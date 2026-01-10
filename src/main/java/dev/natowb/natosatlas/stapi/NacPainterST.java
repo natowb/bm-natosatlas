@@ -1,0 +1,30 @@
+package dev.natowb.natosatlas.stapi;
+
+import dev.natowb.natosatlas.core.painter.NacPainter;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
+import org.lwjgl.opengl.GL11;
+
+public class NacPainterST extends NacPainter {
+
+    @Override
+    public void drawString(String text, int x, int y, int color, boolean shadow) {
+        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        mc.textRenderer.draw(text, x, y, color, shadow);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+    }
+
+    @Override
+    public int getStringWidth(String str) {
+        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
+        return mc.textRenderer.getWidth(str);
+    }
+
+    @Override
+    public int getMinecraftTextureId(String string) {
+        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
+        return mc.textureManager.getTextureId(string);
+    }
+
+}
