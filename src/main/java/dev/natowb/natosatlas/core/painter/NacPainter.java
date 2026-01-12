@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.painter;
 
+import dev.natowb.natosatlas.core.glue.INacPainter;
 import org.lwjgl.opengl.GL11;
 
 public class NacPainter implements INacPainter {

@@ -1,4 +1,4 @@
-# NAP  (Nates Atlas Project)
+# Natos Atlas
 this is a World map mod for minecraft beta 1.7.3 there are currently StAPI and ModLoader ports.
 
 

@@ -1,10 +1,14 @@
 package dev.natowb.natosatlas.core.renderer;
 
-import dev.natowb.natosatlas.core.NatesAtlas;
+import dev.natowb.natosatlas.core.NAC;
+import dev.natowb.natosatlas.core.NACSettings;
+import dev.natowb.natosatlas.core.NACWaypoints;
+import dev.natowb.natosatlas.core.glue.NacPlatform;
 import dev.natowb.natosatlas.core.models.NacCanvasInfo;
 import dev.natowb.natosatlas.core.models.NacEntity;
 import dev.natowb.natosatlas.core.models.NacScaleInfo;
-import dev.natowb.natosatlas.core.painter.INacPainter;
+import dev.natowb.natosatlas.core.models.NacWaypoint;
+import dev.natowb.natosatlas.core.glue.INacPainter;
 import dev.natowb.natosatlas.core.utils.NacConstants;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -12,9 +16,8 @@ import org.lwjgl.opengl.GL11;
 import static dev.natowb.natosatlas.core.utils.NacConstants.*;
 
 
-public class NacRenderer {
+public class NacMapRenderer {
     private static final float REGION_THRESHOLD = 0.3f;
-    private static final float CHUNK_THRESHOLD = 1.0f;
     private static final int CANVAS_PADDING = 0;
     private static final double MIN_ZOOM = 0.05;
     private static final double MAX_ZOOM = 4.0;
@@ -38,12 +41,61 @@ public class NacRenderer {
     private boolean firstRun = true;
 
 
-    public NacRenderer() {
+    public void handleInput() {
+        handleInputs(mouseX, mouseY);
     }
 
-    public void draw(int mouseX, int mouseY, int screenW, int screenH, NacScaleInfo scaleInfo) {
+    private void drawUnavailableMessage() {
+        NacScaleInfo scale = NacPlatform.get().getScaleInfo();
+
+        String msg = "Only available in the Overworld";
+
+        // Canvas center in screen space
+        float centerX = canvasX + canvasW / 2f;
+        float centerY = canvasY + canvasH / 2f;
+
+        // Measure text width/height using your painter
+        int textW = NacPlatform.get().painter.getStringWidth(msg);
+        int textH = 20;
+
+        // Draw centered
+        NacPlatform.get().painter.drawString(
+                msg,
+                (int) (centerX - textW / 2f),
+                (int) (centerY - textH / 2f),
+                0xFFFFFFFF
+        );
+    }
+
+    private void beginCanvas(NacScaleInfo scaleInfo) {
+        NacPlatform.get().painter.drawRect(canvasX, canvasY, canvasX + canvasW, canvasY + canvasH, 0xFF181818);
+
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        int scale = scaleInfo.scaleFactor;
+
+        GL11.glScissor(
+                canvasX * scale,
+                (scaleInfo.scaledHeight - (canvasY + canvasH)) * scale,
+                canvasW * scale,
+                canvasH * scale
+        );
+
+        GL11.glPushMatrix();
+    }
+
+    private void applyCanvasTransform() {
+        GL11.glTranslatef(canvasX, canvasY, 0);
+        GL11.glScalef((float) zoom, (float) zoom, 1f);
+        GL11.glTranslatef((float) -scrollX, (float) -scrollY, 0);
+    }
+
+    private void endCanvas() {
+        GL11.glPopMatrix();
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+    }
+
+    public void draw(int mouseX, int mouseY, int screenW, int screenH) {
         updateWidthAndHeight(screenW, screenH);
-        handleInputs(mouseX, mouseY);
 
         if (firstRun) {
             centerOnActiveChunk();
@@ -54,14 +106,32 @@ public class NacRenderer {
         this.mouseY = mouseY;
 
 
-        beginCanvas(scaleInfo);
+        beginCanvas(NacPlatform.get().getScaleInfo());
+        if (!NacPlatform.get().getCurrentWorldInfo().isPlayerInOverworld) {
+            drawUnavailableMessage();
+            endCanvas();
+            return;
+        }
+        applyCanvasTransform();
+
         NacCanvasInfo info = getInfo();
         drawRegionTiles(info);
-        drawEntities(info);
-        drawCanvasGrid(info);
+
+        if (NACSettings.isMapGridEnabled()) {
+            drawCanvasGrid(info);
+        }
+        if (NACSettings.getEntityDisplayMode() != NACSettings.EntityDisplayMode.NONE) {
+            drawEntities(info);
+        }
+
+        drawWaypoints(info);
+
+
         endCanvas();
 
-        drawDebugInfo(info);
+        if (NACSettings.isMapDebugInfoEnabled()) {
+            drawDebugInfo(info);
+        }
     }
 
     public NacCanvasInfo getInfo() {
@@ -113,38 +183,10 @@ public class NacRenderer {
         canvasH = height - CANVAS_PADDING * 2;
     }
 
-    private void beginCanvas(NacScaleInfo scaleInfo) {
-        NatesAtlas.getInstance().painter.drawRect(canvasX, canvasY, canvasX + canvasW, canvasY + canvasH, 0xFF181818);
-
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        int scale = scaleInfo.scaleFactor;
-
-        GL11.glScissor(
-                canvasX * scale,
-                (scaleInfo.scaledHeight - (canvasY + canvasH)) * scale,
-                canvasW * scale,
-                canvasH * scale
-        );
-
-        GL11.glPushMatrix();
-        applyCanvasTransform();
-    }
-
-    private void applyCanvasTransform() {
-        GL11.glTranslatef(canvasX, canvasY, 0);
-        GL11.glScalef((float) zoom, (float) zoom, 1f);
-        GL11.glTranslatef((float) -scrollX, (float) -scrollY, 0);
-    }
-
-    private void endCanvas() {
-        GL11.glPopMatrix();
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
-    }
-
 
     private void centerOnActiveChunk() {
-        int chunkX = NatesAtlas.getInstance().regionManager.getActiveChunkX();
-        int chunkZ = NatesAtlas.getInstance().regionManager.getActiveChunkZ();
+        int chunkX = NAC.get().regionManager.getActiveChunkX();
+        int chunkZ = NAC.get().regionManager.getActiveChunkZ();
 
         double centerBlockX = chunkX * 16 + 8;
         double centerBlockZ = chunkZ * 16 + 8;
@@ -176,7 +218,7 @@ public class NacRenderer {
         for (int rx = startRegionX; rx <= endRegionX; rx++) {
             for (int rz = startRegionZ; rz <= endRegionZ; rz++) {
 
-                int texId = NatesAtlas.getInstance().regionManager.getTexture(rx, rz);
+                int texId = NAC.get().regionManager.getTexture(rx, rz);
                 if (texId == -1) continue;
 
                 drawRegionTexture(rx, rz, texId);
@@ -192,30 +234,55 @@ public class NacRenderer {
         int drawX = (int) (worldX * PIXELS_PER_CANVAS_UNIT);
         int drawY = (int) (worldZ * PIXELS_PER_CANVAS_UNIT);
 
-        NatesAtlas.getInstance().painter.drawTexture(texId, drawX, drawY, PIXELS_PER_CANVAS_REGION, PIXELS_PER_CANVAS_REGION);
+        NacPlatform.get().painter.drawTexture(texId, drawX, drawY, PIXELS_PER_CANVAS_REGION, PIXELS_PER_CANVAS_REGION);
     }
 
     private static final double ICON_SIZE = 6.0;
 
-    private void drawEntities(NacCanvasInfo info) {
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, NatesAtlas.getInstance().painter.getMinecraftTextureId("/misc/mapicons.png"));
 
-        for (NacEntity e : NatesAtlas.getInstance().entityAdapter.collectEntities()) {
-            renderEntity(e, info.zoom);
+    // FIXME: hacky but idc atm
+    private void drawWaypoints(NacCanvasInfo info) {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, NacPlatform.get().painter.getMinecraftTextureId("/misc/mapicons.png"));
+        for (NacWaypoint wp : NACWaypoints.getAll()) {
+            renderEntity(new NacEntity(wp.x, wp.z, 0, 4), info.zoom);
+
+            double worldX = wp.x * NacConstants.PIXELS_PER_CANVAS_UNIT;
+            double worldZ = wp.z * NacConstants.PIXELS_PER_CANVAS_UNIT;
+
+            double scale = 1 / zoom;
+            GL11.glPushMatrix();
+            GL11.glTranslated(worldX, worldZ, 0);
+            GL11.glScaled(scale, scale, 1);
+
+            int nameLength = NacPlatform.get().painter.getStringWidth(wp.name);
+
+            NacPlatform.get().painter.drawString(wp.name, -(nameLength / 2) + 1, 11, 0xFF000000);
+            NacPlatform.get().painter.drawString(wp.name, -(nameLength / 2), 10, 0xFFFFFFFF);
+            GL11.glPopMatrix();
+
+        }
+    }
+
+
+    private void drawEntities(NacCanvasInfo info) {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, NacPlatform.get().painter.getMinecraftTextureId("/misc/mapicons.png"));
+
+        if (NACSettings.getEntityDisplayMode() == NACSettings.EntityDisplayMode.ALL) {
+            for (NacEntity e : NacPlatform.get().entityProvider.collectEntities()) {
+                renderEntity(e, info.zoom);
+            }
         }
 
-        for (NacEntity p : NatesAtlas.getInstance().entityAdapter.collectPlayers()) {
+        for (NacEntity p : NacPlatform.get().entityProvider.collectPlayers()) {
             renderEntity(p, info.zoom);
         }
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
     }
 
 
     private void renderEntity(NacEntity e, double zoom) {
 
-        double worldX = e.worldX * NacConstants.PIXELS_PER_CANVAS_UNIT;
-        double worldZ = e.worldZ * NacConstants.PIXELS_PER_CANVAS_UNIT;
+        double worldX = e.x * NacConstants.PIXELS_PER_CANVAS_UNIT;
+        double worldZ = e.z * NacConstants.PIXELS_PER_CANVAS_UNIT;
 
         float u1 = (e.iconIndex % 4) / 4.0f;
         float v1 = (e.iconIndex / 4) / 4.0f;
@@ -228,25 +295,19 @@ public class NacRenderer {
         GL11.glTranslated(worldX, worldZ, 0);
         GL11.glRotated(e.yaw, 0, 0, 1);
         GL11.glScaled(scale, scale, 1);
-
-        NatesAtlas.getInstance().painter.drawTexturedQuad(u1, v1, u2, v2);
-
+        NacPlatform.get().painter.drawTexturedQuad(u1, v1, u2, v2);
         GL11.glPopMatrix();
     }
 
 
     private void drawCanvasGrid(NacCanvasInfo info) {
         if (info.zoom < REGION_THRESHOLD) {
-            NatesAtlas.getInstance().painter.drawGrid(PIXELS_PER_CANVAS_REGION,
-                    info.width, info.height, info.scrollX, info.scrollY, info.zoom, 0x80808080);
-
-        } else if (info.zoom < CHUNK_THRESHOLD) {
-            NatesAtlas.getInstance().painter.drawGrid(PIXELS_PER_CANVAS_CHUNK,
-                    info.width, info.height, info.scrollX, info.scrollY, info.zoom, 0x80808080);
+            NacPlatform.get().painter.drawGrid(PIXELS_PER_CANVAS_REGION,
+                    info.width, info.height, info.scrollX, info.scrollY, info.zoom, 0xFFFFFFFF);
 
         } else {
-            NatesAtlas.getInstance().painter.drawGrid(PIXELS_PER_CANVAS_UNIT,
-                    info.width, info.height, info.scrollX, info.scrollY, info.zoom, 0x80808080);
+            NacPlatform.get().painter.drawGrid(PIXELS_PER_CANVAS_CHUNK,
+                    info.width, info.height, info.scrollX, info.scrollY, info.zoom, 0xFFFFFFFF);
         }
     }
 
@@ -258,14 +319,13 @@ public class NacRenderer {
 
     private void renderDebugInfo(NacCanvasInfo canvas) {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
+        NacPlatform.get().painter.drawString("Canvas", 5, 5, 0xFFFFFF);
+        NacPlatform.get().painter.drawString(String.format("Size: %d, %d", canvas.width, canvas.height), 5, 15, 0xFFFFFF);
+        NacPlatform.get().painter.drawString(String.format("Scroll: %.2f, %.2f", canvas.scrollX, canvas.scrollY), 5, 25, 0xFFFFFF);
+        NacPlatform.get().painter.drawString(String.format("Zoom: %.2f", canvas.zoom), 5, 35, 0xFFFFFF);
 
-        NatesAtlas.getInstance().painter.drawString("Canvas", 5, 5, 0xFFFFFF);
-        NatesAtlas.getInstance().painter.drawString(String.format("Size: %d, %d", canvas.width, canvas.height), 5, 15, 0xFFFFFF);
-        NatesAtlas.getInstance().painter.drawString(String.format("Scroll: %.2f, %.2f", canvas.scrollX, canvas.scrollY), 5, 25, 0xFFFFFF);
-        NatesAtlas.getInstance().painter.drawString(String.format("Zoom: %.2f", canvas.zoom), 5, 35, 0xFFFFFF);
-
-        NatesAtlas.getInstance().painter.drawString("Region Cache", 5, 50, 0xFFFFFF);
-        NatesAtlas.getInstance().painter.drawString(String.format("Tile Count: %d", NatesAtlas.getInstance().regionManager.getCacheSize()), 5, 60, 0xFFFFFF);
+        NacPlatform.get().painter.drawString("Region Cache", 5, 50, 0xFFFFFF);
+        NacPlatform.get().painter.drawString(String.format("Tile Count: %d", NAC.get().regionManager.getCacheSize()), 5, 60, 0xFFFFFF);
     }
 
     private void renderTooltip(NacCanvasInfo canvas) {
@@ -279,7 +339,7 @@ public class NacRenderer {
         int tooltipX = canvas.mouseX + 12;
         int tooltipY = canvas.mouseY + 12;
 
-        drawTooltip(NatesAtlas.getInstance().painter, tooltipX, tooltipY, blockCoords);
+        drawTooltip(NacPlatform.get().painter, tooltipX, tooltipY, blockCoords);
     }
 
     private void drawTooltip(INacPainter painter, int x, int y, String line1) {
