@@ -1,13 +1,13 @@
 package dev.natowb.natosatlas.stapi;
 
-import dev.natowb.natosatlas.core.glue.INacChunkGenerator;
+import dev.natowb.natosatlas.core.glue.INacChunkProvider;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.chunk.Chunk;
 
-public class NacChunkGeneratorST implements INacChunkGenerator {
+public class NacChunkProviderST implements INacChunkProvider {
 
     @Override
     public int[] getChunkPixels(int chunkX, int chunkZ) {

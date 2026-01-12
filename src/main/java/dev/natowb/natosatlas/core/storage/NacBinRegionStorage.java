@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core.storage;
 
-import dev.natowb.natosatlas.core.glue.INacFileProvider;
+import dev.natowb.natosatlas.core.glue.NacPlatform;
 import dev.natowb.natosatlas.core.models.NacRegionData;
 
 import java.io.*;
@@ -13,15 +13,9 @@ import java.util.Optional;
 
 public class NacBinRegionStorage implements INacRegionStorage {
 
-    private final INacFileProvider accessor;
-
-    public NacBinRegionStorage(INacFileProvider accessor) {
-        this.accessor = accessor;
-    }
-
     @Override
     public Path getRegionFile(int rx, int rz) {
-        return accessor.getRegionDirectory().resolve("region_" + rx + "_" + rz + ".bin");
+        return NacPlatform.get().getRegionDataDirectory().toPath().resolve("region_" + rx + "_" + rz + ".bin");
     }
 
     @Override
@@ -81,7 +75,7 @@ public class NacBinRegionStorage implements INacRegionStorage {
     @Override
     public Map<Long, NacRegionData> loadAllRegions() {
         Map<Long, NacRegionData> result = new HashMap<>();
-        Path dir = accessor.getRegionDirectory();
+        Path dir = NacPlatform.get().getRegionDataDirectory().toPath();
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "region_*.bin")) {
             for (Path file : stream) {
@@ -98,7 +92,8 @@ public class NacBinRegionStorage implements INacRegionStorage {
                         result.put(key, region);
                     });
 
-                } catch (NumberFormatException ignored) {}
+                } catch (NumberFormatException ignored) {
+                }
             }
         } catch (IOException e) {
             System.err.println("Failed to list BIN regions: " + dir);

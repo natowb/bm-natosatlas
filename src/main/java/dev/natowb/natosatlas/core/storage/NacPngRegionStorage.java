@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core.storage;
 
-import dev.natowb.natosatlas.core.glue.INacFileProvider;
+import dev.natowb.natosatlas.core.glue.NacPlatform;
 import dev.natowb.natosatlas.core.models.NacRegionData;
 import dev.natowb.natosatlas.core.utils.NacConstants;
 
@@ -19,13 +19,11 @@ import java.util.Optional;
 
 public class NacPngRegionStorage implements INacRegionStorage {
 
-    private final INacFileProvider accessor;
 
     private final BufferedImage bufferedImage;
     private final int[] pixelBuffer;
 
-    public NacPngRegionStorage(INacFileProvider accessor) {
-        this.accessor = accessor;
+    public NacPngRegionStorage() {
 
         int size = NacConstants.BLOCKS_PER_CANVAS_REGION;
         this.bufferedImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
@@ -34,7 +32,7 @@ public class NacPngRegionStorage implements INacRegionStorage {
 
     @Override
     public Path getRegionFile(int rx, int rz) {
-        return accessor.getRegionDirectory().resolve("region_" + rx + "_" + rz + ".png");
+        return NacPlatform.get().getRegionDataDirectory().toPath().resolve("region_" + rx + "_" + rz + ".png");
     }
 
     @Override
@@ -87,7 +85,7 @@ public class NacPngRegionStorage implements INacRegionStorage {
     @Override
     public Map<Long, NacRegionData> loadAllRegions() {
         Map<Long, NacRegionData> result = new HashMap<>();
-        Path dir = accessor.getRegionDirectory();
+        Path dir = NacPlatform.get().getRegionDataDirectory().toPath();
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "region_*.png")) {
             for (Path file : stream) {

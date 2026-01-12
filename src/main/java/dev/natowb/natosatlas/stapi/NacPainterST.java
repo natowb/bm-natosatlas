@@ -12,7 +12,6 @@ public class NacPainterST extends NacPainter {
         Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         mc.textRenderer.draw(text, x, y, color, shadow);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
     }
 
     @Override

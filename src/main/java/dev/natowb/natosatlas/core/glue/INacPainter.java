@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core.painter;
+package dev.natowb.natosatlas.core.glue;
 
 public interface INacPainter {
     void drawRect(int x1, int y1, int x2, int y2, int argbColor);

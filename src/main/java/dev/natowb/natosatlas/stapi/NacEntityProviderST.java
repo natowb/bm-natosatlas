@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.stapi;
 
-import dev.natowb.natosatlas.core.glue.INacEntityAdapter;
+import dev.natowb.natosatlas.core.glue.INacEntityProvider;
 import dev.natowb.natosatlas.core.models.NacEntity;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
@@ -12,9 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NacEntityAdapterST implements INacEntityAdapter {
-
-
+public class NacEntityProviderST implements INacEntityProvider {
     @Override
     public List<NacEntity> collectEntities() {
         Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
@@ -28,12 +26,7 @@ public class NacEntityAdapterST implements INacEntityAdapter {
 
             int icon = getIconIndexForEntity(e);
 
-            entities.add(new NacEntity(
-                    e.x,
-                    e.z,
-                    e.yaw,
-                    icon
-            ));
+            entities.add(new NacEntity(e.x, e.z, e.yaw, icon));
         }
 
         return entities;
@@ -49,12 +42,7 @@ public class NacEntityAdapterST implements INacEntityAdapter {
 
             int icon = (p == mc.player) ? 0 : 3;
 
-            players.add(new NacEntity(
-                    p.x,
-                    p.z,
-                    p.yaw,
-                    icon
-            ));
+            players.add(new NacEntity(p.x, p.z, p.yaw, icon));
         }
 
         return players;
@@ -63,12 +51,7 @@ public class NacEntityAdapterST implements INacEntityAdapter {
     @Override
     public NacEntity getLocalPlayer() {
         Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
-        return new NacEntity(
-                mc.player.x,
-                mc.player.z,
-                mc.player.yaw,
-                0
-        );
+        return new NacEntity(mc.player.x, mc.player.z, mc.player.yaw, 0);
     }
 
 

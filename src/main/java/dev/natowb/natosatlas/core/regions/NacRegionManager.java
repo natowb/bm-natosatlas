@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.regions;
 
+import dev.natowb.natosatlas.core.glue.NacPlatform;
 import dev.natowb.natosatlas.core.models.NacRegionData;
 
 public class NacRegionManager {
@@ -7,7 +8,7 @@ public class NacRegionManager {
     private final NacRegionCache regionCache;
     private static final int RADIUS = 8;
     private static final int TICKS_PER_SECOND = 20;
-    private static final int SECONDS_PER_SAVE_INTERVAL = 30;
+    private static final int SECONDS_PER_SAVE_INTERVAL = 1;
     private static final int SAVE_INTERVAL_TICKS = TICKS_PER_SECOND * SECONDS_PER_SAVE_INTERVAL;
 
 
@@ -28,6 +29,11 @@ public class NacRegionManager {
 
 
     public void update(int playerChunkX, int playerChunkZ) {
+
+        if (!NacPlatform.get().getCurrentWorldInfo().isPlayerInOverworld) {
+            return;
+        }
+
         this.activeChunkX = playerChunkX;
         this.activeChunkZ = playerChunkZ;
 

@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core.regions;
 
-import dev.natowb.natosatlas.core.glue.INacChunkGenerator;
+import dev.natowb.natosatlas.core.glue.INacChunkProvider;
 import dev.natowb.natosatlas.core.models.NacCache;
 import dev.natowb.natosatlas.core.models.NacRegionData;
 import dev.natowb.natosatlas.core.storage.INacRegionStorage;
@@ -11,14 +11,14 @@ public class NacRegionCache {
 
     public static final int MAX_REGIONS = 512;
 
-    public final INacChunkGenerator chunkHandler;
+    public final INacChunkProvider chunkHandler;
     private final INacRegionStorage storage;
     private final NacCache<Long, NacRegionData> tileCache;
     private final Queue<Long> dirtyQueue = new ArrayDeque<>();
     private final Set<Long> dirtySet = new HashSet<>();
 
 
-    public NacRegionCache(INacChunkGenerator chunkHandler, INacRegionStorage storage) {
+    public NacRegionCache(INacChunkProvider chunkHandler, INacRegionStorage storage) {
         this.chunkHandler = chunkHandler;
         this.storage = storage;
         this.tileCache = new NacCache<>(MAX_REGIONS);

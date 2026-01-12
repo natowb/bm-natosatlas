@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.stapi;
 
-import dev.natowb.natosatlas.core.NatesAtlas;
-import dev.natowb.natosatlas.core.glue.INacFileProvider;
+import dev.natowb.natosatlas.core.NAC;
+import dev.natowb.natosatlas.stapi.screens.AtlasScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.client.Minecraft;
@@ -14,12 +14,9 @@ import net.modificationstation.stationapi.api.util.Namespace;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
-public class NatosAtlasMod implements INacFileProvider {
+public class NatosAtlasMod {
     static {
         EntrypointManager.registerLookup(MethodHandles.lookup());
     }
@@ -30,11 +27,11 @@ public class NatosAtlasMod implements INacFileProvider {
 
     public static KeyBinding KEY_BINDING_MAP;
     private boolean inWorld;
-    private NatesAtlas NAC;
+    private final NAC nac;
 
 
     public NatosAtlasMod() {
-        NAC = new NatesAtlas(this, new NacChunkGeneratorST(), new NacEntityAdapterST(), new NacPainterST());
+        nac = new NAC(new NacPlatformST());
     }
 
 
@@ -47,30 +44,25 @@ public class NatosAtlasMod implements INacFileProvider {
     @EventListener
     void onGameTick(GameTickEvent.End event) {
         Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
-        if(mc.player == null) {
-            return;
-        }
 
         if (mc.world == null && inWorld) {
             inWorld = false;
-            NAC.onWorldLeft();
+            nac.onWorldLeft();
         }
 
         if (mc.world != null && !inWorld) {
             inWorld = true;
-            NAC.onWorldJoin();
+            nac.onWorldJoin();
         }
 
-        if (inWorld) {
-            NAC.onWorldUpdate();
+        if (inWorld && mc.player != null) {
+            nac.onWorldUpdate();
         }
     }
-
 
     @EventListener
     public void handle(KeyStateChangedEvent event) {
         Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
-
         if (Keyboard.getEventKeyState()) {
             if (Keyboard.isKeyDown(NatosAtlasMod.KEY_BINDING_MAP.code)) {
                 if (event.environment == KeyStateChangedEvent.Environment.IN_GAME) {
@@ -82,39 +74,5 @@ public class NatosAtlasMod implements INacFileProvider {
                 }
             }
         }
-    }
-
-
-    @Override
-    public Path getDataDirectory() {
-        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
-        Path mcPath = FabricLoader.getInstance().getGameDir();
-        Path dataPath;
-        if (mc.isWorldRemote()) {
-            dataPath = mcPath.resolve("natesatlas/data/" + mc.options.lastServer);
-        } else {
-            dataPath = mcPath.resolve("natesatlas/data/" + mc.world.getProperties().getName());
-        }
-
-        try {
-            Files.createDirectories(dataPath);
-        } catch (IOException e) {
-            throw new RuntimeException("UHOHHHHH FAILED TO CREATE DATA DIRECTORY", e);
-        }
-
-        return dataPath;
-    }
-
-    @Override
-    public Path getRegionDirectory() {
-        Path regionDir = getDataDirectory().resolve("regions");
-
-        try {
-            Files.createDirectories(regionDir);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to create region directory", e);
-        }
-
-        return regionDir;
     }
 }
