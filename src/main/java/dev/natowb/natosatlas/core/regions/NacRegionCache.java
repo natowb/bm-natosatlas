@@ -87,7 +87,6 @@ public class NacRegionCache {
         int rz = (int) (key & 0xFFFFFFFFL);
 
         storage.saveRegion(rx, rz, tile);
-        System.out.printf("INFO: saved region %d,%d%n", rx, rz);
     }
 
 

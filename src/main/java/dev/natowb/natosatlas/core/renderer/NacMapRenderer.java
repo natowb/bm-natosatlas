@@ -245,7 +245,12 @@ public class NacMapRenderer {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, NacPlatform.get().painter.getMinecraftTextureId("/misc/mapicons.png"));
         for (NacWaypoint wp : NACWaypoints.getAll()) {
             renderEntity(new NacEntity(wp.x, wp.z, 0, 4), info.zoom);
+        }
+        drawWaypointLabels(info);
+    }
 
+    public void drawWaypointLabels(NacCanvasInfo info) {
+        for (NacWaypoint wp : NACWaypoints.getAll()) {
             double worldX = wp.x * NacConstants.PIXELS_PER_CANVAS_UNIT;
             double worldZ = wp.z * NacConstants.PIXELS_PER_CANVAS_UNIT;
 
