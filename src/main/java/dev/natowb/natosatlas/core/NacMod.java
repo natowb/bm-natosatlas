@@ -1,20 +1,20 @@
 package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.core.glue.NacPlatform;
+import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
 import dev.natowb.natosatlas.core.models.NacEntity;
 import dev.natowb.natosatlas.core.regions.NacRegionCache;
 import dev.natowb.natosatlas.core.regions.NacRegionManager;
-import dev.natowb.natosatlas.core.storage.NacPngRegionStorage;
+import dev.natowb.natosatlas.core.storage.NacRegionStorage;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class NAC {
+public class NacMod {
 
     public static final Logger logger = Logger.getLogger("NatosAtlas");
-    private static NAC instance = null;
+    private static NacMod instance = null;
 
-    public static NAC get() {
+    public static NacMod get() {
         return instance;
     }
 
@@ -26,23 +26,23 @@ public class NAC {
         logger.setLevel(Level.ALL);
     }
 
-    public NAC(NacPlatform platformAPI) {
+    public NacMod(NacPlatformAPI platformAPI) {
         if (instance != null) {
             throw new IllegalStateException("NatosAtlas instance already created!");
         }
         instance = this;
 
-        NacPlatform.setInstance(platformAPI);
+        NacPlatformAPI.setInstance(platformAPI);
 
         setupLogger();
-        regionCache = new NacRegionCache(NacPlatform.get().chunkProvider, new NacPngRegionStorage());
+        regionCache = new NacRegionCache(new NacRegionStorage());
         regionManager = new NacRegionManager(regionCache);
     }
 
     public void onWorldJoin() {
         regionCache.loadFromDisk();
-        NACWaypoints.load();
-        NACSettings.load();
+        NacWaypoints.load();
+        NacSettings.load();
     }
 
     public void onWorldLeft() {
@@ -50,7 +50,7 @@ public class NAC {
     }
 
     public void onWorldUpdate() {
-        NacEntity player = NacPlatform.get().entityProvider.getLocalPlayer();
+        NacEntity player = NacPlatformAPI.get().entityProvider.getLocalPlayer();
 
         double px = player.x;
         double pz = player.z;

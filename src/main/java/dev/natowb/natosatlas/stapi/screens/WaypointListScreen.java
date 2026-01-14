@@ -1,7 +1,6 @@
 package dev.natowb.natosatlas.stapi.screens;
 
-import dev.natowb.natosatlas.core.NAC;
-import dev.natowb.natosatlas.core.NACWaypoints;
+import dev.natowb.natosatlas.core.NacWaypoints;
 import dev.natowb.natosatlas.core.models.NacWaypoint;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
@@ -77,7 +76,7 @@ public class WaypointListScreen extends Screen {
     }
 
     public void openEditScreen(int index) {
-        NacWaypoint selectedWaypoint = NACWaypoints.getAll().get(selectedIndex);
+        NacWaypoint selectedWaypoint = NacWaypoints.getAll().get(selectedIndex);
         minecraft.setScreen(new WaypointCreateScreen(this, selectedWaypoint));
     }
 
@@ -94,8 +93,8 @@ public class WaypointListScreen extends Screen {
         }
 
         if (button.id == 1002 && selectedIndex >= 0) {
-            NacWaypoint selectedWaypoint = NACWaypoints.getAll().get(selectedIndex);
-            NACWaypoints.remove(selectedWaypoint);
+            NacWaypoint selectedWaypoint = NacWaypoints.getAll().get(selectedIndex);
+            NacWaypoints.remove(selectedWaypoint);
             selectedIndex = -1;
             updateButtonStates();
             return;

@@ -1,7 +1,6 @@
 package dev.natowb.natosatlas.stapi.screens;
 
-import dev.natowb.natosatlas.core.NAC;
-import dev.natowb.natosatlas.core.NACWaypoints;
+import dev.natowb.natosatlas.core.NacWaypoints;
 import dev.natowb.natosatlas.core.models.NacWaypoint;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
@@ -19,7 +18,7 @@ public class WaypointListWidget extends EntryListWidget {
 
     @Override
     protected int getEntryCount() {
-        return NACWaypoints.getAll().size();
+        return NacWaypoints.getAll().size();
     }
 
     @Override
@@ -39,7 +38,7 @@ public class WaypointListWidget extends EntryListWidget {
 
     @Override
     protected int getEntriesHeight() {
-        return NACWaypoints.getAll().size() * 30;
+        return NacWaypoints.getAll().size() * 30;
     }
 
     @Override
@@ -49,7 +48,7 @@ public class WaypointListWidget extends EntryListWidget {
 
     @Override
     protected void renderEntry(int index, int x, int y, int mouseX, Tessellator tessellator) {
-        NacWaypoint wp = NACWaypoints.getAll().get(index);
+        NacWaypoint wp = NacWaypoints.getAll().get(index);
         Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
         parent.drawTextWithShadow(mc.textRenderer, wp.name, x + 2, y + 1, 0xFFFFFF);
         parent.drawTextWithShadow(mc.textRenderer,

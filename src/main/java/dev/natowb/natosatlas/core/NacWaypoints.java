@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.core.glue.NacPlatform;
+import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
 import dev.natowb.natosatlas.core.models.NacWaypoint;
 
 import java.io.*;
@@ -9,11 +9,11 @@ import java.util.List;
 
 
 // FIXME: this is a super dump way to handle this, but im wanting to get something working. and having it readable is a plus.
-public final class NACWaypoints {
+public final class NacWaypoints {
 
     private static final List<NacWaypoint> WAYPOINTS = new ArrayList<>();
 
-    private NACWaypoints() {
+    private NacWaypoints() {
     }
 
     public static List<NacWaypoint> getAll() {
@@ -41,7 +41,7 @@ public final class NACWaypoints {
     public static void load() {
         WAYPOINTS.clear();
 
-        File file = new File(NacPlatform.get().getWorldDirectory(), "waypoints.txt");
+        File file = new File(NacPlatformAPI.get().getWorldDirectory(), "waypoints.txt");
 
         if (!file.exists()) {
             save();
@@ -73,7 +73,7 @@ public final class NACWaypoints {
 
     public static void save() {
 
-        File file = new File(NacPlatform.get().getWorldDirectory(), "waypoints.txt");
+        File file = new File(NacPlatformAPI.get().getWorldDirectory(), "waypoints.txt");
 
 
         try (PrintWriter out = new PrintWriter(new FileWriter(file))) {

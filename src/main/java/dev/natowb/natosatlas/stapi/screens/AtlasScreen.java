@@ -1,8 +1,7 @@
 package dev.natowb.natosatlas.stapi.screens;
 
-import dev.natowb.natosatlas.core.glue.NacPlatform;
-import dev.natowb.natosatlas.core.models.NacScaleInfo;
-import dev.natowb.natosatlas.core.renderer.NacMapRenderer;
+import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
+import dev.natowb.natosatlas.core.NacCanvas;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
@@ -12,13 +11,13 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 public class AtlasScreen extends Screen {
 
     private final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
-    private final NacMapRenderer mapRenderer;
+    private final NacCanvas mapRenderer;
 
     private ButtonWidget settingsButton;
     private ButtonWidget waypointsButton;
 
     public AtlasScreen() {
-        this.mapRenderer = new NacMapRenderer();
+        this.mapRenderer = new NacCanvas();
     }
 
     @Override
@@ -49,7 +48,7 @@ public class AtlasScreen extends Screen {
             mapRenderer.handleInput();
         }
 
-        if(NacPlatform.get().getCurrentWorldInfo().isPlayerInOverworld) {
+        if(NacPlatformAPI.get().getCurrentWorldInfo().isPlayerInOverworld) {
             super.render(mouseX, mouseY, delta);
         }
     }

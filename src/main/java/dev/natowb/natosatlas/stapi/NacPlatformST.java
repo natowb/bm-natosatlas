@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.stapi;
 
-import dev.natowb.natosatlas.core.glue.NacPlatform;
+import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
 import dev.natowb.natosatlas.core.models.NacScaleInfo;
 import dev.natowb.natosatlas.core.models.NacWorldInfo;
 import net.fabricmc.loader.api.FabricLoader;
@@ -9,7 +9,7 @@ import net.minecraft.client.util.ScreenScaler;
 
 import java.nio.file.Path;
 
-public class NacPlatformST extends NacPlatform {
+public class NacPlatformST extends NacPlatformAPI {
 
     public NacPlatformST() {
         super(new NacPainterST(), new NacEntityProviderST(), new NacChunkProviderST());
@@ -32,8 +32,7 @@ public class NacPlatformST extends NacPlatform {
     public NacScaleInfo getScaleInfo() {
         Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
         ScreenScaler ss = new ScreenScaler(mc.options, mc.displayWidth, mc.displayHeight);
-        NacScaleInfo scaleInfo = new NacScaleInfo(ss.scaleFactor, ss.getScaledWidth(), ss.getScaledHeight());
-        return scaleInfo;
+        return new NacScaleInfo(ss.scaleFactor, ss.getScaledWidth(), ss.getScaledHeight());
     }
 
     @Override

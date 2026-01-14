@@ -1,7 +1,8 @@
 package dev.natowb.natosatlas.core.glue;
 
 
-public interface INacChunkProvider {
+import dev.natowb.natosatlas.core.models.NacChunk;
 
-    int[] getChunkPixels(int chunkX, int chunkZ);
+public interface INacChunkProvider {
+    NacChunk buildChunk(int chunkX, int chunkZ);
 }

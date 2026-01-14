@@ -1,9 +1,6 @@
-package dev.natowb.natosatlas.core.renderer;
+package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.core.NAC;
-import dev.natowb.natosatlas.core.NACSettings;
-import dev.natowb.natosatlas.core.NACWaypoints;
-import dev.natowb.natosatlas.core.glue.NacPlatform;
+import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
 import dev.natowb.natosatlas.core.models.NacCanvasInfo;
 import dev.natowb.natosatlas.core.models.NacEntity;
 import dev.natowb.natosatlas.core.models.NacScaleInfo;
@@ -16,7 +13,7 @@ import org.lwjgl.opengl.GL11;
 import static dev.natowb.natosatlas.core.utils.NacConstants.*;
 
 
-public class NacMapRenderer {
+public class NacCanvas {
     private static final float REGION_THRESHOLD = 0.3f;
     private static final int CANVAS_PADDING = 0;
     private static final double MIN_ZOOM = 0.05;
@@ -46,7 +43,7 @@ public class NacMapRenderer {
     }
 
     private void drawUnavailableMessage() {
-        NacScaleInfo scale = NacPlatform.get().getScaleInfo();
+        NacScaleInfo scale = NacPlatformAPI.get().getScaleInfo();
 
         String msg = "Only available in the Overworld";
 
@@ -55,11 +52,11 @@ public class NacMapRenderer {
         float centerY = canvasY + canvasH / 2f;
 
         // Measure text width/height using your painter
-        int textW = NacPlatform.get().painter.getStringWidth(msg);
+        int textW = NacPlatformAPI.get().painter.getStringWidth(msg);
         int textH = 20;
 
         // Draw centered
-        NacPlatform.get().painter.drawString(
+        NacPlatformAPI.get().painter.drawString(
                 msg,
                 (int) (centerX - textW / 2f),
                 (int) (centerY - textH / 2f),
@@ -68,7 +65,7 @@ public class NacMapRenderer {
     }
 
     private void beginCanvas(NacScaleInfo scaleInfo) {
-        NacPlatform.get().painter.drawRect(canvasX, canvasY, canvasX + canvasW, canvasY + canvasH, 0xFF181818);
+        NacPlatformAPI.get().painter.drawRect(canvasX, canvasY, canvasX + canvasW, canvasY + canvasH, 0xFF181818);
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         int scale = scaleInfo.scaleFactor;
@@ -106,8 +103,8 @@ public class NacMapRenderer {
         this.mouseY = mouseY;
 
 
-        beginCanvas(NacPlatform.get().getScaleInfo());
-        if (!NacPlatform.get().getCurrentWorldInfo().isPlayerInOverworld) {
+        beginCanvas(NacPlatformAPI.get().getScaleInfo());
+        if (!NacPlatformAPI.get().getCurrentWorldInfo().isPlayerInOverworld) {
             drawUnavailableMessage();
             endCanvas();
             return;
@@ -117,10 +114,10 @@ public class NacMapRenderer {
         NacCanvasInfo info = getInfo();
         drawRegionTiles(info);
 
-        if (NACSettings.isMapGridEnabled()) {
+        if (NacSettings.isMapGridEnabled()) {
             drawCanvasGrid(info);
         }
-        if (NACSettings.getEntityDisplayMode() != NACSettings.EntityDisplayMode.NONE) {
+        if (NacSettings.getEntityDisplayMode() != NacSettings.EntityDisplayMode.NONE) {
             drawEntities(info);
         }
 
@@ -129,7 +126,7 @@ public class NacMapRenderer {
 
         endCanvas();
 
-        if (NACSettings.isMapDebugInfoEnabled()) {
+        if (NacSettings.isDebugEnabled()) {
             drawDebugInfo(info);
         }
     }
@@ -185,8 +182,8 @@ public class NacMapRenderer {
 
 
     private void centerOnActiveChunk() {
-        int chunkX = NAC.get().regionManager.getActiveChunkX();
-        int chunkZ = NAC.get().regionManager.getActiveChunkZ();
+        int chunkX = NacMod.get().regionManager.getActiveChunkX();
+        int chunkZ = NacMod.get().regionManager.getActiveChunkZ();
 
         double centerBlockX = chunkX * 16 + 8;
         double centerBlockZ = chunkZ * 16 + 8;
@@ -218,7 +215,7 @@ public class NacMapRenderer {
         for (int rx = startRegionX; rx <= endRegionX; rx++) {
             for (int rz = startRegionZ; rz <= endRegionZ; rz++) {
 
-                int texId = NAC.get().regionManager.getTexture(rx, rz);
+                int texId = NacMod.get().regionManager.getTexture(rx, rz);
                 if (texId == -1) continue;
 
                 drawRegionTexture(rx, rz, texId);
@@ -234,7 +231,7 @@ public class NacMapRenderer {
         int drawX = (int) (worldX * PIXELS_PER_CANVAS_UNIT);
         int drawY = (int) (worldZ * PIXELS_PER_CANVAS_UNIT);
 
-        NacPlatform.get().painter.drawTexture(texId, drawX, drawY, PIXELS_PER_CANVAS_REGION, PIXELS_PER_CANVAS_REGION);
+        NacPlatformAPI.get().painter.drawTexture(texId, drawX, drawY, PIXELS_PER_CANVAS_REGION, PIXELS_PER_CANVAS_REGION);
     }
 
     private static final double ICON_SIZE = 6.0;
@@ -242,15 +239,15 @@ public class NacMapRenderer {
 
     // FIXME: hacky but idc atm
     private void drawWaypoints(NacCanvasInfo info) {
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, NacPlatform.get().painter.getMinecraftTextureId("/misc/mapicons.png"));
-        for (NacWaypoint wp : NACWaypoints.getAll()) {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, NacPlatformAPI.get().painter.getMinecraftTextureId("/misc/mapicons.png"));
+        for (NacWaypoint wp : NacWaypoints.getAll()) {
             renderEntity(new NacEntity(wp.x, wp.z, 0, 4), info.zoom);
         }
         drawWaypointLabels(info);
     }
 
     public void drawWaypointLabels(NacCanvasInfo info) {
-        for (NacWaypoint wp : NACWaypoints.getAll()) {
+        for (NacWaypoint wp : NacWaypoints.getAll()) {
             double worldX = wp.x * NacConstants.PIXELS_PER_CANVAS_UNIT;
             double worldZ = wp.z * NacConstants.PIXELS_PER_CANVAS_UNIT;
 
@@ -259,10 +256,10 @@ public class NacMapRenderer {
             GL11.glTranslated(worldX, worldZ, 0);
             GL11.glScaled(scale, scale, 1);
 
-            int nameLength = NacPlatform.get().painter.getStringWidth(wp.name);
+            int nameLength = NacPlatformAPI.get().painter.getStringWidth(wp.name);
 
-            NacPlatform.get().painter.drawString(wp.name, -(nameLength / 2) + 1, 11, 0xFF000000);
-            NacPlatform.get().painter.drawString(wp.name, -(nameLength / 2), 10, 0xFFFFFFFF);
+            NacPlatformAPI.get().painter.drawString(wp.name, -(nameLength / 2) + 1, 11, 0xFF000000);
+            NacPlatformAPI.get().painter.drawString(wp.name, -(nameLength / 2), 10, 0xFFFFFFFF);
             GL11.glPopMatrix();
 
         }
@@ -270,15 +267,15 @@ public class NacMapRenderer {
 
 
     private void drawEntities(NacCanvasInfo info) {
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, NacPlatform.get().painter.getMinecraftTextureId("/misc/mapicons.png"));
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, NacPlatformAPI.get().painter.getMinecraftTextureId("/misc/mapicons.png"));
 
-        if (NACSettings.getEntityDisplayMode() == NACSettings.EntityDisplayMode.ALL) {
-            for (NacEntity e : NacPlatform.get().entityProvider.collectEntities()) {
+        if (NacSettings.getEntityDisplayMode() == NacSettings.EntityDisplayMode.ALL) {
+            for (NacEntity e : NacPlatformAPI.get().entityProvider.collectEntities()) {
                 renderEntity(e, info.zoom);
             }
         }
 
-        for (NacEntity p : NacPlatform.get().entityProvider.collectPlayers()) {
+        for (NacEntity p : NacPlatformAPI.get().entityProvider.collectPlayers()) {
             renderEntity(p, info.zoom);
         }
     }
@@ -300,18 +297,18 @@ public class NacMapRenderer {
         GL11.glTranslated(worldX, worldZ, 0);
         GL11.glRotated(e.yaw, 0, 0, 1);
         GL11.glScaled(scale, scale, 1);
-        NacPlatform.get().painter.drawTexturedQuad(u1, v1, u2, v2);
+        NacPlatformAPI.get().painter.drawTexturedQuad(u1, v1, u2, v2);
         GL11.glPopMatrix();
     }
 
 
     private void drawCanvasGrid(NacCanvasInfo info) {
         if (info.zoom < REGION_THRESHOLD) {
-            NacPlatform.get().painter.drawGrid(PIXELS_PER_CANVAS_REGION,
+            NacPlatformAPI.get().painter.drawGrid(PIXELS_PER_CANVAS_REGION,
                     info.width, info.height, info.scrollX, info.scrollY, info.zoom, 0xFFFFFFFF);
 
         } else {
-            NacPlatform.get().painter.drawGrid(PIXELS_PER_CANVAS_CHUNK,
+            NacPlatformAPI.get().painter.drawGrid(PIXELS_PER_CANVAS_CHUNK,
                     info.width, info.height, info.scrollX, info.scrollY, info.zoom, 0xFFFFFFFF);
         }
     }
@@ -324,13 +321,13 @@ public class NacMapRenderer {
 
     private void renderDebugInfo(NacCanvasInfo canvas) {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-        NacPlatform.get().painter.drawString("Canvas", 5, 5, 0xFFFFFF);
-        NacPlatform.get().painter.drawString(String.format("Size: %d, %d", canvas.width, canvas.height), 5, 15, 0xFFFFFF);
-        NacPlatform.get().painter.drawString(String.format("Scroll: %.2f, %.2f", canvas.scrollX, canvas.scrollY), 5, 25, 0xFFFFFF);
-        NacPlatform.get().painter.drawString(String.format("Zoom: %.2f", canvas.zoom), 5, 35, 0xFFFFFF);
+        NacPlatformAPI.get().painter.drawString("Canvas", 5, 5, 0xFFFFFF);
+        NacPlatformAPI.get().painter.drawString(String.format("Size: %d, %d", canvas.width, canvas.height), 5, 15, 0xFFFFFF);
+        NacPlatformAPI.get().painter.drawString(String.format("Scroll: %.2f, %.2f", canvas.scrollX, canvas.scrollY), 5, 25, 0xFFFFFF);
+        NacPlatformAPI.get().painter.drawString(String.format("Zoom: %.2f", canvas.zoom), 5, 35, 0xFFFFFF);
 
-        NacPlatform.get().painter.drawString("Region Cache", 5, 50, 0xFFFFFF);
-        NacPlatform.get().painter.drawString(String.format("Tile Count: %d", NAC.get().regionManager.getCacheSize()), 5, 60, 0xFFFFFF);
+        NacPlatformAPI.get().painter.drawString("Region Cache", 5, 50, 0xFFFFFF);
+        NacPlatformAPI.get().painter.drawString(String.format("Tile Count: %d", NacMod.get().regionManager.getCacheSize()), 5, 60, 0xFFFFFF);
     }
 
     private void renderTooltip(NacCanvasInfo canvas) {
@@ -344,7 +341,7 @@ public class NacMapRenderer {
         int tooltipX = canvas.mouseX + 12;
         int tooltipY = canvas.mouseY + 12;
 
-        drawTooltip(NacPlatform.get().painter, tooltipX, tooltipY, blockCoords);
+        drawTooltip(NacPlatformAPI.get().painter, tooltipX, tooltipY, blockCoords);
     }
 
     private void drawTooltip(INacPainter painter, int x, int y, String line1) {

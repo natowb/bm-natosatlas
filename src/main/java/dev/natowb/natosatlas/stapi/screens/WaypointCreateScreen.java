@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.stapi.screens;
 
-import dev.natowb.natosatlas.core.NACWaypoints;
-import dev.natowb.natosatlas.core.glue.NacPlatform;
+import dev.natowb.natosatlas.core.NacWaypoints;
+import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
 import dev.natowb.natosatlas.core.models.NacEntity;
 import dev.natowb.natosatlas.core.models.NacWaypoint;
 import net.minecraft.client.gui.screen.Screen;
@@ -69,7 +69,7 @@ public class WaypointCreateScreen extends Screen {
         actionButton = new ButtonWidget(3001, blockX + buttonW + gap, buttonY, buttonW, buttonH, editMode ? "Save" : "Create");
         actionButton.active = false;
 
-        NacEntity player = NacPlatform.get().entityProvider.getLocalPlayer();
+        NacEntity player = NacPlatformAPI.get().entityProvider.getLocalPlayer();
 
         if(!editMode) {
             xField.setText("" + (int)player.x);
@@ -238,9 +238,9 @@ public class WaypointCreateScreen extends Screen {
 
         if (editMode) {
             NacWaypoint updated = new NacWaypoint(name, x, y, z);
-            NACWaypoints.update(editing, updated);
+            NacWaypoints.update(editing, updated);
         } else {
-            NACWaypoints.add(new NacWaypoint(name, x, y, z));
+            NacWaypoints.add(new NacWaypoint(name, x, y, z));
         }
 
         minecraft.setScreen(parent);

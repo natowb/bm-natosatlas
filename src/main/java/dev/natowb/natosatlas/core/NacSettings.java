@@ -1,12 +1,13 @@
 package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.core.glue.NacPlatform;
+import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class NACSettings {
+public final class NacSettings {
+
 
     public enum EntityDisplayMode {
         ALL,
@@ -21,15 +22,32 @@ public final class NACSettings {
 
         public String getLabel() {
             switch (this) {
-                case ONLY_PLAYER: return "Players";
-                case ALL: return "All";
-                case NONE: return "None";
+                case ONLY_PLAYER:
+                    return "Players";
+                case ALL:
+                    return "All";
+                case NONE:
+                    return "None";
             }
             return "Unknown";
         }
     }
 
+    public enum SelectedMapRenderer {
+        DEFAULT,
+        HEIGHTMAP,
+        BIOME;
+
+        public SelectedMapRenderer next() {
+            int i = this.ordinal() + 1;
+            if (i >= values().length) i = 0;
+            return values()[i];
+        }
+    }
+
+
     private static EntityDisplayMode entityDisplayMode = EntityDisplayMode.ALL;
+    public static SelectedMapRenderer selectedMapRenderer = SelectedMapRenderer.DEFAULT;
     private static boolean enableMapGrid = true;
     private static boolean enableMapDebugInfo = false;
 
@@ -37,7 +55,7 @@ public final class NACSettings {
         return enableMapGrid;
     }
 
-    public static boolean isMapDebugInfoEnabled() {
+    public static boolean isDebugEnabled() {
         return enableMapDebugInfo;
     }
 
@@ -63,13 +81,18 @@ public final class NACSettings {
         return entityDisplayMode;
     }
 
+    public static SelectedMapRenderer cycleSelectedMapRenderer() {
+        selectedMapRenderer = selectedMapRenderer.next();
+        return selectedMapRenderer;
+    }
 
 
-    private NACSettings() {}
+    private NacSettings() {
+    }
 
     public static void load() {
 
-        File file = new File(NacPlatform.get().getDataDirectory(), "settings.txt" );
+        File file = new File(NacPlatformAPI.get().getDataDirectory(), "settings.txt");
 
         if (!file.exists()) {
             save();
@@ -89,7 +112,8 @@ public final class NACSettings {
             if (map.containsKey("entityDisplayMode")) {
                 try {
                     entityDisplayMode = EntityDisplayMode.valueOf(map.get("entityDisplayMode"));
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
 
             if (map.containsKey("showGrid")) {
@@ -106,7 +130,7 @@ public final class NACSettings {
     }
 
     public static void save() {
-        File file = new File(NacPlatform.get().getDataDirectory(), "settings.txt" );
+        File file = new File(NacPlatformAPI.get().getDataDirectory(), "settings.txt");
 
         try (PrintWriter out = new PrintWriter(new FileWriter(file))) {
             out.println("entityDisplayMode=" + entityDisplayMode.name());

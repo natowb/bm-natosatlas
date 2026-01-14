@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.stapi.screens;
 
-import dev.natowb.natosatlas.core.NACSettings;
+import dev.natowb.natosatlas.core.NacSettings;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 
@@ -28,11 +28,11 @@ public class SettingsScreen extends Screen {
         int totalH = (buttonH * 3) + (vGap * 2);
         int by = (height - totalH) / 2;
 
-        String entityModeLabel = "Entities: " + NACSettings.getEntityDisplayMode().getLabel();
+        String entityModeLabel = "Entities: " + NacSettings.getEntityDisplayMode().getLabel();
         entityModeButton = new ButtonWidget(1, bx, by, buttonW, buttonH, entityModeLabel);
-        String gridLabel = NACSettings.isMapGridEnabled() ? "Grid: On" : "Grid: Off";
+        String gridLabel = NacSettings.isMapGridEnabled() ? "Grid: On" : "Grid: Off";
         showGridButton = new ButtonWidget(2, bx, by + buttonH + vGap, buttonW, buttonH, gridLabel);
-        String debugLabel = NACSettings.isMapDebugInfoEnabled() ? "Debug: On" : "Debug: Off";
+        String debugLabel = NacSettings.isDebugEnabled() ? "Debug: On" : "Debug: Off";
         showDebugButton = new ButtonWidget(3, bx, by + (buttonH + vGap) * 2, buttonW, buttonH, debugLabel);
         ButtonWidget backButton = new ButtonWidget(4, bx, by + (buttonH + vGap) * 3, buttonW, buttonH, "Back");
         buttons.add(entityModeButton);
@@ -46,14 +46,14 @@ public class SettingsScreen extends Screen {
     protected void buttonClicked(ButtonWidget button) {
         switch (button.id) {
             case 1:
-                entityModeButton.text = "Entities: " + NACSettings.cycleEntityDisplayMode().getLabel();
+                entityModeButton.text = "Entities: " + NacSettings.cycleEntityDisplayMode().getLabel();
                 break;
 
             case 2:
-                showGridButton.text = NACSettings.toggleMapGrid() ? "Grid: On" : "Grid: Off";
+                showGridButton.text = NacSettings.toggleMapGrid() ? "Grid: On" : "Grid: Off";
                 break;
             case 3:
-                showDebugButton.text = NACSettings.toggleDebugInfo() ?"Debug: On" : "Debug: Off";
+                showDebugButton.text = NacSettings.toggleDebugInfo() ?"Debug: On" : "Debug: Off";
                 break;
             case 4:
                 minecraft.setScreen(parent);

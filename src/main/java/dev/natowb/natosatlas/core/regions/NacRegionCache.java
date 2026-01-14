@@ -1,9 +1,9 @@
 package dev.natowb.natosatlas.core.regions;
 
-import dev.natowb.natosatlas.core.glue.INacChunkProvider;
 import dev.natowb.natosatlas.core.models.NacCache;
+import dev.natowb.natosatlas.core.models.NacChunk;
 import dev.natowb.natosatlas.core.models.NacRegionData;
-import dev.natowb.natosatlas.core.storage.INacRegionStorage;
+import dev.natowb.natosatlas.core.storage.NacRegionStorage;
 
 import java.util.*;
 
@@ -11,66 +11,78 @@ public class NacRegionCache {
 
     public static final int MAX_REGIONS = 512;
 
-    public final INacChunkProvider chunkHandler;
-    private final INacRegionStorage storage;
-    private final NacCache<Long, NacRegionData> tileCache;
+    private final NacRegionStorage storage;
+
+    private final NacCache<Long, NacRegionData> regionCache;
     private final Queue<Long> dirtyQueue = new ArrayDeque<>();
     private final Set<Long> dirtySet = new HashSet<>();
 
 
-    public NacRegionCache(INacChunkProvider chunkHandler, INacRegionStorage storage) {
-        this.chunkHandler = chunkHandler;
+    public NacRegionCache(NacRegionStorage storage) {
         this.storage = storage;
-        this.tileCache = new NacCache<>(MAX_REGIONS);
+        this.regionCache = new NacCache<>(MAX_REGIONS);
     }
 
-    public void put(int rx, int rz, NacRegionData tile) {
-        tileCache.put(createRegionKey(rx, rz), tile);
+    public NacRegionData getRegion(int rx, int rz) {
+        long key = regionKey(rx, rz);
+        return regionCache.get(key);
     }
 
-    public NacCache<Long, NacRegionData> get() {
-        return tileCache;
-    }
+    public NacRegionData getOrCreateRegion(int rx, int rz) {
+        long key = regionKey(rx, rz);
+        NacRegionData region = regionCache.get(key);
 
-    public NacRegionData getTile(int rx, int rz) {
-        long key = createRegionKey(rx, rz);
-        return tileCache.get(key);
-    }
-
-    public void clear() {
-
-        System.out.printf("INFO: clearing cache of size : %d%n", tileCache.size());
-
-        for (NacRegionData tile : tileCache.values()) {
-            tile.clearTexture();
+        if (region == null) {
+            region = new NacRegionData(rx, rz);
+            regionCache.put(key, region);
         }
-        tileCache.clear();
+
+        return region;
     }
 
-    private long createRegionKey(int rx, int rz) {
-        return (((long) rx) << 32) ^ (rz & 0xffffffffL);
-    }
-
-
-    public void writeChunk(int chunkX, int chunkZ, int[] pixels) {
+    public void writeChunk(int chunkX, int chunkZ, NacChunk chunk) {
         int rx = chunkX >> 5;
         int rz = chunkZ >> 5;
         int cx = chunkX & 31;
         int cz = chunkZ & 31;
 
-        NacRegionData tile = getTile(rx, rz);
-        if (tile == null) {
-            tile = new NacRegionData();
-            put(rx, rz, tile);
-        }
+        NacRegionData region = getOrCreateRegion(rx, rz);
+        region.writeChunk(cx, cz, chunk);
 
-        tile.writeChunk(cx, cz, pixels);
-
-        long key = (((long) rx) << 32) ^ (rz & 0xffffffffL);
-
+        long key = regionKey(rx, rz);
         if (dirtySet.add(key)) {
             dirtyQueue.add(key);
         }
+    }
+
+    public void clear() {
+
+        for (NacRegionData region : regionCache.values()) {
+            region.clearTexture();
+        }
+
+        regionCache.clear();
+
+        dirtyQueue.clear();
+        dirtySet.clear();
+
+        System.out.printf("INFO: cleared region cache%n");
+    }
+
+    public void markAllDirty() {
+
+        for (Map.Entry<Long, NacRegionData> entry : regionCache.entrySet()) {
+            long key = entry.getKey();
+            NacRegionData region = entry.getValue();
+
+            region.markDirty();
+
+            if (dirtySet.add(key)) {
+                dirtyQueue.add(key);
+            }
+        }
+
+        System.out.printf("INFO: marked %d regions dirty due to renderer change%n", regionCache.size());
     }
 
 
@@ -80,23 +92,28 @@ public class NacRegionCache {
 
         dirtySet.remove(key);
 
-        NacRegionData tile = tileCache.get(key);
-        if (tile == null) return;
+        NacRegionData region = regionCache.get(key);
+        if (region == null) return;
 
         int rx = (int) (key >> 32);
         int rz = (int) (key & 0xFFFFFFFFL);
 
-        storage.saveRegion(rx, rz, tile);
+        storage.saveRegion(rx, rz, region);
     }
-
 
     public void loadFromDisk() {
-        Map<Long, NacRegionData> diskRegions = storage.loadAllRegions();
-        for (Map.Entry<Long, NacRegionData> entry : diskRegions.entrySet()) {
-            tileCache.put(entry.getKey(), entry.getValue());
+        Map<Long, NacRegionData> loaded = storage.loadAllRegions();
+        for (Map.Entry<Long, NacRegionData> entry : loaded.entrySet()) {
+            regionCache.put(entry.getKey(), entry.getValue());
         }
-        System.out.printf("INFO: loaded regions from disk: %d%n", diskRegions.size());
+        System.out.printf("INFO: loaded %d regions from disk%n", loaded.size());
     }
 
+    private long regionKey(int rx, int rz) {
+        return (((long) rx) << 32) ^ (rz & 0xffffffffL);
+    }
 
+    public int getCacheSize() {
+        return regionCache.size();
+    }
 }

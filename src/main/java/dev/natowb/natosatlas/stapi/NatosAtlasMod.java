@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.stapi;
 
-import dev.natowb.natosatlas.core.NAC;
+import dev.natowb.natosatlas.core.NacMod;
 import dev.natowb.natosatlas.stapi.screens.AtlasScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.mine_diver.unsafeevents.listener.EventListener;
@@ -27,17 +27,17 @@ public class NatosAtlasMod {
 
     public static KeyBinding KEY_BINDING_MAP;
     private boolean inWorld;
-    private final NAC nac;
+    private final NacMod nac;
 
 
     public NatosAtlasMod() {
-        nac = new NAC(new NacPlatformST());
+        nac = new NacMod(new NacPlatformST());
     }
 
 
     @EventListener
     public void registerKeybinds(KeyBindingRegisterEvent event) {
-        KEY_BINDING_MAP = new KeyBinding("key.natoworldmap.map_keybind", Keyboard.KEY_M);
+        KEY_BINDING_MAP = new KeyBinding("key.natosatlas.map_keybind", Keyboard.KEY_M);
         event.keyBindings.add(NatosAtlasMod.KEY_BINDING_MAP);
     }
 

@@ -8,30 +8,27 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public abstract class NacPlatform {
+public abstract class NacPlatformAPI {
 
     private static final String DATA_FOLDER = "natosatlas";
 
-    private static NacPlatform instance;
+    private static NacPlatformAPI instance;
+    public static void setInstance(NacPlatformAPI impl) {
+        instance = impl;
+    }
+    public static NacPlatformAPI get() {
+        return instance;
+    }
 
     public final INacPainter painter;
     public final INacEntityProvider entityProvider;
     public final INacChunkProvider chunkProvider;
 
-    public static void setInstance(NacPlatform impl) {
-        instance = impl;
-    }
-
-    public static NacPlatform get() {
-        return instance;
-    }
-
-    public NacPlatform(INacPainter painter, INacEntityProvider entityProvider, INacChunkProvider chunkProvider) {
+    public NacPlatformAPI(INacPainter painter, INacEntityProvider entityProvider, INacChunkProvider chunkProvider) {
         this.painter = painter;
         this.entityProvider = entityProvider;
         this.chunkProvider = chunkProvider;
     }
-
 
     public abstract NacWorldInfo getCurrentWorldInfo();
     public abstract NacScaleInfo getScaleInfo();
