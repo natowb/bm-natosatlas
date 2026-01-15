@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core.storage;
+package dev.natowb.natosatlas.core.regions;
 
 import dev.natowb.natosatlas.core.NacSettings;
 import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
@@ -14,7 +14,7 @@ public class NacRegionStorage {
     private static final byte VERSION = 1;
 
     private void debug(String msg) {
-        if (NacSettings.isDebugEnabled()) {
+        if (NacSettings.DEBUG_INFO.getValue()) {
             System.out.println("[MapStorage] " + msg);
         }
     }
@@ -65,9 +65,7 @@ public class NacRegionStorage {
 
         } catch (IOException e) {
             System.err.println("Failed to save region: " + file);
-            if (NacSettings.isDebugEnabled()) {
-                e.printStackTrace();
-            }
+            e.printStackTrace();
         }
     }
 
@@ -117,9 +115,7 @@ public class NacRegionStorage {
 
         } catch (IOException e) {
             System.err.println("Failed to load region: " + file);
-            if (NacSettings.isDebugEnabled()) {
-                e.printStackTrace();
-            }
+            e.printStackTrace();
             return Optional.empty();
         }
     }
@@ -161,9 +157,7 @@ public class NacRegionStorage {
 
         } catch (IOException e) {
             System.err.println("Failed to list regions: " + dir);
-            if (NacSettings.isDebugEnabled()) {
-                e.printStackTrace();
-            }
+            e.printStackTrace();
         }
 
         debug("Loaded " + result.size() + " regions from disk.");

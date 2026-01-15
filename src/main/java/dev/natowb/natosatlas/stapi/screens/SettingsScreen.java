@@ -1,15 +1,22 @@
 package dev.natowb.natosatlas.stapi.screens;
 
 import dev.natowb.natosatlas.core.NacSettings;
+import dev.natowb.natosatlas.core.config.NacConfigOption;
+import dev.natowb.natosatlas.core.config.NacOption;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 
 public class SettingsScreen extends Screen {
 
+    private static final NacOption[] OPTIONS = {
+            NacOption.MAP_RENDERER,
+            NacOption.ENTITY_DISPLAY,
+            NacOption.MAP_GRID,
+            NacOption.DEBUG_INFO
+    };
+
     private final Screen parent;
-    private ButtonWidget entityModeButton;
-    private ButtonWidget showGridButton;
-    private ButtonWidget showDebugButton;
+    protected String title = "Settings";
 
     public SettingsScreen(Screen parent) {
         this.parent = parent;
@@ -17,53 +24,53 @@ public class SettingsScreen extends Screen {
 
     @Override
     public void init() {
-        super.init();
+        int index = 0;
 
-        int buttonW = 200;
-        int buttonH = 20;
-        int vGap = 10;
+        for (NacOption opt : OPTIONS) {
+            int x = this.width / 2 - 155 + (index % 2) * 160;
+            int y = this.height / 6 + 24 * (index / 2);
 
-        int bx = (width - buttonW) / 2;
+            this.buttons.add(new NacOptionButtonWidget(
+                    opt.getId(),
+                    x, y,
+                    150, 20,
+                    opt
+            ));
 
-        int totalH = (buttonH * 3) + (vGap * 2);
-        int by = (height - totalH) / 2;
+            index++;
+        }
 
-        String entityModeLabel = "Entities: " + NacSettings.getEntityDisplayMode().getLabel();
-        entityModeButton = new ButtonWidget(1, bx, by, buttonW, buttonH, entityModeLabel);
-        String gridLabel = NacSettings.isMapGridEnabled() ? "Grid: On" : "Grid: Off";
-        showGridButton = new ButtonWidget(2, bx, by + buttonH + vGap, buttonW, buttonH, gridLabel);
-        String debugLabel = NacSettings.isDebugEnabled() ? "Debug: On" : "Debug: Off";
-        showDebugButton = new ButtonWidget(3, bx, by + (buttonH + vGap) * 2, buttonW, buttonH, debugLabel);
-        ButtonWidget backButton = new ButtonWidget(4, bx, by + (buttonH + vGap) * 3, buttonW, buttonH, "Back");
-        buttons.add(entityModeButton);
-        buttons.add(showGridButton);
-        buttons.add(showDebugButton);
-        buttons.add(backButton);
+        this.buttons.add(new ButtonWidget(
+                200,
+                this.width / 2 - 100,
+                this.height / 6 + 168,
+                200, 20,
+                "Done"
+        ));
     }
-
 
     @Override
     protected void buttonClicked(ButtonWidget button) {
-        switch (button.id) {
-            case 1:
-                entityModeButton.text = "Entities: " + NacSettings.cycleEntityDisplayMode().getLabel();
-                break;
+        if (!button.active) return;
 
-            case 2:
-                showGridButton.text = NacSettings.toggleMapGrid() ? "Grid: On" : "Grid: Off";
-                break;
-            case 3:
-                showDebugButton.text = NacSettings.toggleDebugInfo() ?"Debug: On" : "Debug: Off";
-                break;
-            case 4:
-                minecraft.setScreen(parent);
-                break;
+        if (button.id < 100 && button instanceof NacOptionButtonWidget) {
+            NacOptionButtonWidget optButton = (NacOptionButtonWidget) button;
+            NacConfigOption cfg = NacSettings.getOption(optButton.getOption());
+
+            cfg.click();          // toggle or cycle
+            optButton.refreshLabel();
+        }
+
+        if (button.id == 200) {
+            NacSettings.save();
+            this.minecraft.setScreen(parent);
         }
     }
 
     @Override
     public void render(int mouseX, int mouseY, float delta) {
-        renderBackground();
+        this.renderBackground();
+        this.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
         super.render(mouseX, mouseY, delta);
     }
 }

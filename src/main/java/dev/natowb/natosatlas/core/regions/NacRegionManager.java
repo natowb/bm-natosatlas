@@ -1,9 +1,12 @@
 package dev.natowb.natosatlas.core.regions;
 
+import dev.natowb.natosatlas.core.NacSettings;
 import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
 import dev.natowb.natosatlas.core.models.NacChunk;
 import dev.natowb.natosatlas.core.models.NacRegionData;
+import dev.natowb.natosatlas.core.renderer.NacRegionRenderer;
 import dev.natowb.natosatlas.core.renderer.NacRegionRendererDefault;
+import dev.natowb.natosatlas.core.renderer.NacRegionRendererSmooth;
 
 public class NacRegionManager {
 
@@ -14,6 +17,7 @@ public class NacRegionManager {
     private static final int UPDATE_INTERVAL_TICKS = 1 * TICKS_PER_SECOND;
 
     private final NacRegionCache cache;
+
 
     private int activeChunkX, activeChunkZ;
     private int saveTimer = 0;
@@ -71,7 +75,21 @@ public class NacRegionManager {
     public int getTexture(int rx, int rz) {
         NacRegionData region = cache.getRegion(rx, rz);
         if (region == null) return -1;
-        region.updateTexture(new NacRegionRendererDefault());
+
+        NacRegionRenderer renderer;
+        switch (NacSettings.MAP_RENDERER.getValue()) {
+            case Vanilla:
+                renderer = new NacRegionRendererDefault();
+                break;
+            case Smooth:
+                renderer = new NacRegionRendererSmooth();
+                break;
+
+            default:
+                renderer = new NacRegionRendererDefault();
+                break;
+        }
+        region.updateTexture(renderer);
         return region.getTextureId();
     }
 

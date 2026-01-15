@@ -114,10 +114,10 @@ public class NacCanvas {
         NacCanvasInfo info = getInfo();
         drawRegionTiles(info);
 
-        if (NacSettings.isMapGridEnabled()) {
+        if (NacSettings.MAP_GRID.getValue()) {
             drawCanvasGrid(info);
         }
-        if (NacSettings.getEntityDisplayMode() != NacSettings.EntityDisplayMode.NONE) {
+        if (NacSettings.ENTITY_DISPLAY_MODE.getValue() != NacSettings.EntityDisplayMode.NONE) {
             drawEntities(info);
         }
 
@@ -126,7 +126,7 @@ public class NacCanvas {
 
         endCanvas();
 
-        if (NacSettings.isDebugEnabled()) {
+        if (NacSettings.DEBUG_INFO.getValue()) {
             drawDebugInfo(info);
         }
     }
@@ -269,7 +269,7 @@ public class NacCanvas {
     private void drawEntities(NacCanvasInfo info) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, NacPlatformAPI.get().painter.getMinecraftTextureId("/misc/mapicons.png"));
 
-        if (NacSettings.getEntityDisplayMode() == NacSettings.EntityDisplayMode.ALL) {
+        if (NacSettings.ENTITY_DISPLAY_MODE.getValue() == NacSettings.EntityDisplayMode.ALL) {
             for (NacEntity e : NacPlatformAPI.get().entityProvider.collectEntities()) {
                 renderEntity(e, info.zoom);
             }

@@ -4,7 +4,7 @@ import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
 import dev.natowb.natosatlas.core.models.NacEntity;
 import dev.natowb.natosatlas.core.regions.NacRegionCache;
 import dev.natowb.natosatlas.core.regions.NacRegionManager;
-import dev.natowb.natosatlas.core.storage.NacRegionStorage;
+import dev.natowb.natosatlas.core.regions.NacRegionStorage;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
