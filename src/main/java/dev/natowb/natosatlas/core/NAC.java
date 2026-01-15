@@ -1,6 +1,5 @@
 package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
 import dev.natowb.natosatlas.core.models.NacEntity;
 import dev.natowb.natosatlas.core.regions.NacRegionCache;
 import dev.natowb.natosatlas.core.regions.NacRegionManager;
@@ -9,12 +8,12 @@ import dev.natowb.natosatlas.core.regions.NacRegionStorage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class NacMod {
+public class NAC {
 
     public static final Logger logger = Logger.getLogger("NatosAtlas");
-    private static NacMod instance = null;
+    private static NAC instance = null;
 
-    public static NacMod get() {
+    public static NAC get() {
         return instance;
     }
 
@@ -26,7 +25,7 @@ public class NacMod {
         logger.setLevel(Level.ALL);
     }
 
-    public NacMod(NacPlatformAPI platformAPI) {
+    public NAC(NacPlatformAPI platformAPI) {
         if (instance != null) {
             throw new IllegalStateException("NatosAtlas instance already created!");
         }

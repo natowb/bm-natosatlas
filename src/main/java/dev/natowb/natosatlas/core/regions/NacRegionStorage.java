@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.core.regions;
 
 import dev.natowb.natosatlas.core.NacSettings;
-import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
+import dev.natowb.natosatlas.core.NacPlatformAPI;
 import dev.natowb.natosatlas.core.models.NacChunk;
 import dev.natowb.natosatlas.core.models.NacRegionData;
 

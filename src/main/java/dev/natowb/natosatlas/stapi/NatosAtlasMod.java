@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.stapi;
 
-import dev.natowb.natosatlas.core.NacMod;
+import dev.natowb.natosatlas.core.NAC;
 import dev.natowb.natosatlas.stapi.screens.AtlasScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.mine_diver.unsafeevents.listener.EventListener;
@@ -27,11 +27,11 @@ public class NatosAtlasMod {
 
     public static KeyBinding KEY_BINDING_MAP;
     private boolean inWorld;
-    private final NacMod nac;
+    private final NAC nac;
 
 
     public NatosAtlasMod() {
-        nac = new NacMod(new NacPlatformST());
+        nac = new NAC(new NacPlatformST());
     }
 
 

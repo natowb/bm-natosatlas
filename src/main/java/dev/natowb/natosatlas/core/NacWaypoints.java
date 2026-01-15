@@ -1,6 +1,5 @@
 package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
 import dev.natowb.natosatlas.core.models.NacWaypoint;
 
 import java.io.*;

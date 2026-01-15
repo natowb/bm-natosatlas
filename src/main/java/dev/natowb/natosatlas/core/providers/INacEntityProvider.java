@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core.glue;
+package dev.natowb.natosatlas.core.providers;
 
 import dev.natowb.natosatlas.core.models.NacEntity;
 

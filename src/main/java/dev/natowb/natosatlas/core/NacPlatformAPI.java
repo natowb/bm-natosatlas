@@ -1,5 +1,8 @@
-package dev.natowb.natosatlas.core.glue;
+package dev.natowb.natosatlas.core;
 
+import dev.natowb.natosatlas.core.providers.INacChunkProvider;
+import dev.natowb.natosatlas.core.providers.INacEntityProvider;
+import dev.natowb.natosatlas.core.painter.INacPainter;
 import dev.natowb.natosatlas.core.models.NacScaleInfo;
 import dev.natowb.natosatlas.core.models.NacWorldInfo;
 
@@ -69,6 +72,4 @@ public abstract class NacPlatformAPI {
         }
         return dataPath.toFile();
     }
-
-
 }

@@ -1,10 +1,10 @@
 package dev.natowb.natosatlas.core.renderer;
 
-import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
+import dev.natowb.natosatlas.core.NacPlatformAPI;
 import dev.natowb.natosatlas.core.models.NacChunk;
 import dev.natowb.natosatlas.core.models.NacRegionData;
 import dev.natowb.natosatlas.core.utils.NacConstants;
-import dev.natowb.natosatlas.core.colors.NacColorMapper;
+import dev.natowb.natosatlas.core.utils.NacColorMapper;
 
 public class NacRegionRendererDefault implements NacRegionRenderer {
 

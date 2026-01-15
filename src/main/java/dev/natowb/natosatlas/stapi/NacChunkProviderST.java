@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.stapi;
 
-import dev.natowb.natosatlas.core.glue.INacChunkProvider;
+import dev.natowb.natosatlas.core.providers.INacChunkProvider;
 import dev.natowb.natosatlas.core.models.NacChunk;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;

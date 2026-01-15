@@ -1,11 +1,10 @@
 package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
 import dev.natowb.natosatlas.core.models.NacCanvasInfo;
 import dev.natowb.natosatlas.core.models.NacEntity;
 import dev.natowb.natosatlas.core.models.NacScaleInfo;
 import dev.natowb.natosatlas.core.models.NacWaypoint;
-import dev.natowb.natosatlas.core.glue.INacPainter;
+import dev.natowb.natosatlas.core.painter.INacPainter;
 import dev.natowb.natosatlas.core.utils.NacConstants;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -182,8 +181,8 @@ public class NacCanvas {
 
 
     private void centerOnActiveChunk() {
-        int chunkX = NacMod.get().regionManager.getActiveChunkX();
-        int chunkZ = NacMod.get().regionManager.getActiveChunkZ();
+        int chunkX = NAC.get().regionManager.getActiveChunkX();
+        int chunkZ = NAC.get().regionManager.getActiveChunkZ();
 
         double centerBlockX = chunkX * 16 + 8;
         double centerBlockZ = chunkZ * 16 + 8;
@@ -215,7 +214,7 @@ public class NacCanvas {
         for (int rx = startRegionX; rx <= endRegionX; rx++) {
             for (int rz = startRegionZ; rz <= endRegionZ; rz++) {
 
-                int texId = NacMod.get().regionManager.getTexture(rx, rz);
+                int texId = NAC.get().regionManager.getTexture(rx, rz);
                 if (texId == -1) continue;
 
                 drawRegionTexture(rx, rz, texId);
@@ -327,7 +326,7 @@ public class NacCanvas {
         NacPlatformAPI.get().painter.drawString(String.format("Zoom: %.2f", canvas.zoom), 5, 35, 0xFFFFFF);
 
         NacPlatformAPI.get().painter.drawString("Region Cache", 5, 50, 0xFFFFFF);
-        NacPlatformAPI.get().painter.drawString(String.format("Tile Count: %d", NacMod.get().regionManager.getCacheSize()), 5, 60, 0xFFFFFF);
+        NacPlatformAPI.get().painter.drawString(String.format("Tile Count: %d", NAC.get().regionManager.getCacheSize()), 5, 60, 0xFFFFFF);
     }
 
     private void renderTooltip(NacCanvasInfo canvas) {

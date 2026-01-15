@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core.colors;
+package dev.natowb.natosatlas.core.utils;
 
 import java.util.HashMap;
 import java.util.Map;

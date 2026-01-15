@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.stapi.screens;
 
 import dev.natowb.natosatlas.core.NacWaypoints;
-import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
+import dev.natowb.natosatlas.core.NacPlatformAPI;
 import dev.natowb.natosatlas.core.models.NacEntity;
 import dev.natowb.natosatlas.core.models.NacWaypoint;
 import net.minecraft.client.gui.screen.Screen;

@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.stapi.screens;
 
-import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
+import dev.natowb.natosatlas.core.NacPlatformAPI;
 import dev.natowb.natosatlas.core.NacCanvas;
 
 import net.fabricmc.loader.api.FabricLoader;

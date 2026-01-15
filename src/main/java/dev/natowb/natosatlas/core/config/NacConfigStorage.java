@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core.config;
 
-import dev.natowb.natosatlas.core.glue.NacPlatformAPI;
+import dev.natowb.natosatlas.core.NacPlatformAPI;
 
 import java.io.*;
 import java.util.HashMap;

@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.stapi;
 
-import dev.natowb.natosatlas.core.glue.INacEntityProvider;
+import dev.natowb.natosatlas.core.providers.INacEntityProvider;
 import dev.natowb.natosatlas.core.models.NacEntity;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
