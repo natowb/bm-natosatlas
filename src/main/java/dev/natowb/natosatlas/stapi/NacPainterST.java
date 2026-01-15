@@ -26,4 +26,9 @@ public class NacPainterST extends NacPainter {
         return mc.textureManager.getTextureId(string);
     }
 
+    @Override
+    public void drawCenteredString(String text, int centerX, int y, int color) {
+        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
+        mc.textRenderer.drawWithShadow(text, centerX - mc.textRenderer.getWidth(text) / 2, y, color);
+    }
 }

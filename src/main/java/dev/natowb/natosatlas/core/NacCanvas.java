@@ -15,8 +15,8 @@ import static dev.natowb.natosatlas.core.utils.NacConstants.*;
 public class NacCanvas {
     private static final float REGION_THRESHOLD = 0.3f;
     private static final int CANVAS_PADDING = 0;
-    private static final double MIN_ZOOM = 0.05;
-    private static final double MAX_ZOOM = 4.0;
+    public static final float MIN_ZOOM = 0.05f;
+    public static final float MAX_ZOOM = 4.0f;
 
     private final int canvasX = CANVAS_PADDING;
     private final int canvasY = CANVAS_PADDING;
@@ -26,7 +26,7 @@ public class NacCanvas {
 
     private double scrollX = 0.0;
     private double scrollY = 0.0;
-    private double zoom = 1.0;
+    private float zoom = 1.0f;
 
     private int dragStartX = -1;
     private int dragStartY = -1;
@@ -37,6 +37,10 @@ public class NacCanvas {
     private boolean firstRun = true;
 
 
+    public NacCanvas() {
+        zoom = NacSettings.DEFAULT_ZOOM.getValue();
+    }
+
     public void handleInput() {
         handleInputs(mouseX, mouseY);
     }
@@ -46,21 +50,13 @@ public class NacCanvas {
 
         String msg = "Only available in the Overworld";
 
-        // Canvas center in screen space
         float centerX = canvasX + canvasW / 2f;
         float centerY = canvasY + canvasH / 2f;
 
-        // Measure text width/height using your painter
         int textW = NacPlatformAPI.get().painter.getStringWidth(msg);
         int textH = 20;
 
-        // Draw centered
-        NacPlatformAPI.get().painter.drawString(
-                msg,
-                (int) (centerX - textW / 2f),
-                (int) (centerY - textH / 2f),
-                0xFFFFFFFF
-        );
+        NacPlatformAPI.get().painter.drawString(msg, (int) (centerX - textW / 2f), (int) (centerY - textH / 2f), 0xFFFFFFFF);
     }
 
     private void beginCanvas(NacScaleInfo scaleInfo) {

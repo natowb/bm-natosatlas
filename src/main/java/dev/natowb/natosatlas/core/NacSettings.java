@@ -27,6 +27,10 @@ public final class NacSettings {
     public static final NacBoolConfigOption DEBUG_INFO =
             new NacBoolConfigOption("showDebugInfo", false);
 
+    public static final NacFloatConfigOption DEFAULT_ZOOM =
+            new NacFloatConfigOption("defaultZoom", 0.5f);
+
+
 
     public static NacConfigOption getOption(NacOption option) {
         switch (option) {

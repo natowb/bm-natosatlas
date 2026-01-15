@@ -1,15 +1,14 @@
-package dev.natowb.natosatlas.stapi.screens;
+package dev.natowb.natosatlas.core.gui;
 
 import dev.natowb.natosatlas.core.NacSettings;
 import dev.natowb.natosatlas.core.config.NacConfigOption;
 import dev.natowb.natosatlas.core.config.NacOption;
-import net.minecraft.client.gui.widget.ButtonWidget;
 
-public class NacOptionButtonWidget extends ButtonWidget {
+public class NacGuiOptionButton extends NacGuiButton {
 
     private final NacOption option;
 
-    public NacOptionButtonWidget(int id, int x, int y, int w, int h, NacOption option) {
+    public NacGuiOptionButton(int id, int x, int y, int w, int h, NacOption option) {
         super(id, x, y, w, h, "");
         this.option = option;
         refreshLabel();
@@ -21,6 +20,12 @@ public class NacOptionButtonWidget extends ButtonWidget {
 
     public void refreshLabel() {
         NacConfigOption cfg = NacSettings.getOption(option);
-        this.text = option.getTitle() + ": " + cfg.getValueLabel();
+        this.label = option.getTitle() + ": " + cfg.getValueLabel();
+    }
+
+    public void cycle() {
+        NacConfigOption cfg = NacSettings.getOption(option);
+        cfg.click();
+        refreshLabel();
     }
 }

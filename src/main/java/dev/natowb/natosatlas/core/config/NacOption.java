@@ -5,7 +5,8 @@ public enum NacOption {
     MAP_RENDERER("options.mapRenderer", "Renderer", false, true),
     ENTITY_DISPLAY("options.entityDisplay", "Entities", false, true),
     MAP_GRID("options.mapGrid", "Grid", false, true),
-    DEBUG_INFO("options.debugInfo", "Debug", false, true);
+    DEBUG_INFO("options.debugInfo", "Debug", false, true),
+    DEFAULT_ZOOM("options.defaultZoom", "Default Zoom", true, false);
 
     private final boolean slider;
     private final boolean toggle;

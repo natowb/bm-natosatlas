@@ -5,6 +5,7 @@ import dev.natowb.natosatlas.core.providers.INacEntityProvider;
 import dev.natowb.natosatlas.core.painter.INacPainter;
 import dev.natowb.natosatlas.core.models.NacScaleInfo;
 import dev.natowb.natosatlas.core.models.NacWorldInfo;
+import dev.natowb.natosatlas.core.screens.NacScreen;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +38,8 @@ public abstract class NacPlatformAPI {
     public abstract NacScaleInfo getScaleInfo();
 
     public abstract Path getMinecraftDirectory();
-
+    public abstract void openNacScreen(NacScreen screen);
+    public abstract void playSound(String sound, float volume, float pitch);
 
     public File getDataDirectory() {
         Path configPath = getMinecraftDirectory().resolve(DATA_FOLDER);

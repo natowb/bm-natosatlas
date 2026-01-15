@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.painter;
 
+import net.minecraft.client.font.TextRenderer;
 import org.lwjgl.opengl.GL11;
 
 public class NacPainter implements INacPainter {
@@ -137,6 +138,10 @@ public class NacPainter implements INacPainter {
     @Override
     public void drawString(String text, int x, int y, int color, boolean shadow) {
 
+    }
+
+    @Override
+    public void drawCenteredString(String text, int centerX, int y, int color) {
     }
 
     @Override

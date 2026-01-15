@@ -15,6 +15,8 @@ public interface INacPainter {
 
     void drawString(String text, int x, int y, int color, boolean shadow);
 
+    void drawCenteredString(String text, int centerX, int y, int color);
+
     int getMinecraftTextureId(String string);
 
     void drawTexturedQuad(float u1, float v1, float u2, float v2);

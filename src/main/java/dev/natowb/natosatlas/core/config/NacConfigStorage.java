@@ -45,7 +45,6 @@ public final class NacConfigStorage {
         }
     }
 
-    // Boolean
     public static void setBoolean(String key, boolean value) {
         values.put(key, Boolean.toString(value));
         save();
@@ -55,7 +54,6 @@ public final class NacConfigStorage {
         return Boolean.parseBoolean(values.getOrDefault(key, "false"));
     }
 
-    // Enum
     public static <E extends Enum<E>> void setEnum(String key, E value) {
         values.put(key, value.name());
         save();
@@ -75,4 +73,18 @@ public final class NacConfigStorage {
         int next = (current.ordinal() + 1) % all.length;
         setEnum(key, all[next]);
     }
+
+    public static void setFloat(String key, float value) {
+        values.put(key, Float.toString(value));
+        save();
+    }
+
+    public static float getFloat(String key) {
+        try {
+            return Float.parseFloat(values.getOrDefault(key, "0"));
+        } catch (Exception e) {
+            return 0f;
+        }
+    }
+
 }

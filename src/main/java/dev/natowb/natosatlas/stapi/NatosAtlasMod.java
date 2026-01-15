@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.stapi;
 
 import dev.natowb.natosatlas.core.NAC;
-import dev.natowb.natosatlas.stapi.screens.AtlasScreen;
+import dev.natowb.natosatlas.core.screens.NacCanvasScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.client.Minecraft;
@@ -66,11 +66,7 @@ public class NatosAtlasMod {
         if (Keyboard.getEventKeyState()) {
             if (Keyboard.isKeyDown(NatosAtlasMod.KEY_BINDING_MAP.code)) {
                 if (event.environment == KeyStateChangedEvent.Environment.IN_GAME) {
-                    mc.setScreen(new AtlasScreen());
-                }
-
-                if (event.environment == KeyStateChangedEvent.Environment.IN_GUI && mc.currentScreen instanceof AtlasScreen) {
-                    mc.setScreen(null);
+                    NacPlatformST.get().openNacScreen(new NacCanvasScreen(null));
                 }
             }
         }
