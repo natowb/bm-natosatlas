@@ -22,50 +22,36 @@ import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_CANVAS_REGIO
 
 public class MapStorage {
 
-    private final int layerId;
     private final BufferedImage reusableImage;
     private final ImageWriter pngWriter;
     private final ImageWriteParam pngParams;
 
-    public MapStorage(int layerId) {
-        this.layerId = layerId;
-
-        this.reusableImage = new BufferedImage(
-                BLOCKS_PER_CANVAS_REGION,
-                BLOCKS_PER_CANVAS_REGION,
-                BufferedImage.TYPE_INT_ARGB
-        );
-
+    public MapStorage() {
+        this.reusableImage = new BufferedImage(BLOCKS_PER_CANVAS_REGION, BLOCKS_PER_CANVAS_REGION, BufferedImage.TYPE_INT_ARGB);
         Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("png");
         this.pngWriter = writers.hasNext() ? writers.next() : null;
-
         if (pngWriter == null) {
             throw new IllegalStateException("No PNG writer available");
         }
-
         this.pngParams = pngWriter.getDefaultWriteParam();
-
         if (pngParams.canWriteCompressed()) {
             pngParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             pngParams.setCompressionQuality(1.0f);
         }
     }
 
-    private Path getRegionDirectory() {
-        return NAPaths.getWorldMapStoragePath(layerId);
+
+    public File getRegionFile(int layerId, NACoord regionCoord) {
+        return NAPaths.getWorldMapStoragePath(layerId).resolve("region_" + regionCoord.x + "_" + regionCoord.z + ".png").toFile();
     }
 
-    public File getRegionFile(NACoord regionCoord) {
-        return getRegionDirectory().resolve("region_" + regionCoord.x + "_" + regionCoord.z + ".png").toFile();
-    }
-
-    public void saveRegion(NACoord coord, MapRegion region) {
-        MapSaveWorker.enqueue(this, coord, region, getRegionFile(coord));
+    public void saveRegion(int layerId, NACoord coord, MapRegion region) {
+        MapSaveWorker.enqueue(this, coord, region, getRegionFile(layerId, coord));
     }
 
 
-    public Optional<MapRegion> loadRegion(NACoord coord) {
-        File file = getRegionFile(coord);
+    public Optional<MapRegion> loadRegion(int layerId, NACoord coord) {
+        File file = getRegionFile(layerId, coord);
 
         if (!file.exists()) {
             return Optional.empty();
@@ -96,80 +82,6 @@ public class MapStorage {
         }
     }
 
-    public void exportFullMap(Path outputFile) {
-        Path regionDir = getRegionDirectory();
-
-        try {
-            Files.createDirectories(outputFile.getParent());
-        } catch (IOException ignored) {
-        }
-
-        File[] regionFiles = regionDir.toFile().listFiles((dir, name) -> name.endsWith(".png"));
-        if (regionFiles == null || regionFiles.length == 0) {
-            LogUtil.warn("No region PNGs found to export.");
-            return;
-        }
-
-        int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
-        int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
-
-        for (File f : regionFiles) {
-            String name = f.getName();
-            String[] parts = name.substring(7, name.length() - 4).split("_");
-
-            int rx = Integer.parseInt(parts[0]);
-            int rz = Integer.parseInt(parts[1]);
-
-            minX = Math.min(minX, rx);
-            maxX = Math.max(maxX, rx);
-            minZ = Math.min(minZ, rz);
-            maxZ = Math.max(maxZ, rz);
-        }
-
-        int regionsX = (maxX - minX) + 1;
-        int regionsZ = (maxZ - minZ) + 1;
-
-        int regionSize = BLOCKS_PER_CANVAS_REGION;
-
-        int fullWidth = regionsX * regionSize;
-        int fullHeight = regionsZ * regionSize;
-
-        LogUtil.info("Exporting full map: {}x{} regions -> {}x{} px",
-                regionsX, regionsZ, fullWidth, fullHeight);
-
-        BufferedImage full = new BufferedImage(fullWidth, fullHeight, BufferedImage.TYPE_INT_ARGB);
-
-        for (File f : regionFiles) {
-            String name = f.getName();
-            String[] parts = name.substring(7, name.length() - 4).split("_");
-
-            int rx = Integer.parseInt(parts[0]);
-            int rz = Integer.parseInt(parts[1]);
-
-            int px = (rx - minX) * regionSize;
-            int pz = (rz - minZ) * regionSize;
-
-            try {
-                BufferedImage regionImg = ImageIO.read(f);
-                if (regionImg == null) {
-                    LogUtil.warn("Skipping invalid region file {}", f);
-                    continue;
-                }
-
-                full.getRaster().setRect(px, pz, regionImg.getRaster());
-
-            } catch (IOException e) {
-                LogUtil.error("Failed to read region {}", f);
-            }
-        }
-
-        try {
-            ImageIO.write(full, "png", outputFile.toFile());
-            LogUtil.info("Full map exported to {}", outputFile);
-        } catch (IOException e) {
-            LogUtil.error("Failed to save full map to {}", outputFile);
-        }
-    }
 
     public void saveRegionBlocking(NACoord regionCoord, MapRegion region, File file) {
         try {

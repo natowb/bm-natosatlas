@@ -2,7 +2,7 @@ package dev.natowb.natosatlas.core;
 
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.data.NAWorldInfo;
-import dev.natowb.natosatlas.core.map.MapRenderer;
+import dev.natowb.natosatlas.core.map.*;
 import dev.natowb.natosatlas.core.tasks.MapSaveWorker;
 import dev.natowb.natosatlas.core.platform.Platform;
 import dev.natowb.natosatlas.core.settings.Settings;
@@ -29,12 +29,16 @@ public class NatosAtlas {
         return instance;
     }
 
-    public final Platform platform;
-    public final MapRenderer renderer;
-    public NAWorldInfo worldInfo;
-
     private final Set<Long> activeRegions = new HashSet<>();
     private final Set<Long> visibleRegions = new HashSet<>();
+
+    public final Platform platform;
+    public final MapRenderer renderer;
+    public final MapTextureProvider textures;
+    public final MapCache cache;
+
+
+    public NAWorldInfo worldInfo;
 
     private int updateTimer = 0;
     private int saveTimer = 0;
@@ -52,7 +56,8 @@ public class NatosAtlas {
 
         this.platform = platform;
         this.renderer = new MapRenderer();
-
+        this.textures = new MapTextureProvider(this.renderer);
+        this.cache = new MapCache(new MapStorage());
         NAPaths.updateBasePaths(platform.getMinecraftDirectory());
         Settings.load();
 
@@ -73,7 +78,7 @@ public class NatosAtlas {
     public void onWorldLeft() {
         MapUpdateWorker.stop();
         MapSaveWorker.stop();
-        renderer.cleanup();
+        cache.clear();
 
         LogUtil.info("Left world: {}", worldInfo.worldName);
         worldInfo = null;
@@ -97,7 +102,7 @@ public class NatosAtlas {
 
         if (++saveTimer >= SAVE_INTERVAL) {
             saveTimer = 0;
-            renderer.saveOneRegion();
+            cache.saveOneRegion();
         }
     }
 
@@ -110,7 +115,6 @@ public class NatosAtlas {
             worldInfo = latest;
 
             NAPaths.updateWorldPath(worldInfo);
-            renderer.cleanup();
         }
     }
 
@@ -121,19 +125,32 @@ public class NatosAtlas {
     }
 
     private void updateActiveLayer() {
+        int oldLayer = renderer.getLayer().id;
+
         if (Settings.mapRenderMode == Settings.MapRenderMode.Day) {
             renderer.setActiveLayer(0);
-            return;
-        }
-
-        if (Settings.mapRenderMode == Settings.MapRenderMode.Night) {
+        } else if (Settings.mapRenderMode == Settings.MapRenderMode.Night) {
             renderer.setActiveLayer(1);
-            return;
+        } else {
+            long time = worldInfo.worldTime % 24000L;
+            renderer.setActiveLayer(time < 12000L ? 0 : 1);
         }
 
-        long time = worldInfo.worldTime % 24000L;
-        renderer.setActiveLayer(time < 12000L ? 0 : 1);
+        int newLayer = renderer.getLayer().id;
+
+        if (newLayer != oldLayer) {
+            reloadVisibleRegionsForNewLayer();
+        }
     }
+
+    private void reloadVisibleRegionsForNewLayer() {
+        for (long key : visibleRegions) {
+            NACoord coord = NACoord.fromKey(key);
+            cache.getRegion(renderer.getLayer().id, coord);
+        }
+    }
+
+
 
 
     public void updateCanvasVisibleRegions(Set<Long> visible) {
@@ -160,7 +177,7 @@ public class NatosAtlas {
     private void syncLifetime() {
         Set<Long> keep = new HashSet<>(activeRegions);
         keep.addAll(visibleRegions);
-        renderer.syncLoadedRegions(keep);
+        cache.syncLoadedRegions(keep);
     }
 
     private void updateNearbyChunks() {
