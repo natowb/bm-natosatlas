@@ -12,16 +12,8 @@ import java.util.Set;
 
 import static dev.natowb.natosatlas.core.utils.Constants.PIXELS_PER_CANVAS_CHUNK;
 
-public class MapRenderer {
-
-    public void render(MapContext ctx) {
-        drawRegions(ctx);
-        drawGrid(ctx);
-        drawEntities(ctx);
-        drawWaypoints(ctx);
-    }
-
-    private void drawRegions(MapContext ctx) {
+public class MapPainter {
+    public void drawRegions(MapContext ctx) {
         double leftBlock = ctx.scrollX / Constants.PIXELS_PER_CANVAS_UNIT;
         double topBlock = ctx.scrollY / Constants.PIXELS_PER_CANVAS_UNIT;
         double rightBlock = (ctx.scrollX + ctx.canvasW / ctx.zoom) / Constants.PIXELS_PER_CANVAS_UNIT;
@@ -54,7 +46,7 @@ public class MapRenderer {
         NatosAtlas.get().regionManager.updateCanvasVisibleRegions(visible);
     }
 
-    private void drawRegionTexture(int rx, int rz, int texId) {
+    public void drawRegionTexture(int rx, int rz, int texId) {
         double worldX = rx * 32 * 16;
         double worldZ = rz * 32 * 16;
 
@@ -68,14 +60,14 @@ public class MapRenderer {
         );
     }
 
-    private void drawGrid(MapContext ctx) {
+    public void drawGrid(MapContext ctx) {
         if (!Settings.mapGrid) return;
 
         NatosAtlas.get().platform.painter.drawGrid(PIXELS_PER_CANVAS_CHUNK,
                 ctx.canvasW, ctx.canvasH, ctx.scrollX, ctx.scrollY, ctx.zoom, 0xFF5b5b5b);
     }
 
-    private void drawEntities(MapContext ctx) {
+    public void drawEntities(MapContext ctx) {
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.Nothing) return;
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
@@ -91,7 +83,7 @@ public class MapRenderer {
         }
     }
 
-    private void drawWaypoints(MapContext ctx) {
+    public void drawWaypoints(MapContext ctx) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
         for (Waypoint wp : Waypoints.getAll()) {
             renderEntity(new MapEntity(wp.x, wp.y, wp.z, 0, 4), ctx.zoom);

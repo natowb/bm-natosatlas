@@ -15,7 +15,7 @@ public class MapScreen extends UIScreen {
 
     private final MapContext ctx = new MapContext();
     private final MapViewport viewport = new MapViewport();
-    private final MapRenderer mapRenderer = new MapRenderer();
+    private final MapPainter mapPainter = new MapPainter();
     private final MapOverlayRenderer overlayRenderer = new MapOverlayRenderer();
 
     private UIElementButton settingsButton;
@@ -107,7 +107,10 @@ public class MapScreen extends UIScreen {
                 NatosAtlas.get().platform.getScaleInfo().scaledHeight
         );
 
-        mapRenderer.render(ctx);
+        mapPainter.drawRegions(ctx);
+        mapPainter.drawGrid(ctx);
+        mapPainter.drawEntities(ctx);
+        mapPainter.drawWaypoints(ctx);
 
         viewport.end();
 
