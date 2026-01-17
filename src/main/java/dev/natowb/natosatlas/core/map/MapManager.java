@@ -4,6 +4,7 @@ import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.settings.Settings;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MapManager {
 
@@ -49,6 +50,25 @@ public class MapManager {
             activeLayer = index;
         }
     }
+
+    public int getTotalCacheSize() {
+        AtomicInteger size = new AtomicInteger();
+        layers.forEach(l -> size.addAndGet(l.cache().getCacheSize()));
+        return size.get();
+    }
+
+    public int getTotalDirtyQueueSize() {
+        AtomicInteger size = new AtomicInteger();
+        layers.forEach(l -> size.addAndGet(l.cache().getDirtyQueueSize()));
+        return size.get();
+    }
+
+    public int getTotalPngCacheSize() {
+        AtomicInteger size = new AtomicInteger();
+        layers.forEach(l -> size.addAndGet(l.cache().getPngCacheSize()));
+        return size.get();
+    }
+
 
     public void cleanup() {
         layers.forEach(l -> l.cache().clear());
@@ -141,51 +161,45 @@ public class MapManager {
     }
 
     private void updateNearbyChunks(int playerChunkX, int playerChunkZ) {
-        for (int dx = -RADIUS; dx <= RADIUS; dx++) {
-            for (int dz = -RADIUS; dz <= RADIUS; dz++) {
-
-                if (dx * dx + dz * dz > RADIUS * RADIUS) continue;
-
-                int chunkX = playerChunkX + dx;
-                int chunkZ = playerChunkZ + dz;
-
-                MapChunk surface = NatosAtlas.get().platform.chunkProvider.buildSurface(chunkX, chunkZ);
-                updateChunk(chunkX, chunkZ, surface);
+        for (int deltaChunkX = -RADIUS; deltaChunkX <= RADIUS; deltaChunkX++) {
+            for (int deltaChunkZ = -RADIUS; deltaChunkZ <= RADIUS; deltaChunkZ++) {
+                if (deltaChunkX * deltaChunkX + deltaChunkZ * deltaChunkZ > RADIUS * RADIUS) continue;
+                int worldChunkX = playerChunkX + deltaChunkX;
+                int worldChunkZ = playerChunkZ + deltaChunkZ;
+                MapChunk surface = NatosAtlas.get().platform.chunkProvider.buildSurface(worldChunkX, worldChunkZ);
+                updateChunk(worldChunkX, worldChunkZ, surface);
             }
         }
     }
 
-    public void updateChunk(int cx, int cz, MapChunk chunk) {
+    public void updateChunk(int worldChunkX, int worldChunkZ, MapChunk chunk) {
         for (MapLayer layer : layers) {
-            buildChunkForLayer(cx, cz, layer, chunk);
+            buildChunkForLayer(worldChunkX, worldChunkZ, layer, chunk);
         }
+    }
+
+    private void buildChunkForLayer(int worldChunkX, int worldChunkZ, MapLayer layer, MapChunk chunk) {
+        if (chunk == null) return;
+        int regionChunkX = worldChunkX >> 5;
+        int regionChunkZ = worldChunkZ >> 5;
+        MapRegionCoord regionCoord = new MapRegionCoord(regionChunkX, regionChunkZ);
+        MapRegionCache cache = layer.cache();
+        MapRegion region = cache.getRegion(regionCoord);
+        if (region == null) {
+            region = new MapRegion();
+            cache.put(regionCoord, region);
+            MapRegion diskLoaded = cache.getRegion(regionCoord);
+            if (diskLoaded != null) region = diskLoaded;
+        }
+        layer.renderer().applyChunkToRegion(region, worldChunkX, worldChunkZ, chunk, layer.usesBlockLight());
+        cache.markDirty(regionCoord);
     }
 
     public void exportLayers() {
         for (MapLayer layer : layers) {
-            layer.cache().getStorage().exportFullMap(NatosAtlas.get().getWorldDataPath().resolve("layer_"+layer.id()+".png"));
+            layer.cache().getStorage().exportFullMap(NatosAtlas.get().getWorldDataPath().resolve("layer_" + layer.id() + ".png"));
         }
     }
 
-    private void buildChunkForLayer(int chunkX, int chunkZ, MapLayer layer, MapChunk chunk) {
-        if (chunk == null) return;
 
-        int rx = chunkX >> 5;
-        int rz = chunkZ >> 5;
-        MapRegionCoord coord = new MapRegionCoord(rx, rz);
-
-        MapRegionCache cache = layer.cache();
-        MapRegion region = cache.getRegion(coord);
-
-        if (region == null) {
-            region = new MapRegion();
-            cache.put(coord, region);
-
-            MapRegion diskLoaded = cache.getRegion(coord);
-            if (diskLoaded != null) region = diskLoaded;
-        }
-
-        layer.renderer().applyChunkToRegion(region, chunkX, chunkZ, chunk, layer.usesBlockLight());
-        cache.markDirty(coord);
-    }
 }

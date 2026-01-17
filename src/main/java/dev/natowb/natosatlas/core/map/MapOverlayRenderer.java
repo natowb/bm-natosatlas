@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 public class MapOverlayRenderer {
 
     public void render(MapContext ctx) {
-        if(Settings.debugInfo) {
+        if (Settings.debugInfo) {
             renderDebugInfo(ctx);
         }
         renderBottomBar(ctx);
@@ -31,6 +31,7 @@ public class MapOverlayRenderer {
 
         int blockX = (int) (worldPixelX / 8.0);
         int blockZ = (int) (worldPixelZ / 8.0);
+
 
         String blockInfo = "Block: " + blockX + ", " + blockZ;
         String shortcuts = "[Q/E] Zoom  |  [Space] Center on Player  |  Drag: Move Map";
@@ -68,5 +69,18 @@ public class MapOverlayRenderer {
         y += 10;
         painter.drawString(String.format("Loaded Regions (Player): %d",
                 manager.getLoadedRegionCount()), 5, y, 0xFFFFFF);
+
+        y += 15;
+        painter.drawString("Cache", 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("Total Cache Size: %d",
+                manager.getTotalCacheSize()), 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("Dirty Queue Size: %d",
+                manager.getTotalDirtyQueueSize()), 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("PNG Cache Size: %d",
+                manager.getTotalPngCacheSize()), 5, y, 0xFFFFFF);
     }
+
 }

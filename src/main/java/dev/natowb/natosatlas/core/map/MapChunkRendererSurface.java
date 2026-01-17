@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.map;
 
+import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.utils.ColorMapperUtil;
 
 import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.*;
@@ -10,76 +11,132 @@ import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CH
 public class MapChunkRendererSurface implements MapChunkRenderer {
 
     @Override
-    public void applyChunkToRegion(MapRegion tile, int chunkX, int chunkZ, MapChunk chunk, boolean useBlockLight) {
-        int[] pixels = tile.getPixels();
-        int ox = (chunkX & 31) * BLOCKS_PER_MINECRAFT_CHUNK;
-        int oz = (chunkZ & 31) * BLOCKS_PER_MINECRAFT_CHUNK;
-
-        for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
-            int row = (oz + z) * BLOCKS_PER_CANVAS_REGION;
-            for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
-                int c = color(x, z, chunk);
+    public void applyChunkToRegion(MapRegion region, int worldChunkX, int worldChunkZ, MapChunk chunk, boolean useBlockLight) {
+        int[] pixels = region.getPixels();
+        int regionBlockOffsetX = (worldChunkX & 31) * BLOCKS_PER_MINECRAFT_CHUNK;
+        int regionBlockOffsetZ = (worldChunkZ & 31) * BLOCKS_PER_MINECRAFT_CHUNK;
+        for (int localBlockZ = 0; localBlockZ < BLOCKS_PER_MINECRAFT_CHUNK; localBlockZ++) {
+            int pixelRow = (regionBlockOffsetZ + localBlockZ) * BLOCKS_PER_CANVAS_REGION;
+            for (int localBlockX = 0; localBlockX < BLOCKS_PER_MINECRAFT_CHUNK; localBlockX++) {
+                int color = getBlockColor(worldChunkX, worldChunkZ, localBlockX, localBlockZ, chunk);
                 if (useBlockLight) {
-                    int idx = z * 16 + x;
-                    c = applyBlockLight(c, chunk.blockLight[idx]);
+                    int localIndex = localBlockZ * 16 + localBlockX;
+                    color = applyBlockLight(color, chunk.blockLight[localIndex]);
                 }
-                pixels[row + ox + x] = c;
+                pixels[pixelRow + regionBlockOffsetX + localBlockX] = color;
             }
         }
     }
 
-    private int color(int x, int z, MapChunk chunk) {
-        int idx = z * 16 + x;
-        int y = chunk.heights[idx];
-        if (y <= 0) return 0xFF000000;
+    private int getBlockColor(
+            int worldChunkX,
+            int worldChunkZ,
+            int localBlockX,
+            int localBlockZ,
+            MapChunk chunk
+    ) {
+        int localIndex = localBlockZ * 16 + localBlockX;
 
-        int id = chunk.blockIds[idx];
-        int meta = chunk.meta[idx];
-        int base = ColorMapperUtil.get(id, meta);
+        int height = chunk.heights[localIndex];
+        if (height <= 0) return 0xFF000000;
 
-        if (isFluid(id))
-            return waterColor(x, z, chunk, base);
+        int blockId = chunk.blockIds[localIndex];
+        int blockMeta = chunk.meta[localIndex];
+        int baseColor = ColorMapperUtil.get(blockId, blockMeta);
 
-        int prevZ = Math.max(0, z - 1);
-        int dy = y - chunk.heights[prevZ * 16 + x];
-        int shade = dy > 0 ? 2 : dy < 0 ? 0 : 1;
-        return applyShade(base, shade);
+        int worldBlockX = worldChunkX * 16 + localBlockX;
+        int worldBlockZ = worldChunkZ * 16 + localBlockZ;
 
+        MapBiome biome = NatosAtlas.get().platform.worldProvider.getBiome(worldBlockX, worldBlockZ);
+
+        if (blockId == BLOCK_GRASS_ID) {
+            baseColor = mixColors(baseColor, biome.grassColor, 0.2f);
+        }
+
+        if (blockId == BLOCK_LEAVES_ID) {
+            baseColor = mixColors(baseColor, biome.foliageColor, 0.2f);
+        }
+
+        if (isFluid(blockId))
+            return waterColor(localBlockX, localBlockZ, chunk, baseColor);
+
+        int prevLocalZ = Math.max(0, localBlockZ - 1);
+        int heightDiff = height - chunk.heights[prevLocalZ * 16 + localBlockX];
+        int shade = heightDiff > 0 ? 2 : heightDiff < 0 ? 0 : 1;
+
+        return applyShade(baseColor, shade);
     }
 
 
     private final int[] BRIGHTNESS = {180, 220, 255, 135};
 
-    public boolean isFluid(int id) {
-        return id == BLOCK_WATER_STILL_ID ||
-                id == BLOCK_WATER_MOVING_ID ||
-                id == BLOCK_LAVA_STILL_ID ||
-                id == BLOCK_LAVA_MOVING_ID;
+    public boolean isFluid(int blockId) {
+        return blockId == BLOCK_WATER_STILL_ID ||
+                blockId == BLOCK_WATER_MOVING_ID ||
+                blockId == BLOCK_LAVA_STILL_ID ||
+                blockId == BLOCK_LAVA_MOVING_ID;
     }
 
-    public int waterColor(int x, int z, MapChunk chunk, int base) {
-        int depth = chunk.waterDepths[z * 16 + x];
-        double noise = ((x + z) & 1) * 0.2;
-        double d = depth * 0.1 + noise;
-        int shade = (d < 0.5) ? 2 : (d > 0.9) ? 0 : 1;
-        return applyShade(base, shade);
+    public int waterColor(int localBlockX, int localBlockZ, MapChunk chunk, int baseColor) {
+        int localIndex = localBlockZ * 16 + localBlockX;
+
+        int waterDepth = chunk.waterDepths[localIndex];
+
+        double noise = ((localBlockX + localBlockZ) & 1) * 0.2;
+
+        double depthFactor = waterDepth * 0.1 + noise;
+
+        int shadeIndex =
+                (depthFactor < 0.5) ? 2 :
+                        (depthFactor > 0.9) ? 0 :
+                                1;
+
+        return applyShade(baseColor, shadeIndex);
     }
 
-    public int applyShade(int base, int shadeIndex) {
-        int b = BRIGHTNESS[shadeIndex];
-        int r = (base >> 16 & 255) * b / 255;
-        int g = (base >> 8 & 255) * b / 255;
-        int bl = (base & 255) * b / 255;
-        return 0xFF000000 | (r << 16) | (g << 8) | bl;
+    public int applyShade(int baseColor, int shadeIndex) {
+        int brightnessFactor = BRIGHTNESS[shadeIndex];
+
+        int baseRed = (baseColor >> 16) & 255;
+        int baseGreen = (baseColor >> 8) & 255;
+        int baseBlue = baseColor & 255;
+
+        int r = baseRed * brightnessFactor / 255;
+        int g = baseGreen * brightnessFactor / 255;
+        int b = baseBlue * brightnessFactor / 255;
+
+        return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
 
-    public int applyBlockLight(int color, int blockLight) {
-        float min = 0.20f;
-        float f = Math.max(min, blockLight / 15f);
+    public int applyBlockLight(int baseColor, int blockLightLevel) {
+        float minBrightness = 0.20f;
+        float lightFactor = Math.max(minBrightness, blockLightLevel / 15f);
 
-        int r = (int) (((color >> 16) & 255) * f);
-        int g = (int) (((color >> 8) & 255) * f);
-        int b = (int) ((color & 255) * f);
+        int baseRed = (baseColor >> 16) & 255;
+        int baseGreen = (baseColor >> 8) & 255;
+        int baseBlue = baseColor & 255;
+
+        int r = (int) (baseRed * lightFactor);
+        int g = (int) (baseGreen * lightFactor);
+        int b = (int) (baseBlue * lightFactor);
+
+        return 0xFF000000 | (r << 16) | (g << 8) | b;
+    }
+
+    private int mixColors(int baseColor, int tintColor, float tintAmount) {
+        float baseAmount = 1f - tintAmount;
+
+        int br = (baseColor >> 16) & 255;
+        int bg = (baseColor >> 8) & 255;
+        int bb = baseColor & 255;
+
+        int tr = (tintColor >> 16) & 255;
+        int tg = (tintColor >> 8) & 255;
+        int tb = tintColor & 255;
+
+        int r = (int) (br * baseAmount + tr * tintAmount);
+        int g = (int) (bg * baseAmount + tg * tintAmount);
+        int b = (int) (bb * baseAmount + tb * tintAmount);
 
         return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
