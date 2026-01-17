@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.stapi;
 
+import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.platform.PlatformChunkProvider;
 import dev.natowb.natosatlas.core.map.MapChunk;
 import dev.natowb.natosatlas.core.utils.LogUtil;
@@ -7,7 +8,9 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.LightType;
 import net.minecraft.world.chunk.Chunk;
+import net.modificationstation.stationapi.impl.world.chunk.FlattenedWorldChunkLoader;
 
+import java.io.File;
 import java.util.Set;
 
 import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.*;
@@ -24,8 +27,26 @@ public class NacChunkProviderST implements PlatformChunkProvider {
         MapChunk nac = new MapChunk();
         for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
             for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
+                int height = getBlockHeight(chunk, x, z);
+                int blockId = chunk.getBlockId(x, height, z);
+                int depth = computeFluidDepth(chunk, x, height, z);
+                int blockLight = safeBlockLight(chunk, x, height + 1, z);
+                int meta = chunk.getBlockMeta(x, height, z);
+                nac.set(x, z, height, blockId, depth, blockLight, meta);
+            }
+        }
+        return nac;
+    }
 
+    @Override
+    public MapChunk buildFromStorage(int chunkX, int chunkZ) {
+        File worldDir = NatosAtlas.get().platform.getMinecraftDirectory().resolve("saves/" + NatosAtlas.get().platform.worldProvider.getName()).toFile();
+        FlattenedWorldChunkLoader chunkLoader = new FlattenedWorldChunkLoader(worldDir);
+        Chunk chunk = chunkLoader.loadChunk(mc.world, chunkX, chunkZ);
 
+        MapChunk nac = new MapChunk();
+        for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
+            for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
                 int height = getBlockHeight(chunk, x, z);
                 int blockId = chunk.getBlockId(x, height, z);
                 int depth = computeFluidDepth(chunk, x, height, z);

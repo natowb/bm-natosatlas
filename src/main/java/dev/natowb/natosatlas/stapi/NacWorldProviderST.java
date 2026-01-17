@@ -1,17 +1,24 @@
 package dev.natowb.natosatlas.stapi;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.map.MapBiome;
 import dev.natowb.natosatlas.core.map.MapChunk;
 import dev.natowb.natosatlas.core.platform.PlatformWorldProvider;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.ChunkSource;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.AlphaChunkStorage;
 import net.minecraft.world.chunk.storage.RegionFile;
+import net.minecraft.world.chunk.storage.RegionIo;
 
 import java.io.DataInputStream;
 import java.io.File;
+import java.nio.file.Path;
 
 public class NacWorldProviderST implements PlatformWorldProvider {
     @Override
@@ -45,14 +52,11 @@ public class NacWorldProviderST implements PlatformWorldProvider {
         return time < 12000L;
     }
 
+
     @Override
     public void generateExistingChunks() {
-        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
-
-        File regionDir = new File(
-                NatosAtlas.get().platform.getMinecraftDirectory() + "/saves/" + getName(),
-                "region"
-        );
+        File worldDir = NatosAtlas.get().platform.getMinecraftDirectory().resolve("saves/" + getName()).toFile();
+        File regionDir = new File(worldDir, "region");
 
         File[] regionFiles = regionDir.listFiles((dir, name) -> name.endsWith(".mcr"));
         if (regionFiles == null || regionFiles.length == 0) {
@@ -94,24 +98,25 @@ public class NacWorldProviderST implements PlatformWorldProvider {
                     int worldChunkX = rx * 32 + x;
                     int worldChunkZ = rz * 32 + z;
 
-                    MapChunk chunk = NatosAtlas.get().platform.chunkProvider
-                            .buildSurface(worldChunkX, worldChunkZ);
-
-                    NatosAtlas.get().regionManager
-                            .updateChunk(worldChunkX, worldChunkZ, chunk);
+                    MapChunk chunk = NatosAtlas.get().platform.chunkProvider.buildFromStorage(worldChunkX, worldChunkZ);
+                    NatosAtlas.get().regionManager.updateChunk(worldChunkX, worldChunkZ, chunk);
                 }
             }
-
-            LogUtil.info(
-                    "ChunkScanner",
-                    "Finished region r({}, {})  ({} chunks found)",
-                    rx, rz, processed
-            );
-
+            NatosAtlas.get().regionManager.cleanup();
+            LogUtil.info("ChunkScanner", "Finished region r({}, {})  ({} chunks found)", rx, rz, processed);
             rf.close();
         }
 
         LogUtil.info("ChunkScanner", "All regions scanned.");
     }
+
+
+    @Override
+    public MapBiome getBiome(int blockX, int blockZ) {
+        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
+        Biome biome = mc.world.method_1781().getBiome(blockX, blockZ);
+        return new MapBiome(biome.grassColor, biome.foliageColor);
+    }
+
 
 }
