@@ -13,6 +13,7 @@ public class UIElementList<T> {
     private final int entryHeight;
 
     private List<T> items;
+    private NacListRenderer<T> renderer;
 
     private int scrollOffset = 0;
     private int selectedIndex = -1;
@@ -21,28 +22,27 @@ public class UIElementList<T> {
     private long lastClickTime = 0;
     private boolean wasMouseDown = false;
 
-    private final NacListRenderer<T> renderer;
-
     public interface NacListRenderer<T> {
-        void render(PlatformPainter p, T item,
-                    int x, int y, int w, int h,
-                    boolean hovered, boolean selected);
+        void render(T item, int x, int y, int w, int h, boolean hovered, boolean selected);
     }
 
-    public UIElementList(int x, int y, int w, int h, int entryHeight,
-                         List<T> items, NacListRenderer<T> renderer) {
+    public UIElementList(int x, int y, int w, int h, int entryHeight) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
         this.entryHeight = entryHeight;
-        this.items = items;
-        this.renderer = renderer;
     }
 
-    public void setItems(List<T> items) {
+    public UIElementList<T> setItems(List<T> items) {
         this.items = items;
         clampScroll();
+        return this;
+    }
+
+    public UIElementList<T> setRenderer(NacListRenderer<T> renderer) {
+        this.renderer = renderer;
+        return this;
     }
 
     public int getSelectedIndex() {
@@ -55,6 +55,8 @@ public class UIElementList<T> {
     }
 
     public void render(int mouseX, int mouseY) {
+        if (items == null || renderer == null) return;
+
         PlatformPainter p = NatosAtlas.get().platform.painter;
 
         int visibleStart = scrollOffset / entryHeight;
@@ -71,7 +73,7 @@ public class UIElementList<T> {
 
             boolean selected = (i == selectedIndex);
 
-            renderer.render(p, item, x, yPos, w, entryHeight, hovered, selected);
+            renderer.render(item, x, yPos, w, entryHeight, hovered, selected);
 
             yPos += entryHeight;
         }

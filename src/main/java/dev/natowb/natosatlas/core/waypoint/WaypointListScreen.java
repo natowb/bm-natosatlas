@@ -8,6 +8,8 @@ import dev.natowb.natosatlas.core.ui.UITheme;
 import dev.natowb.natosatlas.core.platform.PlatformPainter;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 
+import java.util.Collections;
+
 public class WaypointListScreen extends UIScreen {
 
 
@@ -26,25 +28,11 @@ public class WaypointListScreen extends UIScreen {
     public void init(int width, int height) {
         super.init(width, height);
 
-        list = new UIElementList<>(
-                20, 50,
-                width - 40,
-                height - 140,
-                30,
-                Waypoints.getAll(),
-                (p, wp, x, y, w, h, hovered, selected) -> {
+        int maxListWidth = 400;
+        int listWidth = Math.min(width - 40, maxListWidth);
+        int listX = (width - listWidth) / 2;
 
-                    int bg = selected ? UITheme.LIST_BG_SELECTED :
-                            hovered  ? UITheme.LIST_BG_HOVER :
-                                    UITheme.LIST_BG;
-
-                    p.drawRect(x, y, x + w, y + h, bg);
-
-                    p.drawString(wp.name, x + 5, y + 4, UITheme.LIST_TEXT, false);
-                    p.drawString("X: " + wp.x + "  Y: " + wp.y + "  Z: " + wp.z,
-                            x + 5, y + 16, UITheme.LIST_SUBTEXT, false);
-                }
-        );
+        list = new WaypointListElement(listX, 50, listWidth, height - 140, 30);
 
         int smallW = 50;
         int largeW = 100;
@@ -62,10 +50,10 @@ public class WaypointListScreen extends UIScreen {
         int bottomY = height - bottomPadding - buttonH;
         int topY = bottomY - buttonH - vGap;
 
-        editButton   = new UIElementButton(1003, leftX, topY, smallW, buttonH, "Edit");
+        editButton = new UIElementButton(1003, leftX, topY, smallW, buttonH, "Edit");
         deleteButton = new UIElementButton(1002, leftX, bottomY, smallW, buttonH, "Delete");
         createButton = new UIElementButton(1001, rightX, topY, largeW, buttonH, "Create");
-        backButton   = new UIElementButton(1000, rightX, bottomY, largeW, buttonH, "Back");
+        backButton = new UIElementButton(1000, rightX, bottomY, largeW, buttonH, "Back");
 
         editButton.active = false;
         deleteButton.active = false;

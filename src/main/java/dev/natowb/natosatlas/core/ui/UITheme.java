@@ -28,8 +28,9 @@ public final class UITheme {
     public static final int TEXTFIELD_TEXT = 0xFFD9D9D9;
     public static final int TEXTFIELD_SELECTION = 0xFF808080;
 
-    public static final int LIST_BG = 0x202A2A2A;
-    public static final int LIST_BG_HOVER = 0x30404040;
+    public static final int LIST_BG = ELEMENT_BG;
+    public static final int LIST_BG_HOVER = ELEMENT_BG_HOVER;
+    public static final int LIST_BORDER_HOVER = ELEMENT_BORDER_HOVER;
     public static final int LIST_BG_SELECTED = 0x50A0A0A0;
 
     public static final int LIST_TEXT = 0xFFD9D9D9;
