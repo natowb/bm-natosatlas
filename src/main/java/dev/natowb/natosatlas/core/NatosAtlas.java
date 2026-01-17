@@ -97,6 +97,7 @@ public class NatosAtlas {
 
         LogUtil.info("Left world: {}", worldInfo.worldName);
         worldInfo = null;
+        enabled = false;
     }
 
     public void onWorldUpdate() {
