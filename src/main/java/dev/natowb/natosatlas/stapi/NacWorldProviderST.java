@@ -1,8 +1,9 @@
 package dev.natowb.natosatlas.stapi;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
-import dev.natowb.natosatlas.core.map.MapBiome;
-import dev.natowb.natosatlas.core.map.MapChunk;
+import dev.natowb.natosatlas.core.data.NABiome;
+import dev.natowb.natosatlas.core.data.NAChunk;
+import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.platform.PlatformWorldProvider;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import net.fabricmc.loader.api.FabricLoader;
@@ -114,7 +115,7 @@ public class NacWorldProviderST implements PlatformWorldProvider {
                     int worldChunkX = rx * 32 + x;
                     int worldChunkZ = rz * 32 + z;
 
-                    MapChunk chunk = buildSurface(worldChunkX, worldChunkZ);
+                    NAChunk chunk = buildSurface(NACoord.from(worldChunkX, worldChunkZ));
                     NatosAtlas.get().regionManager.updateChunk(worldChunkX, worldChunkZ, chunk);
                 }
             }
@@ -127,15 +128,15 @@ public class NacWorldProviderST implements PlatformWorldProvider {
 
 
     @Override
-    public MapBiome getBiome(int blockX, int blockZ) {
-        Biome biome = mc.world.method_1781().getBiome(blockX, blockZ);
-        return new MapBiome(biome.grassColor, biome.foliageColor);
+    public NABiome getBiome(NACoord blockCoord) {
+        Biome biome = mc.world.method_1781().getBiome(blockCoord.x, blockCoord.z);
+        return new NABiome(biome.grassColor, biome.foliageColor);
     }
 
     @Override
-    public MapChunk buildSurface(int chunkX, int chunkZ) {
-        Chunk chunk = mc.world.getChunk(chunkX, chunkZ);
-        MapChunk nac = new MapChunk();
+    public NAChunk buildSurface(NACoord chunkCoord) {
+        Chunk chunk = mc.world.getChunk(chunkCoord.x, chunkCoord.z);
+        NAChunk nac = new NAChunk();
         for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
             for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
                 int height = getBlockHeight(chunk, x, z);
@@ -150,12 +151,12 @@ public class NacWorldProviderST implements PlatformWorldProvider {
     }
 
     @Override
-    public MapChunk buildFromStorage(int chunkX, int chunkZ) {
+    public NAChunk buildFromStorage(NACoord chunkCoord) {
         File worldDir = NatosAtlas.get().platform.getMinecraftDirectory().resolve("saves/" + NatosAtlas.get().platform.worldProvider.getName()).toFile();
         FlattenedWorldChunkLoader chunkLoader = new FlattenedWorldChunkLoader(worldDir);
-        Chunk chunk = chunkLoader.loadChunk(mc.world, chunkX, chunkZ);
+        Chunk chunk = chunkLoader.loadChunk(mc.world, chunkCoord.x, chunkCoord.z);
 
-        MapChunk nac = new MapChunk();
+        NAChunk nac = new NAChunk();
         for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
             for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
                 int height = getBlockHeight(chunk, x, z);

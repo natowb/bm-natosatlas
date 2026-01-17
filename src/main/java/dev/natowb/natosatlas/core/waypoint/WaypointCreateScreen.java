@@ -4,7 +4,7 @@ import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementTextField;
 import dev.natowb.natosatlas.core.ui.UITheme;
-import dev.natowb.natosatlas.core.map.MapEntity;
+import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.platform.PlatformPainter;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import org.lwjgl.input.Keyboard;
@@ -73,7 +73,7 @@ public class WaypointCreateScreen extends UIScreen {
         actionButton.active = false;
 
         if (!editMode) {
-            MapEntity player = NatosAtlas.get().platform.entityProvider.getLocalPlayer();
+            NAEntity player = NatosAtlas.get().platform.entityProvider.getLocalPlayer();
             xField.setText("" + (int) player.x);
             yField.setText("0");
             zField.setText("" + (int) player.z);

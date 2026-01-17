@@ -1,6 +1,7 @@
 package dev.natowb.natosatlas.core.map;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.Profiler;
 
@@ -67,16 +68,16 @@ public class MapStorage {
         return dir;
     }
 
-    public Path getRegionFile(MapRegionCoord coord) {
-        return getRegionDirectory().resolve("region_" + coord.getX() + "_" + coord.getZ() + ".png");
+    public Path getRegionFile(NACoord regionCoord) {
+        return getRegionDirectory().resolve("region_" + regionCoord.x + "_" + regionCoord.z + ".png");
     }
 
-    public void saveRegion(MapRegionCoord coord, MapRegion region) {
+    public void saveRegion(NACoord coord, MapRegion region) {
         RegionSaveWorker.enqueue(this, coord, region);
     }
 
 
-    public Optional<MapRegion> loadRegion(MapRegionCoord coord) {
+    public Optional<MapRegion> loadRegion(NACoord coord) {
         Path file = getRegionFile(coord);
 
         if (!Files.exists(file)) {
@@ -183,9 +184,9 @@ public class MapStorage {
         }
     }
 
-    void saveRegionBlocking(MapRegionCoord coord, MapRegion region) {
-        Profiler p = Profiler.start("saveRegion (" + coord.getX() + "," + coord.getZ() + ")");
-        Path file = getRegionFile(coord);
+    void saveRegionBlocking(NACoord regionCoord, MapRegion region) {
+        Profiler p = Profiler.start("saveRegion (" + regionCoord.x + "," + regionCoord.z + ")");
+        Path file = getRegionFile(regionCoord);
 
         try {
             p.mark("setRGB");
@@ -207,7 +208,7 @@ public class MapStorage {
             }
 
         } catch (IOException e) {
-            LogUtil.error("RegionStorage", e, "Failed to save region {} to {}", coord, file);
+            LogUtil.error("RegionStorage", e, "Failed to save region {} to {}", regionCoord, file);
         }
 
         p.end();

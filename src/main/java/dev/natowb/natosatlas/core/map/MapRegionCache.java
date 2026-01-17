@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.map;
 
+import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 
 import java.util.*;
@@ -28,7 +29,7 @@ public class MapRegionCache {
         this.storage = storage;
     }
 
-    public MapRegion getRegion(MapRegionCoord coord) {
+    public MapRegion getRegion(NACoord coord) {
         long key = coord.toKey();
 
         MapRegion region = regions.get(key);
@@ -53,11 +54,11 @@ public class MapRegionCache {
         return null;
     }
 
-    public void put(MapRegionCoord coord, MapRegion tile) {
+    public void put(NACoord coord, MapRegion tile) {
         regions.put(coord.toKey(), tile);
     }
 
-    public void markDirty(MapRegionCoord coord) {
+    public void markDirty(NACoord coord) {
         long key = coord.toKey();
         if (dirtySet.add(key)) {
             dirtyQueue.add(key);
@@ -78,7 +79,7 @@ public class MapRegionCache {
             return;
         }
 
-        MapRegionCoord coord = MapRegionCoord.fromKey(key);
+        NACoord coord = NACoord.fromKey(key);
         storage.saveRegion(coord, region);
     }
 
