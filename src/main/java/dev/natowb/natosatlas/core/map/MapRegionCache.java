@@ -75,7 +75,7 @@ public class MapRegionCache {
 
         MapRegion region = regions.get(key);
         if (region == null) {
-            LogUtil.warn("RegionCache", "Dirty region {} missing from memory", key);
+            LogUtil.warn("Dirty region {} missing from memory", key);
             return;
         }
 
@@ -98,7 +98,7 @@ public class MapRegionCache {
     }
 
     public void clear() {
-        LogUtil.warn("RegionCache", "Clearing all cached regions and PNG cache");
+        LogUtil.warn("Clearing all cached regions and PNG cache");
         for (MapRegion region : regions.values()) {
             region.clearTexture();
         }
@@ -120,7 +120,4 @@ public class MapRegionCache {
         return pngCache.size();
     }
 
-    public int getPngCacheCapacity() {
-        return PNG_CACHE_SIZE;
-    }
 }
