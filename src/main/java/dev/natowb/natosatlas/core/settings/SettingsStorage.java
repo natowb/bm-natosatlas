@@ -21,7 +21,7 @@ public final class SettingsStorage extends TextStorage {
         Settings.mapGrid = getBoolean("mapGrid", true);
         Settings.debugInfo = getBoolean("debugInfo", false);
         Settings.defaultZoom = getFloat("defaultZoom", 1f);
-        Settings.entityDisplayMode = getEnum("entityDisplayMode", Settings.EntityDisplayMode.class, Settings.EntityDisplayMode.All);
+        Settings.entityDisplayMode = getEnum("entityDisplayMode", Settings.EntityDisplayMode.class, Settings.EntityDisplayMode.Player);
         Settings.mapRenderMode = getEnum("mapRenderMode", Settings.MapRenderMode.class, Settings.MapRenderMode.Auto);
     }
 
