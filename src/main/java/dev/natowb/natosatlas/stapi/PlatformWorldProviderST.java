@@ -151,7 +151,7 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
                     int worldChunkZ = rz * 32 + z;
 
                     NAChunk chunk = getChunkFromDisk(NACoord.from(worldChunkX, worldChunkZ));
-                    NatosAtlas.get().regionManager.updateChunk(worldChunkX, worldChunkZ, chunk);
+                    NatosAtlas.get().renderer.updateChunk(worldChunkX, worldChunkZ, chunk);
                 }
             }
             LogUtil.info("Finished region r({}, {})  ({} chunks found)", rx, rz, processed);

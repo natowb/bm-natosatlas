@@ -11,44 +11,22 @@ import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.utils.Constants;
 import org.lwjgl.opengl.GL11;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import static dev.natowb.natosatlas.core.utils.Constants.PIXELS_PER_CANVAS_CHUNK;
 
 public class MapPainter {
-    public void drawRegions(MapContext ctx) {
-        double leftBlock = ctx.scrollX / Constants.PIXELS_PER_CANVAS_UNIT;
-        double topBlock = ctx.scrollY / Constants.PIXELS_PER_CANVAS_UNIT;
-        double rightBlock = (ctx.scrollX + ctx.canvasW / ctx.zoom) / Constants.PIXELS_PER_CANVAS_UNIT;
-        double bottomBlock = (ctx.scrollY + ctx.canvasH / ctx.zoom) / Constants.PIXELS_PER_CANVAS_UNIT;
 
-        int startChunkX = (int) Math.floor(leftBlock / 16);
-        int endChunkX = (int) Math.floor(rightBlock / 16);
-        int startChunkZ = (int) Math.floor(topBlock / 16);
-        int endChunkZ = (int) Math.floor(bottomBlock / 16);
-
-        int startRegionX = startChunkX / 32 - 1;
-        int endRegionX = endChunkX / 32 + 1;
-        int startRegionZ = startChunkZ / 32 - 1;
-        int endRegionZ = endChunkZ / 32 + 1;
-
-        Set<Long> visible = new HashSet<>();
-
-        for (int rx = startRegionX; rx <= endRegionX; rx++) {
-            for (int rz = startRegionZ; rz <= endRegionZ; rz++) {
-                NACoord coord = new NACoord(rx, rz);
-                visible.add(coord.toKey());
-
-                int texId = NatosAtlas.get().regionManager.getTexture(coord);
-                if (texId != -1) {
-                    drawRegionTexture(rx, rz, texId);
-                }
+    public void drawRegions(Set<Long> visible) {
+        for (long key : visible) {
+            NACoord coord = NACoord.fromKey(key);
+            int texId = NatosAtlas.get().renderer.getTexture(coord);
+            if (texId != -1) {
+                drawRegionTexture(coord.x, coord.z, texId);
             }
         }
-
-        NatosAtlas.get().regionManager.updateCanvasVisibleRegions(visible);
     }
+
 
     public void drawRegionTexture(int rx, int rz, int texId) {
         double worldX = rx * 32 * 16;
@@ -173,7 +151,7 @@ public class MapPainter {
 
 
         String blockInfo = "Block: " + blockX + ", " + blockZ;
-        String shortcuts = "[Q/E] Zoom  |  [Space] Center on Player  |  Drag: Move Map";
+        String shortcuts = "[Space] Center on Player  |  Drag: Move Map";
 
         int padding = 6;
 
@@ -188,7 +166,7 @@ public class MapPainter {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
 
         PlatformPainter painter = NatosAtlas.get().platform.painter;
-        MapManager manager = NatosAtlas.get().regionManager;
+        MapRenderer renderer = NatosAtlas.get().renderer;
 
         int y = 5;
 
@@ -201,24 +179,15 @@ public class MapPainter {
         painter.drawString(String.format("Zoom: %.2f", ctx.zoom), 5, y, 0xFFFFFF);
 
         y += 15;
-        painter.drawString("Region Manager", 5, y, 0xFFFFFF);
-        y += 10;
-        painter.drawString(String.format("Active Chunk: %d, %d",
-                manager.getActiveChunkX(), manager.getActiveChunkZ()), 5, y, 0xFFFFFF);
-        y += 10;
-        painter.drawString(String.format("Loaded Regions (Player): %d",
-                manager.getLoadedRegionCount()), 5, y, 0xFFFFFF);
-
-        y += 15;
         painter.drawString("Cache", 5, y, 0xFFFFFF);
         y += 10;
         painter.drawString(String.format("Total Cache Size: %d",
-                manager.getTotalCacheSize()), 5, y, 0xFFFFFF);
+                renderer.getTotalCacheSize()), 5, y, 0xFFFFFF);
         y += 10;
         painter.drawString(String.format("Dirty Queue Size: %d",
-                manager.getTotalDirtyQueueSize()), 5, y, 0xFFFFFF);
+                renderer.getTotalDirtyQueueSize()), 5, y, 0xFFFFFF);
         y += 10;
         painter.drawString(String.format("PNG Cache Size: %d",
-                manager.getTotalPngCacheSize()), 5, y, 0xFFFFFF);
+                renderer.getTotalPngCacheSize()), 5, y, 0xFFFFFF);
     }
 }

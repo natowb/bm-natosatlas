@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.core.tasks;
 
 import dev.natowb.natosatlas.core.data.NAChunk;
-import dev.natowb.natosatlas.core.map.MapManager;
+import dev.natowb.natosatlas.core.map.MapRenderer;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -35,10 +35,10 @@ public class MapUpdateWorker {
         running = false;
     }
 
-    public static void enqueue(MapManager manager, int worldChunkX, int worldChunkZ, NAChunk chunk) {
+    public static void enqueue(MapRenderer manager, int worldChunkX, int worldChunkZ, NAChunk chunk) {
         QUEUE.offer(new ChunkTask(manager, worldChunkX, worldChunkZ, chunk));
     }
 
-    private record ChunkTask(MapManager manager, int worldChunkX, int worldChunkZ, NAChunk chunk) {
+    private record ChunkTask(MapRenderer manager, int worldChunkX, int worldChunkZ, NAChunk chunk) {
     }
 }

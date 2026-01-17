@@ -4,7 +4,6 @@ import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.tasks.MapSaveWorker;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
-import dev.natowb.natosatlas.core.utils.Profiler;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -34,7 +33,7 @@ public class MapStorage {
         this.reusableImage = new BufferedImage(
                 BLOCKS_PER_CANVAS_REGION,
                 BLOCKS_PER_CANVAS_REGION,
-                BufferedImage.TYPE_INT_RGB
+                BufferedImage.TYPE_INT_ARGB
         );
 
         Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("png");
@@ -173,10 +172,7 @@ public class MapStorage {
     }
 
     public void saveRegionBlocking(NACoord regionCoord, MapRegion region, File file) {
-        Profiler p = Profiler.start("saveRegion (" + regionCoord.x + "," + regionCoord.z + ")");
-
         try {
-            p.mark("setRGB");
             reusableImage.setRGB(
                     0, 0,
                     BLOCKS_PER_CANVAS_REGION,
@@ -186,18 +182,12 @@ public class MapStorage {
                     BLOCKS_PER_CANVAS_REGION
             );
 
-            p.mark("open stream");
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file)) {
                 pngWriter.setOutput(out);
-                p.mark("pngWriter.write");
                 pngWriter.write(null, new IIOImage(reusableImage, null, null), pngParams);
-                p.mark("write complete");
             }
-
         } catch (IOException e) {
             LogUtil.error("Failed to save region {} to {}", regionCoord, file);
         }
-
-        p.end();
     }
 }

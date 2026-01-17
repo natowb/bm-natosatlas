@@ -1,6 +1,7 @@
 package dev.natowb.natosatlas.core.map;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.settings.SettingsOption;
@@ -10,8 +11,13 @@ import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementOptionButton;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import dev.natowb.natosatlas.core.settings.SettingsScreen;
+import dev.natowb.natosatlas.core.utils.Constants;
 import dev.natowb.natosatlas.core.waypoint.WaypointListScreen;
+import dev.natowb.natosatlas.stapi.NatosAtlasST;
 import org.lwjgl.input.Keyboard;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class MapScreen extends UIScreen {
 
@@ -27,6 +33,7 @@ public class MapScreen extends UIScreen {
     private boolean dragging = false;
     private int dragStartX = -1;
     private int dragStartY = -1;
+    private final Set<Long> visibleRegions = new HashSet<>();
 
     public MapScreen(UIScreen parent) {
         super(parent);
@@ -93,6 +100,12 @@ public class MapScreen extends UIScreen {
         );
     }
 
+    @Override
+    public void tick() {
+        visibleRegions.clear();
+        computeVisibleRegions(ctx, visibleRegions);
+        NatosAtlas.get().updateCanvasVisibleRegions(visibleRegions);
+    }
 
     @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
@@ -104,8 +117,7 @@ public class MapScreen extends UIScreen {
         );
 
         viewport.begin(ctx, scaleInfo);
-
-        mapPainter.drawRegions(ctx);
+        mapPainter.drawRegions(visibleRegions);
         mapPainter.drawGrid(ctx);
         mapPainter.drawEntities(ctx);
         mapPainter.drawWaypoints(ctx);
@@ -192,18 +204,6 @@ public class MapScreen extends UIScreen {
         super.keyPressed(character, keyCode);
 
         switch (keyCode) {
-            case Keyboard.KEY_Q:
-                zoomAtCenter(1f / 1.1f);
-                break;
-
-            case Keyboard.KEY_E:
-                zoomAtCenter(1.1f);
-                break;
-
-            case Keyboard.KEY_P:
-                NatosAtlas.get().regionManager.exportLayers();
-                break;
-
             case Keyboard.KEY_SPACE: {
                 NAEntity player = NatosAtlas.get().platform.worldProvider.getPlayer();
                 if (player != null) {
@@ -219,21 +219,6 @@ public class MapScreen extends UIScreen {
     }
 
 
-    private void zoomAtCenter(float factor) {
-        float oldZoom = ctx.zoom;
-        ctx.zoom *= factor;
-        ctx.zoom = Math.max(MapConfig.MIN_ZOOM, Math.min(MapConfig.MAX_ZOOM, ctx.zoom));
-
-        float centerX = ctx.canvasW / 2f;
-        float centerY = ctx.canvasH / 2f;
-
-        float worldX = ctx.scrollX + centerX / oldZoom;
-        float worldY = ctx.scrollY + centerY / oldZoom;
-
-        ctx.scrollX = worldX - centerX / ctx.zoom;
-        ctx.scrollY = worldY - centerY / ctx.zoom;
-    }
-
     @Override
     public void resetAllButtonsClickState() {
         settingsButton.resetClickState();
@@ -241,4 +226,29 @@ public class MapScreen extends UIScreen {
         closeButton.resetClickState();
         dayNightButton.resetClickState();
     }
+
+
+    private void computeVisibleRegions(MapContext ctx, Set<Long> visibleRegions) {
+        double leftBlock = ctx.scrollX / Constants.PIXELS_PER_CANVAS_UNIT;
+        double topBlock = ctx.scrollY / Constants.PIXELS_PER_CANVAS_UNIT;
+        double rightBlock = (ctx.scrollX + ctx.canvasW / ctx.zoom) / Constants.PIXELS_PER_CANVAS_UNIT;
+        double bottomBlock = (ctx.scrollY + ctx.canvasH / ctx.zoom) / Constants.PIXELS_PER_CANVAS_UNIT;
+
+        int startChunkX = (int) Math.floor(leftBlock / 16);
+        int endChunkX = (int) Math.floor(rightBlock / 16);
+        int startChunkZ = (int) Math.floor(topBlock / 16);
+        int endChunkZ = (int) Math.floor(bottomBlock / 16);
+
+        int startRegionX = startChunkX / 32 - 1;
+        int endRegionX = endChunkX / 32 + 1;
+        int startRegionZ = startChunkZ / 32 - 1;
+        int endRegionZ = endChunkZ / 32 + 1;
+
+        for (int rx = startRegionX; rx <= endRegionX; rx++) {
+            for (int rz = startRegionZ; rz <= endRegionZ; rz++) {
+                visibleRegions.add(new NACoord(rx, rz).toKey());
+            }
+        }
+    }
+
 }
