@@ -8,12 +8,10 @@ import java.nio.file.Path;
 
 public abstract class Platform {
     public final PlatformPainter painter;
-    public final PlatformEntityProvider entityProvider;
     public final PlatformWorldProvider worldProvider;
 
-    public Platform(PlatformPainter painter, PlatformEntityProvider entityProvider, PlatformWorldProvider worldProvider) {
+    public Platform(PlatformPainter painter, PlatformWorldProvider worldProvider) {
         this.painter = painter;
-        this.entityProvider = entityProvider;
         this.worldProvider = worldProvider;
         LogUtil.info("Platform", "Platform initialized");
     }

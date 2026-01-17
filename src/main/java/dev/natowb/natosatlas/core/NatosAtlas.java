@@ -61,7 +61,7 @@ public class NatosAtlas {
     }
 
     public void onWorldUpdate() {
-        NAEntity player = NatosAtlas.get().platform.entityProvider.getLocalPlayer();
+        NAEntity player = NatosAtlas.get().platform.worldProvider.getPlayer();
 
         double px = player.x;
         double pz = player.z;

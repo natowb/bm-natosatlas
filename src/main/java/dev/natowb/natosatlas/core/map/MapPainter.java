@@ -75,12 +75,12 @@ public class MapPainter {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
 
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.All) {
-            for (NAEntity e : NatosAtlas.get().platform.entityProvider.collectEntities()) {
+            for (NAEntity e : NatosAtlas.get().platform.worldProvider.getEntities()) {
                 renderEntity(e, ctx.zoom);
             }
         }
 
-        for (NAEntity p : NatosAtlas.get().platform.entityProvider.collectPlayers()) {
+        for (NAEntity p : NatosAtlas.get().platform.worldProvider.getPlayers()) {
             renderEntity(p, ctx.zoom);
         }
     }

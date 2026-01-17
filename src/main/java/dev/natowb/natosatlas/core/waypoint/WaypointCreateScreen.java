@@ -73,7 +73,7 @@ public class WaypointCreateScreen extends UIScreen {
         actionButton.active = false;
 
         if (!editMode) {
-            NAEntity player = NatosAtlas.get().platform.entityProvider.getLocalPlayer();
+            NAEntity player = NatosAtlas.get().platform.worldProvider.getPlayer();
             xField.setText("" + (int) player.x);
             yField.setText("0");
             zField.setText("" + (int) player.z);

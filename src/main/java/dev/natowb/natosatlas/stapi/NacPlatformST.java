@@ -12,7 +12,7 @@ import java.nio.file.Path;
 public class NacPlatformST extends Platform {
 
     public NacPlatformST() {
-        super(new NacPainterST(), new NacEntityProviderST(), new NacWorldProviderST());
+        super(new NacPainterST(), new NacWorldProviderST());
 
 
     }

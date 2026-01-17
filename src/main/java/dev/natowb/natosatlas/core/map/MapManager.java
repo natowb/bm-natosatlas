@@ -170,7 +170,7 @@ public class MapManager {
                 if (deltaChunkX * deltaChunkX + deltaChunkZ * deltaChunkZ > RADIUS * RADIUS) continue;
                 int worldChunkX = playerChunkX + deltaChunkX;
                 int worldChunkZ = playerChunkZ + deltaChunkZ;
-                NAChunk surface = NatosAtlas.get().platform.worldProvider.buildSurface(NACoord.from(worldChunkX, worldChunkZ));
+                NAChunk surface = NatosAtlas.get().platform.worldProvider.getChunk(NACoord.from(worldChunkX, worldChunkZ));
                 updateChunk(worldChunkX, worldChunkZ, surface);
             }
         }

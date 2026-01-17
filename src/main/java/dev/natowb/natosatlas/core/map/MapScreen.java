@@ -41,7 +41,7 @@ public class MapScreen extends UIScreen {
         ctx.canvasW = width;
         ctx.canvasH = height;
 
-        NAEntity player = NatosAtlas.get().platform.entityProvider.getLocalPlayer();
+        NAEntity player = NatosAtlas.get().platform.worldProvider.getPlayer();
         if (player != null) {
             float playerPixelX = (float) player.x * 8f;
             float playerPixelZ = (float) player.z * 8f;
@@ -204,7 +204,7 @@ public class MapScreen extends UIScreen {
                 break;
 
             case Keyboard.KEY_SPACE: {
-                NAEntity player = NatosAtlas.get().platform.entityProvider.getLocalPlayer();
+                NAEntity player = NatosAtlas.get().platform.worldProvider.getPlayer();
                 if (player != null) {
                     float playerPixelX = (float) player.x * 8f;
                     float playerPixelZ = (float) player.z * 8f;

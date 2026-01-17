@@ -1,14 +1,14 @@
 package dev.natowb.natosatlas.stapi;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
-import dev.natowb.natosatlas.core.data.NABiome;
-import dev.natowb.natosatlas.core.data.NAChunk;
-import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.data.NAWorldInfo;
+import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.platform.PlatformWorldProvider;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
@@ -16,6 +16,8 @@ import net.minecraft.world.chunk.storage.RegionFile;
 import net.modificationstation.stationapi.impl.world.chunk.FlattenedWorldChunkLoader;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.*;
@@ -61,6 +63,55 @@ public class NacWorldProviderST implements PlatformWorldProvider {
     }
 
     @Override
+    public List<NAEntity> getEntities() {
+        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
+
+        List<NAEntity> entities = new ArrayList<>();
+
+        for (Object o : mc.world.entities) {
+            if (!(o instanceof LivingEntity e)) continue;
+            if (e instanceof PlayerEntity) continue;
+
+            NAEntity.NAEntityType type = NAEntity.NAEntityType.Mob;
+
+            if (e instanceof AnimalEntity) {
+                type = NAEntity.NAEntityType.Animal;
+            }
+
+            entities.add(new NAEntity(e.x, e.y, e.z, e.yaw, type));
+        }
+
+        return entities;
+    }
+
+    @Override
+    public List<NAEntity> getPlayers() {
+        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
+        List<NAEntity> players = new ArrayList<>();
+
+        for (Object o : mc.world.players) {
+            if (!(o instanceof PlayerEntity p)) continue;
+            players.add(new NAEntity(p.x, p.y, p.z, p.yaw, NAEntity.NAEntityType.Player));
+        }
+
+        return players;
+    }
+
+    @Override
+    public NAEntity getPlayer() {
+        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
+        return new NAEntity(mc.player.x, mc.player.y, mc.player.z, mc.player.yaw, NAEntity.NAEntityType.Player);
+    }
+
+
+    @Override
+    public NABiome getBiome(NACoord blockCoord) {
+        Biome biome = mc.world.method_1781().getBiome(blockCoord.x, blockCoord.z);
+        return new NABiome(biome.grassColor, biome.foliageColor);
+    }
+
+
+    @Override
     public void generateExistingChunks() {
         File regionDir = new File(getWorldInfo().worldDirectory, "region");
 
@@ -104,7 +155,7 @@ public class NacWorldProviderST implements PlatformWorldProvider {
                     int worldChunkX = rx * 32 + x;
                     int worldChunkZ = rz * 32 + z;
 
-                    NAChunk chunk = buildFromStorage(NACoord.from(worldChunkX, worldChunkZ));
+                    NAChunk chunk = getChunkFromDisk(NACoord.from(worldChunkX, worldChunkZ));
                     NatosAtlas.get().regionManager.updateChunk(worldChunkX, worldChunkZ, chunk);
                 }
             }
@@ -117,13 +168,7 @@ public class NacWorldProviderST implements PlatformWorldProvider {
 
 
     @Override
-    public NABiome getBiome(NACoord blockCoord) {
-        Biome biome = mc.world.method_1781().getBiome(blockCoord.x, blockCoord.z);
-        return new NABiome(biome.grassColor, biome.foliageColor);
-    }
-
-    @Override
-    public NAChunk buildSurface(NACoord chunkCoord) {
+    public NAChunk getChunk(NACoord chunkCoord) {
         Chunk chunk = mc.world.getChunk(chunkCoord.x, chunkCoord.z);
         NAChunk nac = new NAChunk();
         for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
@@ -140,7 +185,7 @@ public class NacWorldProviderST implements PlatformWorldProvider {
     }
 
     @Override
-    public NAChunk buildFromStorage(NACoord chunkCoord) {
+    public NAChunk getChunkFromDisk(NACoord chunkCoord) {
         FlattenedWorldChunkLoader chunkLoader = new FlattenedWorldChunkLoader(getWorldInfo().worldDirectory);
         Chunk chunk = chunkLoader.loadChunk(mc.world, chunkCoord.x, chunkCoord.z);
 
