@@ -11,8 +11,8 @@ public final class NACoord {
     }
 
     public long toKey() {
-        long lx = ((long) x & 0x3FFFFFFL) << 26; // 26 bits for X
-        long lz = ((long) z & 0x3FFFFFFL);       // 26 bits for Z
+        long lx = ((long) x & 0x3FFFFFFL) << 26;
+        long lz = ((long) z & 0x3FFFFFFL);
         return lx | lz;
     }
 
@@ -33,7 +33,8 @@ public final class NACoord {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof NACoord other)) return false;
+        if (!(o instanceof NACoord)) return false;
+        NACoord other = (NACoord) o;
         return x == other.x && z == other.z;
     }
 

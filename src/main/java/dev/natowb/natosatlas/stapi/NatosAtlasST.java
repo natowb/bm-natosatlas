@@ -45,6 +45,7 @@ public class NatosAtlasST {
             return mc.options.lastServer;
         }
 
+        mc.world.attemptSaving(0);
         List<WorldSaveInfo> saves = mc.getWorldStorageSource().getAll();
         if (saves == null || saves.isEmpty()) return null;
         String currentName = mc.world.getProperties().getName();

@@ -13,7 +13,6 @@ import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import dev.natowb.natosatlas.core.settings.SettingsScreen;
 import dev.natowb.natosatlas.core.utils.Constants;
 import dev.natowb.natosatlas.core.waypoint.WaypointListScreen;
-import dev.natowb.natosatlas.stapi.NatosAtlasST;
 import org.lwjgl.input.Keyboard;
 
 import java.util.HashSet;
