@@ -1,6 +1,9 @@
 package dev.natowb.natosatlas.core.map;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.data.NABiome;
+import dev.natowb.natosatlas.core.data.NAChunk;
+import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.utils.ColorMapperUtil;
 
 import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.*;
@@ -11,7 +14,7 @@ import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CH
 public class MapChunkRendererSurface implements MapChunkRenderer {
 
     @Override
-    public void applyChunkToRegion(MapRegion region, int worldChunkX, int worldChunkZ, MapChunk chunk, boolean useBlockLight) {
+    public void applyChunkToRegion(MapRegion region, int worldChunkX, int worldChunkZ, NAChunk chunk, boolean useBlockLight) {
         int[] pixels = region.getPixels();
         int regionBlockOffsetX = (worldChunkX & 31) * BLOCKS_PER_MINECRAFT_CHUNK;
         int regionBlockOffsetZ = (worldChunkZ & 31) * BLOCKS_PER_MINECRAFT_CHUNK;
@@ -33,7 +36,7 @@ public class MapChunkRendererSurface implements MapChunkRenderer {
             int worldChunkZ,
             int localBlockX,
             int localBlockZ,
-            MapChunk chunk
+            NAChunk chunk
     ) {
         int localIndex = localBlockZ * 16 + localBlockX;
 
@@ -47,7 +50,7 @@ public class MapChunkRendererSurface implements MapChunkRenderer {
         int worldBlockX = worldChunkX * 16 + localBlockX;
         int worldBlockZ = worldChunkZ * 16 + localBlockZ;
 
-        MapBiome biome = NatosAtlas.get().platform.worldProvider.getBiome(worldBlockX, worldBlockZ);
+        NABiome biome = NatosAtlas.get().platform.worldProvider.getBiome(NACoord.from(worldBlockX, worldBlockZ));
 
         if (blockId == BLOCK_GRASS_ID) {
             baseColor = mixColors(baseColor, biome.grassColor, 0.1f);
@@ -77,7 +80,7 @@ public class MapChunkRendererSurface implements MapChunkRenderer {
                 blockId == BLOCK_LAVA_MOVING_ID;
     }
 
-    public int waterColor(int localBlockX, int localBlockZ, MapChunk chunk, int baseColor) {
+    public int waterColor(int localBlockX, int localBlockZ, NAChunk chunk, int baseColor) {
         int localIndex = localBlockZ * 16 + localBlockX;
 
         int waterDepth = chunk.waterDepths[localIndex];

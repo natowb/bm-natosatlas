@@ -1,6 +1,8 @@
 package dev.natowb.natosatlas.core.map;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.data.NACoord;
+import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.waypoint.Waypoints;
 import dev.natowb.natosatlas.core.waypoint.Waypoint;
 import dev.natowb.natosatlas.core.settings.Settings;
@@ -33,7 +35,7 @@ public class MapPainter {
 
         for (int rx = startRegionX; rx <= endRegionX; rx++) {
             for (int rz = startRegionZ; rz <= endRegionZ; rz++) {
-                MapRegionCoord coord = new MapRegionCoord(rx, rz);
+                NACoord coord = new NACoord(rx, rz);
                 visible.add(coord.toKey());
 
                 int texId = NatosAtlas.get().regionManager.getTexture(coord);
@@ -73,12 +75,12 @@ public class MapPainter {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
 
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.All) {
-            for (MapEntity e : NatosAtlas.get().platform.entityProvider.collectEntities()) {
+            for (NAEntity e : NatosAtlas.get().platform.entityProvider.collectEntities()) {
                 renderEntity(e, ctx.zoom);
             }
         }
 
-        for (MapEntity p : NatosAtlas.get().platform.entityProvider.collectPlayers()) {
+        for (NAEntity p : NatosAtlas.get().platform.entityProvider.collectPlayers()) {
             renderEntity(p, ctx.zoom);
         }
     }
@@ -86,7 +88,7 @@ public class MapPainter {
     public void drawWaypoints(MapContext ctx) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
         for (Waypoint wp : Waypoints.getAll()) {
-            renderEntity(new MapEntity(wp.x, wp.y, wp.z, 0, 4), ctx.zoom);
+            renderEntity(new NAEntity(wp.x, wp.y, wp.z, 0, NAEntity.NAEntityType.Waypoint), ctx.zoom);
         }
 
         for (Waypoint wp : Waypoints.getAll()) {
@@ -108,13 +110,33 @@ public class MapPainter {
     }
 
 
-    private void renderEntity(MapEntity e, double zoom) {
+    private void renderEntity(NAEntity e, double zoom) {
 
         double worldX = e.x * Constants.PIXELS_PER_CANVAS_UNIT;
         double worldZ = e.z * Constants.PIXELS_PER_CANVAS_UNIT;
 
-        float u1 = (e.iconIndex % 4) / 4.0f;
-        float v1 = (e.iconIndex / 4) / 4.0f;
+        int iconIndex = 3;
+        switch (e.type) {
+            case Player: {
+                iconIndex = 0;
+                break;
+            }
+            case Mob: {
+                iconIndex = 2;
+                break;
+            }
+            case Animal: {
+                iconIndex = 1;
+                break;
+            }
+            case Waypoint: {
+                iconIndex = 4;
+            }
+
+        }
+
+        float u1 = (iconIndex % 4) / 4.0f;
+        float v1 = (iconIndex / 4) / 4.0f;
         float u2 = u1 + 0.25f;
         float v2 = v1 + 0.25f;
 

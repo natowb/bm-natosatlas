@@ -1,10 +1,10 @@
 package dev.natowb.natosatlas.core.platform;
 
-import dev.natowb.natosatlas.core.map.MapBiome;
-import dev.natowb.natosatlas.core.map.MapChunk;
+import dev.natowb.natosatlas.core.data.NABiome;
+import dev.natowb.natosatlas.core.data.NAChunk;
+import dev.natowb.natosatlas.core.data.NACoord;
 
 public interface PlatformWorldProvider {
-
     String getName();
 
     boolean isRemote();
@@ -15,9 +15,9 @@ public interface PlatformWorldProvider {
 
     void generateExistingChunks();
 
-    MapBiome getBiome(int blockX, int blockZ);
+    NABiome getBiome(NACoord blockCoord);
 
-    MapChunk buildSurface(int chunkX, int chunkZ);
+    NAChunk buildSurface(NACoord chunkCoord);
 
-    MapChunk buildFromStorage(int chunkX, int chunkZ);
+    NAChunk buildFromStorage(NACoord chunkCoord);
 }

@@ -1,15 +1,15 @@
-package dev.natowb.natosatlas.core.map;
+package dev.natowb.natosatlas.core.data;
 
 import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CHUNK;
 
-public class MapChunk {
+public class NAChunk {
     public final int[] blockIds;
     public final int[] heights;
     public final int[] waterDepths;
     public final int[] meta;
     public final int[] blockLight;
 
-    public MapChunk() {
+    public NAChunk() {
         this.blockIds = new int[BLOCKS_PER_MINECRAFT_CHUNK * BLOCKS_PER_MINECRAFT_CHUNK];
         this.heights = new int[BLOCKS_PER_MINECRAFT_CHUNK * BLOCKS_PER_MINECRAFT_CHUNK];
         this.waterDepths = new int[BLOCKS_PER_MINECRAFT_CHUNK * BLOCKS_PER_MINECRAFT_CHUNK];

@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.stapi;
 
 import dev.natowb.natosatlas.core.platform.PlatformEntityProvider;
-import dev.natowb.natosatlas.core.map.MapEntity;
+import dev.natowb.natosatlas.core.data.NAEntity;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
@@ -14,50 +14,45 @@ import java.util.List;
 
 public class NacEntityProviderST implements PlatformEntityProvider {
     @Override
-    public List<MapEntity> collectEntities() {
+    public List<NAEntity> collectEntities() {
         Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
-        List<MapEntity> entities = new ArrayList<>();
+        List<NAEntity> entities = new ArrayList<>();
 
         for (Object o : mc.world.entities) {
             if (!(o instanceof LivingEntity e)) continue;
 
             if (e instanceof PlayerEntity) continue;
 
-            int icon = getIconIndexForEntity(e);
 
-            entities.add(new MapEntity(e.x, e.y, e.z, e.yaw, icon));
+            NAEntity.NAEntityType type = NAEntity.NAEntityType.Mob;
+
+            if (e instanceof AnimalEntity) {
+                type = NAEntity.NAEntityType.Animal;
+            }
+
+            entities.add(new NAEntity(e.x, e.y, e.z, e.yaw, type));
         }
 
         return entities;
     }
 
     @Override
-    public List<MapEntity> collectPlayers() {
+    public List<NAEntity> collectPlayers() {
         Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
-        List<MapEntity> players = new ArrayList<>();
+        List<NAEntity> players = new ArrayList<>();
 
         for (Object o : mc.world.players) {
             if (!(o instanceof PlayerEntity p)) continue;
-
-            int icon = (p == mc.player) ? 0 : 3;
-
-            players.add(new MapEntity(p.x, p.y, p.z, p.yaw, icon));
+            players.add(new NAEntity(p.x, p.y, p.z, p.yaw, NAEntity.NAEntityType.Player));
         }
 
         return players;
     }
 
     @Override
-    public MapEntity getLocalPlayer() {
+    public NAEntity getLocalPlayer() {
         Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
-        return new MapEntity(mc.player.x, mc.player.y, mc.player.z, mc.player.yaw, 0);
-    }
-
-
-    private int getIconIndexForEntity(LivingEntity e) {
-        if (e instanceof AnimalEntity) return 1;
-        if (e instanceof MobEntity) return 2;
-        return 1;
+        return new NAEntity(mc.player.x, mc.player.y, mc.player.z, mc.player.yaw, NAEntity.NAEntityType.Player);
     }
 }

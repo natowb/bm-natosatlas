@@ -1,6 +1,8 @@
 package dev.natowb.natosatlas.core.map;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.data.NACoord;
+import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.utils.Profiler;
 
@@ -75,7 +77,7 @@ public class MapManager {
         layers.forEach(l -> l.cache().clear());
     }
 
-    public int getTexture(MapRegionCoord coord) {
+    public int getTexture(NACoord coord) {
         MapLayer layer = layers.get(activeLayer);
         MapRegion region = layer.cache().getRegion(coord);
         if (region == null) return -1;
@@ -158,7 +160,7 @@ public class MapManager {
 
         for (int rx = regionX - 1; rx <= regionX + 1; rx++) {
             for (int rz = regionZ - 1; rz <= regionZ + 1; rz++) {
-                activeRegions.add(new MapRegionCoord(rx, rz).toKey());
+                activeRegions.add(new NACoord(rx, rz).toKey());
             }
         }
 
@@ -171,23 +173,23 @@ public class MapManager {
                 if (deltaChunkX * deltaChunkX + deltaChunkZ * deltaChunkZ > RADIUS * RADIUS) continue;
                 int worldChunkX = playerChunkX + deltaChunkX;
                 int worldChunkZ = playerChunkZ + deltaChunkZ;
-                MapChunk surface = NatosAtlas.get().platform.worldProvider.buildSurface(worldChunkX, worldChunkZ);
+                NAChunk surface = NatosAtlas.get().platform.worldProvider.buildSurface(NACoord.from(worldChunkX, worldChunkZ));
                 updateChunk(worldChunkX, worldChunkZ, surface);
             }
         }
     }
 
-    public void updateChunk(int worldChunkX, int worldChunkZ, MapChunk chunk) {
+    public void updateChunk(int worldChunkX, int worldChunkZ, NAChunk chunk) {
         for (MapLayer layer : layers) {
             buildChunkForLayer(worldChunkX, worldChunkZ, layer, chunk);
         }
     }
 
-    private void buildChunkForLayer(int worldChunkX, int worldChunkZ, MapLayer layer, MapChunk chunk) {
+    private void buildChunkForLayer(int worldChunkX, int worldChunkZ, MapLayer layer, NAChunk chunk) {
         if (chunk == null) return;
         int regionChunkX = worldChunkX >> 5;
         int regionChunkZ = worldChunkZ >> 5;
-        MapRegionCoord regionCoord = new MapRegionCoord(regionChunkX, regionChunkZ);
+        NACoord regionCoord = new NACoord(regionChunkX, regionChunkZ);
         MapRegionCache cache = layer.cache();
         MapRegion region = cache.getRegion(regionCoord);
         if (region == null) {

@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.core.map.MapEntity;
+import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.map.MapManager;
 import dev.natowb.natosatlas.core.map.RegionSaveWorker;
 import dev.natowb.natosatlas.core.platform.Platform;
@@ -61,7 +61,7 @@ public class NatosAtlas {
     }
 
     public void onWorldUpdate() {
-        MapEntity player = NatosAtlas.get().platform.entityProvider.getLocalPlayer();
+        NAEntity player = NatosAtlas.get().platform.entityProvider.getLocalPlayer();
 
         double px = player.x;
         double pz = player.z;

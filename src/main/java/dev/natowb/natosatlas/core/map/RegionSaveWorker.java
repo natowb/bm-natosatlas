@@ -1,6 +1,8 @@
 package dev.natowb.natosatlas.core.map;
 
 
+import dev.natowb.natosatlas.core.data.NACoord;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -28,16 +30,16 @@ public class RegionSaveWorker {
         running = false;
     }
 
-    public static void enqueue(MapStorage storage, MapRegionCoord coord, MapRegion region) {
+    public static void enqueue(MapStorage storage, NACoord coord, MapRegion region) {
         QUEUE.offer(new SaveTask(storage, coord, region));
     }
 
     private static final class SaveTask {
         final MapStorage storage;
-        final MapRegionCoord coord;
+        final NACoord coord;
         final MapRegion region;
 
-        SaveTask(MapStorage storage, MapRegionCoord coord, MapRegion region) {
+        SaveTask(MapStorage storage, NACoord coord, MapRegion region) {
             this.storage = storage;
             this.coord = coord;
             this.region = region;
