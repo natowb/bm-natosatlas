@@ -20,7 +20,7 @@ public class MapPainter {
     public void drawRegions(Set<Long> visible) {
         for (long key : visible) {
             NACoord coord = NACoord.fromKey(key);
-            int texId = NatosAtlas.get().renderer.getTexture(coord);
+            int texId = NatosAtlas.get().textures.getTexture(coord);
             if (texId != -1) {
                 drawRegionTexture(coord.x, coord.z, texId);
             }
@@ -164,10 +164,7 @@ public class MapPainter {
 
     public void drawDebugInfo(MapContext ctx) {
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-
         PlatformPainter painter = NatosAtlas.get().platform.painter;
-        MapRenderer renderer = NatosAtlas.get().renderer;
-
         int y = 5;
 
         painter.drawString("Canvas", 5, y, 0xFFFFFF);
@@ -182,12 +179,12 @@ public class MapPainter {
         painter.drawString("Cache", 5, y, 0xFFFFFF);
         y += 10;
         painter.drawString(String.format("Total Cache Size: %d",
-                renderer.getTotalCacheSize()), 5, y, 0xFFFFFF);
+                NatosAtlas.get().cache.getCacheSize()), 5, y, 0xFFFFFF);
         y += 10;
         painter.drawString(String.format("Dirty Queue Size: %d",
-                renderer.getTotalDirtyQueueSize()), 5, y, 0xFFFFFF);
+                NatosAtlas.get().cache.getDirtyQueueSize()), 5, y, 0xFFFFFF);
         y += 10;
         painter.drawString(String.format("PNG Cache Size: %d",
-                renderer.getTotalPngCacheSize()), 5, y, 0xFFFFFF);
+                NatosAtlas.get().cache.getPngCacheSize()), 5, y, 0xFFFFFF);
     }
 }
