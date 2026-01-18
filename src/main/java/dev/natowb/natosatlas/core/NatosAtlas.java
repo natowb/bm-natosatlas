@@ -3,16 +3,13 @@ package dev.natowb.natosatlas.core;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.data.NAWorldInfo;
 import dev.natowb.natosatlas.core.map.MapManager;
-import dev.natowb.natosatlas.core.map.RegionSaveWorker;
+import dev.natowb.natosatlas.core.tasks.MapSaveWorker;
 import dev.natowb.natosatlas.core.platform.Platform;
 import dev.natowb.natosatlas.core.settings.Settings;
+import dev.natowb.natosatlas.core.tasks.MapUpdateWorker;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import dev.natowb.natosatlas.core.waypoint.Waypoints;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 public class NatosAtlas {
 
@@ -30,43 +27,45 @@ public class NatosAtlas {
         if (instance != null) {
             throw new IllegalStateException("NatosAtlas instance already created!");
         }
-        LogUtil.info("NatosAtlas", "Initializing NatosAtlas core");
+        LogUtil.info("Initializing NatosAtlas core");
         instance = this;
         this.platform = platform;
         this.regionManager = new MapManager();
         NAPaths.updateBasePaths(platform.getMinecraftDirectory());
         Settings.load();
-        LogUtil.info("NatosAtlas", "Initialization complete");
+        LogUtil.info("Initialization complete");
     }
 
 
     public void onWorldJoin() {
         worldInfo = platform.worldProvider.getWorldInfo();
-        LogUtil.info("NatosAtlas", "Joined world: {}", worldInfo.worldName);
+        LogUtil.info("Joined world: {}", worldInfo.worldName);
         NAPaths.updateWorldPath(worldInfo);
         Waypoints.load();
-        RegionSaveWorker.start();
+        MapSaveWorker.start();
+        MapUpdateWorker.start();
     }
 
     public void onWorldLeft() {
-        RegionSaveWorker.stop();
+        MapUpdateWorker.stop();
+        MapSaveWorker.stop();
         regionManager.cleanup();
 
-        LogUtil.info("NatosAtlas", "Left world: {}", worldInfo.worldName);
+        LogUtil.info("Left world: {}", worldInfo.worldName);
         worldInfo = null;
     }
 
     public void onWorldUpdate() {
 
         if (worldInfo == null) {
-            LogUtil.error("NatosAtlas", "WHY ARE WE UPDATING WITHOUT A WORLD");
+            LogUtil.error("WHY ARE WE UPDATING WITHOUT A WORLD");
             return;
         }
 
 
         if (platform.worldProvider.getWorldInfo().worldDimension != worldInfo.worldDimension) {
             NAWorldInfo latestWorldInfo = platform.worldProvider.getWorldInfo();
-            LogUtil.info("NatosAtlas", "changed from DIM {} to DIM {}", worldInfo.worldDimension, latestWorldInfo.worldDimension);
+            LogUtil.info("changed from DIM {} to DIM {}", worldInfo.worldDimension, latestWorldInfo.worldDimension);
             worldInfo = latestWorldInfo;
             NAPaths.updateWorldPath(worldInfo);
             regionManager.cleanup();

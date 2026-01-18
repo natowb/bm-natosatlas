@@ -1,9 +1,7 @@
 package dev.natowb.natosatlas.core.map;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
-import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.utils.ColorMapperUtil;
 
 import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.*;
@@ -21,7 +19,7 @@ public class MapChunkRendererSurface implements MapChunkRenderer {
         for (int localBlockZ = 0; localBlockZ < BLOCKS_PER_MINECRAFT_CHUNK; localBlockZ++) {
             int pixelRow = (regionBlockOffsetZ + localBlockZ) * BLOCKS_PER_CANVAS_REGION;
             for (int localBlockX = 0; localBlockX < BLOCKS_PER_MINECRAFT_CHUNK; localBlockX++) {
-                int color = getBlockColor(worldChunkX, worldChunkZ, localBlockX, localBlockZ, chunk);
+                int color = getBlockColor(localBlockX, localBlockZ, chunk);
                 if (useBlockLight) {
                     int localIndex = localBlockZ * 16 + localBlockX;
                     color = applyBlockLight(color, chunk.blockLight[localIndex]);
@@ -31,14 +29,8 @@ public class MapChunkRendererSurface implements MapChunkRenderer {
         }
     }
 
-    private int getBlockColor(
-            int worldChunkX,
-            int worldChunkZ,
-            int localBlockX,
-            int localBlockZ,
-            NAChunk chunk
-    ) {
-        int localIndex = localBlockZ * 16 + localBlockX;
+    private int getBlockColor(int localBlockX, int localBlockZ, NAChunk chunk) {
+        int localIndex = NAChunk.index(localBlockX, localBlockZ);
 
         int height = chunk.heights[localIndex];
         if (height <= 0) return 0xFF000000;
@@ -46,11 +38,7 @@ public class MapChunkRendererSurface implements MapChunkRenderer {
         int blockId = chunk.blockIds[localIndex];
         int blockMeta = chunk.meta[localIndex];
         int baseColor = ColorMapperUtil.get(blockId, blockMeta);
-
-        int worldBlockX = worldChunkX * 16 + localBlockX;
-        int worldBlockZ = worldChunkZ * 16 + localBlockZ;
-
-        NABiome biome = NatosAtlas.get().platform.worldProvider.getBiome(NACoord.from(worldBlockX, worldBlockZ));
+        NABiome biome = chunk.biome[localIndex];
 
         if (blockId == BLOCK_GRASS_ID) {
             baseColor = mixColors(baseColor, biome.grassColor, 0.1f);

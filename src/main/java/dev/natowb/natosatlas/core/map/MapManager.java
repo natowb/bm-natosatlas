@@ -4,6 +4,7 @@ import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.settings.Settings;
+import dev.natowb.natosatlas.core.tasks.MapUpdateWorker;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import dev.natowb.natosatlas.core.utils.Profiler;
 
@@ -73,7 +74,6 @@ public class MapManager {
         return size.get();
     }
 
-
     public void cleanup() {
         layers.forEach(l -> l.cache().clear());
     }
@@ -104,22 +104,24 @@ public class MapManager {
         this.activeChunkX = playerChunkX;
         this.activeChunkZ = playerChunkZ;
         updateSelectedLayer();
-        Profiler p = Profiler.start("MapManager.update");
 
         if (++updateTimer >= UPDATE_INTERVAL) {
+            Profiler p = Profiler.start("MapManager UPDATE_INTERVAL");
             updateTimer = 0;
             updateActiveRegions(playerChunkX, playerChunkZ);
             p.mark("updateActiveRegions");
             updateNearbyChunks(playerChunkX, playerChunkZ);
             p.mark("updateNearbyChunks");
+            p.end();
         }
 
         if (++saveTimer >= SAVE_INTERVAL) {
+            Profiler p = Profiler.start("MapManager SAVE_INTERVAL");
             saveTimer = 0;
             layers.forEach(layer -> layer.cache().saveOneRegion());
+            p.mark("saveOneRegion");
+            p.end();
         }
-        p.mark("saveRegions");
-        p.end();
     }
 
     private void updateSelectedLayer() {
@@ -133,7 +135,7 @@ public class MapManager {
             return;
         }
 
-        long time = NatosAtlas.get().platform.worldProvider.getWorldInfo().worldTime % 24000L;
+        long time = NatosAtlas.get().worldInfo.worldTime % 24000L;
         setActiveLayer(time < 12000L ? 0 : 1);
     }
 
@@ -165,17 +167,25 @@ public class MapManager {
         syncLifetime();
     }
 
+    public void processChunkSync(int worldChunkX, int worldChunkZ, NAChunk chunk) {
+        for (MapLayer layer : layers) {
+            buildChunkForLayer(worldChunkX, worldChunkZ, layer, chunk);
+        }
+    }
+
+
     private void updateNearbyChunks(int playerChunkX, int playerChunkZ) {
-        for (int deltaChunkX = -RADIUS; deltaChunkX <= RADIUS; deltaChunkX++) {
-            for (int deltaChunkZ = -RADIUS; deltaChunkZ <= RADIUS; deltaChunkZ++) {
-                if (deltaChunkX * deltaChunkX + deltaChunkZ * deltaChunkZ > RADIUS * RADIUS) continue;
-                int worldChunkX = playerChunkX + deltaChunkX;
-                int worldChunkZ = playerChunkZ + deltaChunkZ;
+        for (int dx = -RADIUS; dx <= RADIUS; dx++) {
+            for (int dz = -RADIUS; dz <= RADIUS; dz++) {
+                if (dx * dx + dz * dz > RADIUS * RADIUS) continue;
+                int worldChunkX = playerChunkX + dx;
+                int worldChunkZ = playerChunkZ + dz;
                 NAChunk surface = NatosAtlas.get().platform.worldProvider.getChunk(NACoord.from(worldChunkX, worldChunkZ));
-                updateChunk(worldChunkX, worldChunkZ, surface);
+                MapUpdateWorker.enqueue(this, worldChunkX, worldChunkZ, surface);
             }
         }
     }
+
 
     public void updateChunk(int worldChunkX, int worldChunkZ, NAChunk chunk) {
         for (MapLayer layer : layers) {

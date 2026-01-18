@@ -1,6 +1,7 @@
 package dev.natowb.natosatlas.core.map;
 
 import dev.natowb.natosatlas.core.data.NACoord;
+import dev.natowb.natosatlas.core.tasks.MapSaveWorker;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import dev.natowb.natosatlas.core.utils.Profiler;
@@ -60,7 +61,7 @@ public class MapStorage {
     }
 
     public void saveRegion(NACoord coord, MapRegion region) {
-        RegionSaveWorker.enqueue(this, coord, region, getRegionFile(coord));
+        MapSaveWorker.enqueue(this, coord, region, getRegionFile(coord));
     }
 
 
@@ -74,7 +75,7 @@ public class MapStorage {
         try {
             BufferedImage img = ImageIO.read(file);
             if (img == null) {
-                LogUtil.warn("RegionStorage", "Invalid PNG file for region {} at {}", coord, file);
+                LogUtil.warn("Invalid PNG file for region {} at {}", coord, file);
                 return Optional.empty();
             }
 
@@ -91,7 +92,7 @@ public class MapStorage {
             return Optional.of(region);
 
         } catch (IOException e) {
-            LogUtil.error("RegionStorage", e, "Failed to load region {} from {}", coord, file);
+            LogUtil.error("Failed to load region {} from {}", coord, file);
             return Optional.empty();
         }
     }
@@ -106,7 +107,7 @@ public class MapStorage {
 
         File[] regionFiles = regionDir.toFile().listFiles((dir, name) -> name.endsWith(".png"));
         if (regionFiles == null || regionFiles.length == 0) {
-            LogUtil.warn("MapExport", "No region PNGs found to export.");
+            LogUtil.warn("No region PNGs found to export.");
             return;
         }
 
@@ -134,7 +135,7 @@ public class MapStorage {
         int fullWidth = regionsX * regionSize;
         int fullHeight = regionsZ * regionSize;
 
-        LogUtil.info("MapExport", "Exporting full map: {}x{} regions -> {}x{} px",
+        LogUtil.info("Exporting full map: {}x{} regions -> {}x{} px",
                 regionsX, regionsZ, fullWidth, fullHeight);
 
         BufferedImage full = new BufferedImage(fullWidth, fullHeight, BufferedImage.TYPE_INT_ARGB);
@@ -152,26 +153,26 @@ public class MapStorage {
             try {
                 BufferedImage regionImg = ImageIO.read(f);
                 if (regionImg == null) {
-                    LogUtil.warn("MapExport", "Skipping invalid region file {}", f);
+                    LogUtil.warn("Skipping invalid region file {}", f);
                     continue;
                 }
 
                 full.getRaster().setRect(px, pz, regionImg.getRaster());
 
             } catch (IOException e) {
-                LogUtil.error("MapExport", e, "Failed to read region {}", f);
+                LogUtil.error("Failed to read region {}", f);
             }
         }
 
         try {
             ImageIO.write(full, "png", outputFile.toFile());
-            LogUtil.info("MapExport", "Full map exported to {}", outputFile);
+            LogUtil.info("Full map exported to {}", outputFile);
         } catch (IOException e) {
-            LogUtil.error("MapExport", e, "Failed to save full map to {}", outputFile);
+            LogUtil.error("Failed to save full map to {}", outputFile);
         }
     }
 
-    void saveRegionBlocking(NACoord regionCoord, MapRegion region, File file) {
+    public void saveRegionBlocking(NACoord regionCoord, MapRegion region, File file) {
         Profiler p = Profiler.start("saveRegion (" + regionCoord.x + "," + regionCoord.z + ")");
 
         try {
@@ -194,7 +195,7 @@ public class MapStorage {
             }
 
         } catch (IOException e) {
-            LogUtil.error("RegionStorage", e, "Failed to save region {} to {}", regionCoord, file);
+            LogUtil.error("Failed to save region {} to {}", regionCoord, file);
         }
 
         p.end();

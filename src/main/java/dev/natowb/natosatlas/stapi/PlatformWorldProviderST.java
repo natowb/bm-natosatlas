@@ -166,22 +166,29 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
     }
 
 
-    @Override
     public NAChunk getChunk(NACoord chunkCoord) {
         Chunk chunk = mc.world.getChunk(chunkCoord.x, chunkCoord.z);
         NAChunk nac = new NAChunk();
         for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
             for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
+
                 int height = getBlockHeight(chunk, x, z);
                 int blockId = chunk.getBlockId(x, height, z);
                 int depth = computeFluidDepth(chunk, x, height, z);
                 int blockLight = safeBlockLight(chunk, x, height + 1, z);
                 int meta = chunk.getBlockMeta(x, height, z);
-                nac.set(x, z, height, blockId, depth, blockLight, meta);
+
+                int worldBlockX = chunkCoord.x * 16 + x;
+                int worldBlockZ = chunkCoord.z * 16 + z;
+                NABiome biome = getBiome(NACoord.from(worldBlockX, worldBlockZ));
+
+                nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
             }
         }
+
         return nac;
     }
+
 
     @Override
     public NAChunk getChunkFromDisk(NACoord chunkCoord) {
@@ -196,7 +203,10 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
                 int depth = computeFluidDepth(chunk, x, height, z);
                 int blockLight = safeBlockLight(chunk, x, height + 1, z);
                 int meta = chunk.getBlockMeta(x, height, z);
-                nac.set(x, z, height, blockId, depth, blockLight, meta);
+                int worldBlockX = chunkCoord.x * 16 + x;
+                int worldBlockZ = chunkCoord.z * 16 + z;
+                NABiome biome = getBiome(NACoord.from(worldBlockX, worldBlockZ));
+                nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
             }
         }
 

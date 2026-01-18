@@ -16,8 +16,8 @@ public final class NAPaths {
 
     public static void updateBasePaths(Path _mcPath) {
         mcPath = _mcPath;
+        LogUtil.debug("NAPaths", "Setup base paths: nmcPath={} dataPath={}", mcPath, dataPath);
         dataPath = ensurePathExists(mcPath.resolve("natosatlas"));
-        LogUtil.info("NAPaths", "Setup base paths:\nmcPath={}\ndataPath={}", mcPath, dataPath);
 
     }
 

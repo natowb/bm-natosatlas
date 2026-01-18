@@ -2,7 +2,7 @@ package dev.natowb.natosatlas.core.utils;
 
 public final class Profiler {
 
-    private static volatile boolean ENABLED = false;
+    private static volatile boolean ENABLED = true;
 
     public static void setEnabled(boolean enabled) {
         ENABLED = enabled;

@@ -5,38 +5,42 @@ import java.util.Date;
 
 public final class LogUtil {
 
-    private static final String NS = "NatosAtlas";
+    private static final String MOD = "NatosAtlas";
     private static final SimpleDateFormat TIME = new SimpleDateFormat("HH:mm:ss");
 
-    private LogUtil() {
+    private static final String BLUE  = "\u001B[34m";
+    private static final String GREEN = "\u001B[32m";
+    private static final String CYAN  = "\u001B[36m";
+    private static final String RESET = "\u001B[0m";
+
+    private LogUtil() {}
+
+    public static void info(String format, Object... args) {
+        System.out.println(prefix("INFO") + format(format, args) + RESET);
     }
 
-    public static void info(String source, String format, Object... args) {
-        System.out.println(prefix("INFO", source) + format(format, args));
+    public static void warn(String format, Object... args) {
+        System.out.println(prefix("WARN") + format(format, args) + RESET);
     }
 
-    public static void warn(String source, String format, Object... args) {
-        System.out.println(prefix("WARN", source) + format(format, args));
+    public static void debug(String format, Object... args) {
+        System.out.println(prefix("DBUG") + format(format, args) + RESET);
     }
 
-    public static void debug(String source, String format, Object... args) {
-        System.out.println(prefix("DBUG", source) + format(format, args));
+    public static void error(String format, Object... args) {
+        System.err.println(prefix("ERRR") + format(format, args) + RESET);
     }
 
-    public static void error(String source, String format, Object... args) {
-        System.err.println(prefix("ERRR", source) + format(format, args));
-    }
+    private static String prefix(String level) {
+        String time   = TIME.format(new Date());
+        String thread = Thread.currentThread().getName();
 
-    public static void error(String source, Throwable t, String format, Object... args) {
-        System.err.println(prefix("ERROR", source) + format(format, args));
-        t.printStackTrace(System.err);
-    }
+        String timePart   = BLUE  + "[" + time   + "]" + RESET;
+        String threadPart = GREEN + "[" + thread + "/" + level + "]" + RESET;
+        String modPart    = CYAN  + "[" + MOD    + "]" + RESET;
 
-    private static String prefix(String level, String source) {
-        String time = TIME.format(new Date());
-        return "[" + time + "] [" + NS + "/" + level + "] (" + source + ") ";
+        return timePart + " " + threadPart + " " + modPart + " ";
     }
-
 
     private static String format(String template, Object... args) {
         if (template == null) return "null";
@@ -53,7 +57,7 @@ public final class LogUtil {
                 break;
             }
 
-            sb.append(template.substring(pos, brace));
+            sb.append(template, pos, brace);
 
             if (argIndex < args.length) {
                 Object arg = args[argIndex++];

@@ -1,13 +1,15 @@
-package dev.natowb.natosatlas.core.map;
+package dev.natowb.natosatlas.core.tasks;
 
 
 import dev.natowb.natosatlas.core.data.NACoord;
+import dev.natowb.natosatlas.core.map.MapRegion;
+import dev.natowb.natosatlas.core.map.MapStorage;
 
 import java.io.File;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class RegionSaveWorker {
+public class MapSaveWorker {
     private static final BlockingQueue<SaveTask> QUEUE = new LinkedBlockingQueue<>();
     private static volatile boolean running = false;
 
