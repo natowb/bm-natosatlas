@@ -10,95 +10,59 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.input.Keyboard;
 
 public class UIScreenWrapperST extends Screen {
-
-    private final UIScreen nac;
-    private boolean ignoreNextMouseClick = true;
     private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
+    private final UIScreen screen;
 
-    public UIScreenWrapperST(UIScreen nac) {
-        this.nac = nac;
+    public UIScreenWrapperST(UIScreen screen) {
+        this.screen = screen;
     }
 
     @Override
     public void init() {
         super.init();
-        nac.init(width, height);
+        screen.init(width, height);
         Keyboard.enableRepeatEvents(true);
-        ignoreNextMouseClick = true;
     }
 
     @Override
     public void removed() {
         Keyboard.enableRepeatEvents(false);
-        nac.onClose();
+        screen.onClose();
     }
 
     @Override
     public void tick() {
-        nac.tick();
+        screen.tick();
     }
 
     @Override
     public void render(int mouseX, int mouseY, float delta) {
         ScreenScaler ss = new ScreenScaler(mc.options, mc.displayWidth, mc.displayHeight);
-        nac.render(mouseX, mouseY, delta, new UIScaleInfo(ss.scaleFactor, ss.getScaledWidth(), ss.getScaledHeight()));
+        UIScaleInfo info = new UIScaleInfo(ss.scaleFactor, ss.getScaledWidth(), ss.getScaledHeight());
+        screen.render(mouseX, mouseY, delta, info);
     }
 
     @Override
     public void onMouseEvent() {
-        if (ignoreNextMouseClick) {
-            if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1) || Mouse.isButtonDown(2)) {
-                return;
-            }
-            ignoreNextMouseClick = false;
-        }
-
-        int x = Mouse.getEventX() * this.width / this.minecraft.displayWidth;
-        int y = this.height - Mouse.getEventY() * this.height / this.minecraft.displayHeight - 1;
-
-        int button = Mouse.getEventButton();
-
-        if (button != -1 && Mouse.getEventButtonState()) {
-            nac.mouseDown(x, y, button);
-        }
-
-        if (button != -1 && !Mouse.getEventButtonState()) {
-            nac.mouseUp(x, y, button);
-            nac.resetAllButtonsClickState();
-        }
-
-        if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1) || Mouse.isButtonDown(2)) {
-            if (Mouse.getEventDX() != 0 || Mouse.getEventDY() != 0) {
-                int mx = Mouse.getX() * this.width / this.minecraft.displayWidth;
-                int my = this.height - Mouse.getY() * this.height / this.minecraft.displayHeight - 1;
-
-                nac.mouseDrag(mx, my, 0);
-            }
-        }
-
-        int wheel = Mouse.getEventDWheel();
-        if (wheel != 0) {
-            nac.mouseScroll(wheel);
-        }
-    }
-
-
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int button) {
-    }
-
-    @Override
-    protected void mouseReleased(int mouseX, int mouseY, int button) {
+        int x = Mouse.getEventX() * width / minecraft.displayWidth;
+        int y = height - Mouse.getEventY() * height / minecraft.displayHeight - 1;
+        screen.handleRawMouseEvent(x, y, Mouse.getEventButton(), Mouse.getEventButtonState(), Mouse.getEventDWheel());
     }
 
     @Override
     protected void keyPressed(char character, int keyCode) {
-        nac.keyPressed(character, keyCode);
+        screen.keyPressed(character, keyCode);
     }
 
+
+    @Override
+    public void handleTab() {
+        screen.handleTab();
+    }
 
     @Override
     public boolean shouldPause() {
         return false;
     }
 }
+
