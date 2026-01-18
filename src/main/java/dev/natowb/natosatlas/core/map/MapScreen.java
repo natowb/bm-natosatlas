@@ -40,6 +40,15 @@ public class MapScreen extends UIScreen {
         ctx.canvasW = width;
         ctx.canvasH = height;
 
+        MapEntity player = NatosAtlas.get().platform.entityProvider.getLocalPlayer();
+        if (player != null) {
+            float playerPixelX = (float) player.x * 8f;
+            float playerPixelZ = (float) player.z * 8f;
+            ctx.scrollX = playerPixelX - (ctx.canvasW / 2f) / ctx.zoom;
+            ctx.scrollY = playerPixelZ - (ctx.canvasH / 2f) / ctx.zoom;
+
+        }
+
         int padding = 6;
 
         int buttonW = 80;
