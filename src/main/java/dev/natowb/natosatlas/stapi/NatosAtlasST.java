@@ -88,6 +88,9 @@ public class NatosAtlasST {
 
     @EventListener
     public void handle(KeyStateChangedEvent event) {
+
+        if(!NatosAtlas.get().isEnabled()) return;
+
         if (Keyboard.getEventKeyState()) {
             if (Keyboard.isKeyDown(NatosAtlasST.KEY_BINDING_MAP.code)) {
                 if (event.environment == KeyStateChangedEvent.Environment.IN_GAME) {
