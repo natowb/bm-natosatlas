@@ -1,6 +1,9 @@
 package dev.natowb.natosatlas.core.settings;
 
 import dev.natowb.natosatlas.core.utils.LogUtil;
+import dev.natowb.natosatlas.core.utils.NAPaths;
+
+import java.io.File;
 
 public final class Settings {
 
@@ -21,12 +24,12 @@ public final class Settings {
     }
 
     public static void load() {
-        STORAGE.load();
+        STORAGE.load(new File(NAPaths.getDataPath().toFile(), "settings.txt"));
         LogUtil.info("Loaded settings");
     }
 
     public static void save() {
-        STORAGE.save();
+        STORAGE.save(new File(NAPaths.getDataPath().toFile(), "settings.txt"));
         LogUtil.info("Saved settings");
     }
 }

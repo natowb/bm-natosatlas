@@ -8,10 +8,10 @@ public final class LogUtil {
     private static final String MOD = "NatosAtlas";
     private static final SimpleDateFormat TIME = new SimpleDateFormat("HH:mm:ss");
 
-    private static final String BLUE  = "\u001B[34m";
-    private static final String GREEN = "\u001B[32m";
-    private static final String CYAN  = "\u001B[36m";
-    private static final String RESET = "\u001B[0m";
+    private static final String BLUE  = "";
+    private static final String GREEN = "";
+    private static final String CYAN  = "";
+    private static final String RESET = "";
 
     private LogUtil() {}
 

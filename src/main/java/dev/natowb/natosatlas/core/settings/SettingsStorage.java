@@ -7,9 +7,6 @@ import java.io.File;
 
 public final class SettingsStorage extends TextStorage {
 
-    public SettingsStorage() {
-        super(new File(NAPaths.getDataPath().toFile(), "settings.txt"));
-    }
 
     @Override
     protected String getName() {

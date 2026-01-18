@@ -1,7 +1,9 @@
 package dev.natowb.natosatlas.core.waypoint;
 
 import dev.natowb.natosatlas.core.utils.LogUtil;
+import dev.natowb.natosatlas.core.utils.NAPaths;
 
+import java.io.File;
 import java.util.List;
 
 public final class Waypoints {
@@ -12,12 +14,12 @@ public final class Waypoints {
     }
 
     public static void load() {
-        STORAGE.load();
+        STORAGE.load(new File(NAPaths.getWorldDataPath().toFile(), "waypoints.txt"));
         LogUtil.info("Loaded {} waypoints", STORAGE.getAll().size());
     }
 
     public static void save() {
-        STORAGE.save();
+        STORAGE.save(new File(NAPaths.getWorldDataPath().toFile(), "waypoints.txt"));
         LogUtil.info("Saved {} waypoints", STORAGE.getAll().size());
     }
 

@@ -48,7 +48,7 @@ public final class NAPaths {
         return dataPath;
     }
 
-    public static Path geWorldDataPath() {
+    public static Path getWorldDataPath() {
         return worldDataPath;
     }
 

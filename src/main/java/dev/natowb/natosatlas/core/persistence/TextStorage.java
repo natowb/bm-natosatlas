@@ -12,16 +12,12 @@ import java.util.Map;
 public abstract class TextStorage {
 
     protected final Map<String, String> values = new HashMap<>();
-    private final File file;
 
-    protected TextStorage(File file) {
-        this.file = file;
-    }
 
-    public final void load() {
+    public final void load(File file) {
         values.clear();
         if (!file.exists()) {
-            save();
+            save(file);
             return;
         }
 
@@ -35,7 +31,7 @@ public abstract class TextStorage {
         onLoad();
     }
 
-    public final void save() {
+    public final void save(File file) {
         onSave();
 
         List<String> lines = new ArrayList<>();

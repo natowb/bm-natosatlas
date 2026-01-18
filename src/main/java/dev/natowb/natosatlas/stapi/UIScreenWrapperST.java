@@ -46,7 +46,6 @@ public class UIScreenWrapperST extends Screen {
 
     @Override
     public void onMouseEvent() {
-
         if (ignoreNextMouseClick) {
             if (Mouse.isButtonDown(0) || Mouse.isButtonDown(1) || Mouse.isButtonDown(2)) {
                 return;

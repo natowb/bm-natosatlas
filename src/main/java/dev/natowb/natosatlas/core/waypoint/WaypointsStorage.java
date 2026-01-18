@@ -11,10 +11,6 @@ public final class WaypointsStorage extends TextStorage {
 
     private final List<Waypoint> waypoints = new ArrayList<>();
 
-    public WaypointsStorage() {
-        super(new File(NAPaths.getDataPath().toFile(), "waypoints.txt"));
-    }
-
     public List<Waypoint> getAll() {
         return waypoints;
     }
