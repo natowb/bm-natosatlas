@@ -50,11 +50,11 @@ public class MapChunkRendererSurface implements MapChunkRenderer {
         MapBiome biome = NatosAtlas.get().platform.worldProvider.getBiome(worldBlockX, worldBlockZ);
 
         if (blockId == BLOCK_GRASS_ID) {
-            baseColor = mixColors(baseColor, biome.grassColor, 0.2f);
+            baseColor = mixColors(baseColor, biome.grassColor, 0.1f);
         }
 
         if (blockId == BLOCK_LEAVES_ID) {
-            baseColor = mixColors(baseColor, biome.foliageColor, 0.2f);
+            baseColor = mixColors(baseColor, biome.foliageColor, 0.4f);
         }
 
         if (isFluid(blockId))
