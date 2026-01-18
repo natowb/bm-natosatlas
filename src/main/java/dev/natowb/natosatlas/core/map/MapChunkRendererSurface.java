@@ -49,6 +49,10 @@ public class MapChunkRendererSurface implements MapChunkRenderer {
             baseColor = mixColors(baseColor, biome.foliageColor, 0.4f);
         }
 
+        if(chunk.slimeChunk) {
+            baseColor = mixColors(baseColor, 0xFF0000, 0.5F);
+        }
+
         if (isFluid(blockId))
             return waterColor(localBlockX, localBlockZ, chunk, baseColor);
 

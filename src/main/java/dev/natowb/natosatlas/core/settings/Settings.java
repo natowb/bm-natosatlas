@@ -16,6 +16,8 @@ public final class Settings {
     public static float defaultZoom = 0.5f;
     public static EntityDisplayMode entityDisplayMode = EntityDisplayMode.All;
     public static MapRenderMode mapRenderMode = MapRenderMode.Auto;
+    public static boolean slimeChunk = false;
+
 
     private Settings() {
     }

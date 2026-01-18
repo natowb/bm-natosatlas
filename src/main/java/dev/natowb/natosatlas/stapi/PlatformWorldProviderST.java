@@ -3,10 +3,12 @@ package dev.natowb.natosatlas.stapi;
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.platform.PlatformWorldProvider;
+import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.world.GrassColors;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -163,7 +165,6 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
         LogUtil.info("All regions scanned.");
     }
 
-
     public NAChunk getChunk(NACoord chunkCoord) {
         Chunk chunk = mc.world.getChunk(chunkCoord.x, chunkCoord.z);
         NAChunk nac = new NAChunk();
@@ -175,12 +176,13 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
                 int depth = computeFluidDepth(chunk, x, height, z);
                 int blockLight = safeBlockLight(chunk, x, height + 1, z);
                 int meta = chunk.getBlockMeta(x, height, z);
+                boolean slime = Settings.slimeChunk && chunk.getSlimeRandom(987234911L).nextInt(10) == 0;
 
                 int worldBlockX = chunkCoord.x * 16 + x;
                 int worldBlockZ = chunkCoord.z * 16 + z;
                 NABiome biome = getBiome(NACoord.from(worldBlockX, worldBlockZ));
 
-                nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
+                nac.set(x, z, height, blockId, depth, blockLight, meta, biome, slime);
             }
         }
 
@@ -203,8 +205,9 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
                 int meta = chunk.getBlockMeta(x, height, z);
                 int worldBlockX = chunkCoord.x * 16 + x;
                 int worldBlockZ = chunkCoord.z * 16 + z;
+                boolean slime = chunk.getSlimeRandom(987234911L).nextInt(10) == 0;
                 NABiome biome = getBiome(NACoord.from(worldBlockX, worldBlockZ));
-                nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
+                nac.set(x, z, height, blockId, depth, blockLight, meta, biome, slime);
             }
         }
 

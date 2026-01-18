@@ -60,6 +60,18 @@ public enum SettingsOption {
         }
     },
 
+    SLIME_CHUNK("Slime Chunk") {
+        @Override
+        public void cycle() {
+            Settings.slimeChunk = !Settings.slimeChunk;
+        }
+
+        @Override
+        public String getValueLabel() {
+            return Settings.slimeChunk ? "On" : "Off";
+        }
+    },
+
     DEBUG_INFO("Debug") {
         @Override
         public void cycle() {

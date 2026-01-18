@@ -9,6 +9,7 @@ public class NAChunk {
     public final int[] meta;
     public final int[] blockLight;
     public final NABiome[] biome;
+    public boolean slimeChunk = false;
 
     public NAChunk() {
         this.blockIds = new int[BLOCKS_PER_MINECRAFT_CHUNK * BLOCKS_PER_MINECRAFT_CHUNK];
@@ -23,7 +24,7 @@ public class NAChunk {
         return z * BLOCKS_PER_MINECRAFT_CHUNK + x;
     }
 
-    public void set(int x, int z, int height, int blockId, int depth, int blockLight, int meta, NABiome biome) {
+    public void set(int x, int z, int height, int blockId, int depth, int blockLight, int meta, NABiome biome, boolean slimeChunk) {
         int i = index(x, z);
         this.heights[i] = height;
         this.blockIds[i] = blockId;
@@ -31,6 +32,7 @@ public class NAChunk {
         this.blockLight[i] = blockLight;
         this.meta[i] = meta;
         this.biome[i] = biome;
+        this.slimeChunk = slimeChunk;
     }
 
 }
