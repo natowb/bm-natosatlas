@@ -7,7 +7,7 @@ import dev.natowb.natosatlas.core.tasks.MapSaveScheduler;
 import dev.natowb.natosatlas.core.tasks.MapSaveWorker;
 import dev.natowb.natosatlas.core.platform.Platform;
 import dev.natowb.natosatlas.core.settings.Settings;
-import dev.natowb.natosatlas.core.tasks.MapUpdateWorker;
+import dev.natowb.natosatlas.core.tasks.MapUpdateScheduler;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import dev.natowb.natosatlas.core.waypoint.Waypoints;
@@ -22,7 +22,6 @@ public class NatosAtlas {
     private static final int RADIUS = 8;
     private static final int TPS = 20;
     private static final int UPDATE_INTERVAL = TPS;
-    private static final int SAVE_INTERVAL = TPS;
 
     private static NatosAtlas instance = null;
 
@@ -86,16 +85,13 @@ public class NatosAtlas {
         LogUtil.info("Joined world name={}, saveName={}", worldInfo.worldName, worldSaveName);
         NAPaths.updateWorldPath(saveName);
         Waypoints.load();
-
         MapSaveWorker.start();
-        MapUpdateWorker.start();
     }
 
     public void onWorldLeft() {
 
         if (!enabled) return;
 
-        MapUpdateWorker.stop();
         MapSaveWorker.stop();
         cache.clear();
 
@@ -116,6 +112,7 @@ public class NatosAtlas {
             updateNearbyChunks();
         }
 
+        MapUpdateScheduler.run();
         MapSaveScheduler.run();
     }
 
@@ -182,7 +179,7 @@ public class NatosAtlas {
                 int wz = activeChunkZ + dz;
 
                 NAChunk chunk = platform.worldProvider.getChunk(NACoord.from(wx, wz));
-                MapUpdateWorker.enqueue(renderer, NACoord.from(wx, wz), chunk);
+                MapUpdateScheduler.enqueue(renderer, NACoord.from(wx, wz), chunk);
             }
         }
     }
