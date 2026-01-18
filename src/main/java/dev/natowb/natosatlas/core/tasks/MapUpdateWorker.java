@@ -19,7 +19,7 @@ public class MapUpdateWorker {
             while (running) {
                 try {
                     ChunkTask task = QUEUE.take();
-                    task.manager.processChunkSync(task.worldChunkX, task.worldChunkZ, task.chunk);
+                    task.manager.updateChunk(task.worldChunkX, task.worldChunkZ, task.chunk);
                 } catch (InterruptedException ignored) {
                 } catch (Exception e) {
                     e.printStackTrace();

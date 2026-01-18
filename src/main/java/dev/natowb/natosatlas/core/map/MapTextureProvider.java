@@ -1,15 +1,16 @@
 package dev.natowb.natosatlas.core.map;
 
+import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NACoord;
 
 public final class MapTextureProvider {
-    private final MapRenderer renderer;
-
-    public MapTextureProvider(MapRenderer renderer) {
-        this.renderer = renderer;
-    }
 
     public int getTexture(NACoord coord) {
-        return renderer.getTexture(coord);
+        MapLayer layer = NatosAtlas.get().layers.getActiveLayer();
+        MapRegion region = NatosAtlas.get().cache.getRegion(layer.id, coord);
+        if (region == null) return -1;
+
+        region.updateTexture();
+        return region.getTextureId();
     }
 }

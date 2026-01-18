@@ -96,7 +96,6 @@ public class MapCache {
 
         NACoord coord = NACoord.fromKey(key);
 
-        // Save all layers that exist
         for (int layerId = 0; layerId < layerCount; layerId++) {
             MapRegion region = arr[layerId];
             if (region != null) {

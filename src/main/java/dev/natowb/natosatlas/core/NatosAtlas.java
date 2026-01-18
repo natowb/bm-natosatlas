@@ -36,7 +36,7 @@ public class NatosAtlas {
     public final MapRenderer renderer;
     public final MapTextureProvider textures;
     public final MapCache cache;
-
+    public final MapLayerManager layers;
 
     public NAWorldInfo worldInfo;
 
@@ -56,7 +56,8 @@ public class NatosAtlas {
 
         this.platform = platform;
         this.renderer = new MapRenderer();
-        this.textures = new MapTextureProvider(this.renderer);
+        this.layers = new MapLayerManager();
+        this.textures = new MapTextureProvider();
         this.cache = new MapCache(new MapStorage());
         NAPaths.updateBasePaths(platform.getMinecraftDirectory());
         Settings.load();
@@ -125,32 +126,16 @@ public class NatosAtlas {
     }
 
     private void updateActiveLayer() {
-        int oldLayer = renderer.getLayer().id;
-
         if (Settings.mapRenderMode == Settings.MapRenderMode.Day) {
-            renderer.setActiveLayer(0);
+            layers.setActiveLayer(0);
         } else if (Settings.mapRenderMode == Settings.MapRenderMode.Night) {
-            renderer.setActiveLayer(1);
+            layers.setActiveLayer(1);
         } else {
             long time = worldInfo.worldTime % 24000L;
-            renderer.setActiveLayer(time < 12000L ? 0 : 1);
+            layers.setActiveLayer(time < 12000L ? 0 : 1);
         }
 
-        int newLayer = renderer.getLayer().id;
-
-        if (newLayer != oldLayer) {
-            reloadVisibleRegionsForNewLayer();
-        }
     }
-
-    private void reloadVisibleRegionsForNewLayer() {
-        for (long key : visibleRegions) {
-            NACoord coord = NACoord.fromKey(key);
-            cache.getRegion(renderer.getLayer().id, coord);
-        }
-    }
-
-
 
 
     public void updateCanvasVisibleRegions(Set<Long> visible) {
