@@ -183,10 +183,8 @@ public class MapStorage {
         }
     }
 
-
     void saveRegionBlocking(MapRegionCoord coord, MapRegion region) {
         Profiler p = Profiler.start("saveRegion (" + coord.getX() + "," + coord.getZ() + ")");
-
         Path file = getRegionFile(coord);
 
         try {
@@ -202,12 +200,9 @@ public class MapStorage {
 
             p.mark("open stream");
             try (ImageOutputStream out = ImageIO.createImageOutputStream(file.toFile())) {
-
                 pngWriter.setOutput(out);
-
                 p.mark("pngWriter.write");
                 pngWriter.write(null, new IIOImage(reusableImage, null, null), pngParams);
-
                 p.mark("write complete");
             }
 
@@ -217,5 +212,4 @@ public class MapStorage {
 
         p.end();
     }
-
 }

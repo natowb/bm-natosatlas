@@ -2,6 +2,7 @@ package dev.natowb.natosatlas.core.map;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.settings.Settings;
+import dev.natowb.natosatlas.core.utils.Profiler;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -99,19 +100,23 @@ public class MapManager {
     public void update(int playerChunkX, int playerChunkZ) {
         this.activeChunkX = playerChunkX;
         this.activeChunkZ = playerChunkZ;
-
         updateSelectedLayer();
+        Profiler p = Profiler.start("MapManager.update");
 
         if (++updateTimer >= UPDATE_INTERVAL) {
             updateTimer = 0;
             updateActiveRegions(playerChunkX, playerChunkZ);
+            p.mark("updateActiveRegions");
             updateNearbyChunks(playerChunkX, playerChunkZ);
+            p.mark("updateNearbyChunks");
         }
 
         if (++saveTimer >= SAVE_INTERVAL) {
             saveTimer = 0;
             layers.forEach(layer -> layer.cache().saveOneRegion());
         }
+        p.mark("saveRegions");
+        p.end();
     }
 
     private void updateSelectedLayer() {

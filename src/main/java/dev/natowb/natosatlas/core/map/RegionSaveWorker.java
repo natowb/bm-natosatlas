@@ -5,10 +5,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class RegionSaveWorker {
-
     private static final BlockingQueue<SaveTask> QUEUE = new LinkedBlockingQueue<>();
     private static volatile boolean running = false;
-
     public static void start() {
         if (running) return;
         running = true;
@@ -16,7 +14,7 @@ public class RegionSaveWorker {
         Thread worker = new Thread(() -> {
             while (running) {
                 try {
-                    SaveTask task = QUEUE.take(); // waits for work
+                    SaveTask task = QUEUE.take();
                     task.storage.saveRegionBlocking(task.coord, task.region);
                 } catch (InterruptedException ignored) {}
             }
@@ -45,5 +43,4 @@ public class RegionSaveWorker {
             this.region = region;
         }
     }
-
 }
