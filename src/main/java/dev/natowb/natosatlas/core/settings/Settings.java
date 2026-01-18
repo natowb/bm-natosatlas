@@ -22,11 +22,11 @@ public final class Settings {
 
     public static void load() {
         STORAGE.load();
-        LogUtil.info("Settings", "loaded settings");
+        LogUtil.info("Loaded settings");
     }
 
     public static void save() {
         STORAGE.save();
-        LogUtil.info("Settings", "saved settings");
+        LogUtil.info("Saved settings");
     }
 }

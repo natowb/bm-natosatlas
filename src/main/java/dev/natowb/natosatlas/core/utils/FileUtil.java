@@ -15,7 +15,7 @@ public final class FileUtil {
         try {
             return Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            LogUtil.error("IO", e, "Failed to read file {}", file.getName());
+            LogUtil.error("Failed to read file {}", file.getName());
             return Collections.emptyList();
         }
     }
@@ -36,7 +36,7 @@ public final class FileUtil {
             return true;
 
         } catch (Exception e) {
-            LogUtil.error("IO", e, "Failed to write file {}", file.getName());
+            LogUtil.error("Failed to write file {}", file.getName());
             return false;
         }
     }

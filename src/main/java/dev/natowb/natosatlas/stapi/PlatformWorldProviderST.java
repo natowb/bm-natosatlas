@@ -116,7 +116,7 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
 
         File[] regionFiles = regionDir.listFiles((dir, name) -> name.endsWith(".mcr"));
         if (regionFiles == null || regionFiles.length == 0) {
-            LogUtil.info("ChunkScanner", "No region files found.");
+            LogUtil.info("No region files found.");
             return;
         }
 
@@ -133,11 +133,7 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
             int rx = Integer.parseInt(parts[0]);
             int rz = Integer.parseInt(parts[1]);
 
-            LogUtil.info(
-                    "ChunkScanner",
-                    "Scanning region {} of {} -> r({}, {})",
-                    regionIndex, totalRegions, rx, rz
-            );
+            LogUtil.info("Scanning region {} of {} -> r({}, {})", regionIndex, totalRegions, rx, rz);
 
             RegionFile rf = new RegionFile(regionFile);
 
@@ -158,11 +154,11 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
                     NatosAtlas.get().regionManager.updateChunk(worldChunkX, worldChunkZ, chunk);
                 }
             }
-            LogUtil.info("ChunkScanner", "Finished region r({}, {})  ({} chunks found)", rx, rz, processed);
+            LogUtil.info("Finished region r({}, {})  ({} chunks found)", rx, rz, processed);
             rf.close();
         }
 
-        LogUtil.info("ChunkScanner", "All regions scanned.");
+        LogUtil.info("All regions scanned.");
     }
 
 

@@ -16,16 +16,16 @@ public final class NAPaths {
 
     public static void updateBasePaths(Path _mcPath) {
         mcPath = _mcPath;
-        LogUtil.debug("NAPaths", "Setup base paths: nmcPath={} dataPath={}", mcPath, dataPath);
         dataPath = ensurePathExists(mcPath.resolve("natosatlas"));
-
+        LogUtil.info("Set mcPath to {}", mcPath);
+        LogUtil.info("Set dataPath to {}", dataPath);
     }
 
     public static void updateWorldPath(NAWorldInfo info) {
         worldDataPath = ensurePathExists(dataPath.resolve(String.format("worlds/%s/", info.worldName)));
         worldSavePath = ensurePathExists(mcPath.resolve("saves/" + info.worldName));
-        LogUtil.info("NAPaths", "Setup world paths, worldDataPath={}, worldSavePath={}", worldDataPath, worldSavePath);
-
+        LogUtil.info("Set worldDataPath to {}", worldDataPath);
+        LogUtil.info("Set worldSavePath to {}", worldSavePath);
     }
 
     public static Path ensurePathExists(Path path) {
@@ -36,9 +36,9 @@ public final class NAPaths {
 
         try {
             Files.createDirectories(path);
-            LogUtil.debug("NAPaths", "ensured path {}", path);
+            LogUtil.debug("Created directories for {}", path);
         } catch (IOException e) {
-            LogUtil.error("NAPaths", e, "Failed to ensure path {}", path);
+            LogUtil.error("Failed to create directories for {}", path);
         }
         return path;
     }

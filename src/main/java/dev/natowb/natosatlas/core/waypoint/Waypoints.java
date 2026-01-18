@@ -13,12 +13,12 @@ public final class Waypoints {
 
     public static void load() {
         STORAGE.load();
-        LogUtil.info("Waypoints", "Loaded {} waypoints", STORAGE.getAll().size());
+        LogUtil.info("Loaded {} waypoints", STORAGE.getAll().size());
     }
 
     public static void save() {
         STORAGE.save();
-        LogUtil.info("Waypoints", "Saved {} waypoints", STORAGE.getAll().size());
+        LogUtil.info("Saved {} waypoints", STORAGE.getAll().size());
     }
 
     public static List<Waypoint> getAll() {
@@ -27,13 +27,13 @@ public final class Waypoints {
 
     public static void add(Waypoint wp) {
         STORAGE.getAll().add(wp);
-        LogUtil.info("Waypoints", "Added waypoint {}", wp.name);
+        LogUtil.debug("Added waypoint {}", wp.name);
         save();
     }
 
     public static void remove(Waypoint wp) {
         STORAGE.getAll().remove(wp);
-        LogUtil.info("Waypoints", "Removed waypoint {}", wp.name);
+        LogUtil.debug("Removed waypoint {}", wp.name);
         save();
     }
 
@@ -43,7 +43,7 @@ public final class Waypoints {
 
         if (index >= 0) {
             list.set(index, newWp);
-            LogUtil.info("Waypoints", "Updated waypoint {} -> {}", oldWp.name, newWp.name);
+            LogUtil.debug("Updated waypoint {} -> {}", oldWp.name, newWp.name);
             save();
         }
     }

@@ -1,14 +1,10 @@
 package dev.natowb.natosatlas.core.utils;
 
 public final class Profiler {
-
-    private static volatile boolean ENABLED = true;
-
-    public static void setEnabled(boolean enabled) {
-        ENABLED = enabled;
-    }
+    private static final boolean ENABLED = true;
 
     private long last;
+    private long start;
     private final String label;
     private final boolean active;
 
@@ -25,7 +21,8 @@ public final class Profiler {
 
         if (active) {
             this.last = System.nanoTime();
-            LogUtil.debug("PROF", "-> " + label);
+            this.start = this.last;
+            LogUtil.debug("ProfileStart(" + label + ")");
         }
     }
 
@@ -33,18 +30,17 @@ public final class Profiler {
 
     public void mark(String name) {
         if (!active) return;
-
         long now = System.nanoTime();
         long ms = (now - last) / 1_000_000L;
-        LogUtil.debug("PROF", "  - " + name + ": " + ms + " ms");
+        LogUtil.debug("  ProfileMark(" + name + ") time: " + ms + " ms");
         last = now;
     }
 
     public void end() {
         if (!active) return;
-
         long now = System.nanoTime();
-        long ms = (now - last) / 1_000_000L;
-        LogUtil.debug("PROF", "<- " + label + " total: " + ms + " ms");
+        long totalMs = (now - start) / 1_000_000L;
+        long lastMs = (now - last) / 1_000_000L;
+        LogUtil.debug("ProfileEnd(" + label + ") time: " + lastMs + "ms, total: " + totalMs + "ms");
     }
 }
