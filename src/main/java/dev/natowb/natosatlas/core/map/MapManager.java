@@ -122,21 +122,18 @@ public class MapManager {
     }
 
     private void updateSelectedLayer() {
-
-        boolean day = true;
-
-        switch (Settings.mapRenderMode) {
-            case Day:
-                day = true;
-                break;
-            case Night:
-                day = false;
-                break;
-            case Auto:
-                day = NatosAtlas.get().platform.worldProvider.isDaytime();
-                break;
+        if (Settings.mapRenderMode == Settings.MapRenderMode.Day) {
+            setActiveLayer(0);
+            return;
         }
-        setActiveLayer(day ? 0 : 1);
+
+        if (Settings.mapRenderMode == Settings.MapRenderMode.Night) {
+            setActiveLayer(1);
+            return;
+        }
+
+        long time = NatosAtlas.get().platform.worldProvider.getWorldInfo().worldTime % 24000L;
+        setActiveLayer(time < 12000L ? 0 : 1);
     }
 
 

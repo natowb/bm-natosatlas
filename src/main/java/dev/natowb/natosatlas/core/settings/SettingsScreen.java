@@ -56,7 +56,7 @@ public class SettingsScreen extends UIScreen {
         ));
 
         generateExistingButton = new UIElementButton(201, centerX, baseY + rowH * 3, 150, 20, "Generate Existing");
-        if (NatosAtlas.get().platform.worldProvider.isRemote())
+        if (NatosAtlas.get().platform.worldProvider.getWorldInfo().isServer)
             generateExistingButton.active = false;
 
         float storedZoom = Settings.defaultZoom;

@@ -4,6 +4,7 @@ import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
+import dev.natowb.natosatlas.core.data.NAWorldInfo;
 import dev.natowb.natosatlas.core.platform.PlatformWorldProvider;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import net.fabricmc.loader.api.FabricLoader;
@@ -43,37 +44,25 @@ public class NacWorldProviderST implements PlatformWorldProvider {
     Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
     @Override
-    public String getName() {
+    public NAWorldInfo getWorldInfo() {
+        int dimension = mc.world.dimension.id;
+        boolean isServer = mc.isWorldRemote();
+        long time = mc.world.getTime();
+
         String name;
         if (mc.isWorldRemote()) {
             name = mc.options.lastServer;
         } else {
             name = mc.world.getProperties().getName();
         }
-        return name;
-    }
 
-    @Override
-    public boolean isRemote() {
-        return mc.isWorldRemote();
+        File worldDir = NatosAtlas.get().platform.getMinecraftDirectory().resolve("saves/" + name).toFile();
+        return new NAWorldInfo(name, isServer, time, dimension, worldDir);
     }
-
-    @Override
-    public int getDimension() {
-        return mc.player.dimensionId;
-    }
-
-    @Override
-    public boolean isDaytime() {
-        long time = mc.world.getTime() % 24000L;
-        return time < 12000L;
-    }
-
 
     @Override
     public void generateExistingChunks() {
-        File worldDir = NatosAtlas.get().platform.getMinecraftDirectory().resolve("saves/" + getName()).toFile();
-        File regionDir = new File(worldDir, "region");
+        File regionDir = new File(getWorldInfo().worldDirectory, "region");
 
         File[] regionFiles = regionDir.listFiles((dir, name) -> name.endsWith(".mcr"));
         if (regionFiles == null || regionFiles.length == 0) {
@@ -115,7 +104,7 @@ public class NacWorldProviderST implements PlatformWorldProvider {
                     int worldChunkX = rx * 32 + x;
                     int worldChunkZ = rz * 32 + z;
 
-                    NAChunk chunk = buildSurface(NACoord.from(worldChunkX, worldChunkZ));
+                    NAChunk chunk = buildFromStorage(NACoord.from(worldChunkX, worldChunkZ));
                     NatosAtlas.get().regionManager.updateChunk(worldChunkX, worldChunkZ, chunk);
                 }
             }
@@ -152,8 +141,7 @@ public class NacWorldProviderST implements PlatformWorldProvider {
 
     @Override
     public NAChunk buildFromStorage(NACoord chunkCoord) {
-        File worldDir = NatosAtlas.get().platform.getMinecraftDirectory().resolve("saves/" + NatosAtlas.get().platform.worldProvider.getName()).toFile();
-        FlattenedWorldChunkLoader chunkLoader = new FlattenedWorldChunkLoader(worldDir);
+        FlattenedWorldChunkLoader chunkLoader = new FlattenedWorldChunkLoader(getWorldInfo().worldDirectory);
         Chunk chunk = chunkLoader.loadChunk(mc.world, chunkCoord.x, chunkCoord.z);
 
         NAChunk nac = new NAChunk();

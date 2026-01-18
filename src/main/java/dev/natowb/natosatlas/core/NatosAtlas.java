@@ -77,7 +77,7 @@ public class NatosAtlas {
     }
 
     public Path getWorldRegionDataPath() {
-        Path path = worldRegionDataPath.resolve("DIM" + platform.worldProvider.getDimension());
+        Path path = worldRegionDataPath.resolve("DIM" + platform.worldProvider.getWorldInfo().worldDimension);
         try {
             Files.createDirectories(path);
         } catch (IOException e) {
@@ -116,7 +116,7 @@ public class NatosAtlas {
     }
 
     private void updateWorldDataPath() {
-        worldDataPath = getDataPath().resolve("worlds/" + platform.worldProvider.getName());
+        worldDataPath = getDataPath().resolve("worlds/" + platform.worldProvider.getWorldInfo().worldName);
         try {
             Files.createDirectories(worldDataPath);
             LogUtil.debug("Platform", "Ensured world directory {}", worldDataPath);
