@@ -1,19 +1,19 @@
-package dev.natowb.natosatlas.stapi;
+package dev.natowb.natosatlas.modloader;
 
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ScreenScaler;
-import org.lwjgl.input.Mouse;
+import net.minecraft.src.ModLoader;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
-public class UIScreenWrapperST extends Screen {
-    private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
+public class UIScreenWrapperML extends Screen {
+    private final Minecraft minecraft = ModLoader.getMinecraftInstance();
     private final UIScreen screen;
 
-    public UIScreenWrapperST(UIScreen screen) {
+    public UIScreenWrapperML(UIScreen screen) {
         this.screen = screen;
     }
 
@@ -37,9 +37,8 @@ public class UIScreenWrapperST extends Screen {
 
     @Override
     public void render(int mouseX, int mouseY, float delta) {
-        ScreenScaler ss = new ScreenScaler(mc.options, mc.displayWidth, mc.displayHeight);
-        UIScaleInfo info = new UIScaleInfo(ss.scaleFactor, ss.getScaledWidth(), ss.getScaledHeight());
-        screen.render(mouseX, mouseY, delta, info);
+        ScreenScaler ss = new ScreenScaler(minecraft.options, minecraft.displayWidth, minecraft.displayHeight);
+        screen.render(mouseX, mouseY, delta, new UIScaleInfo(ss.scaleFactor, ss.getScaledWidth(), ss.getScaledHeight()));
     }
 
     @Override
@@ -50,14 +49,16 @@ public class UIScreenWrapperST extends Screen {
     }
 
     @Override
-    protected void keyPressed(char character, int keyCode) {
-        screen.keyPressed(character, keyCode);
+    protected void keyPressed(char var1, int var2) {
+        screen.keyPressed(var1, var2);
     }
 
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int button) {
+    }
 
     @Override
-    public void handleTab() {
-        screen.handleTab();
+    protected void mouseReleased(int var1, int var2, int var3) {
     }
 
     @Override
@@ -65,4 +66,3 @@ public class UIScreenWrapperST extends Screen {
         return false;
     }
 }
-

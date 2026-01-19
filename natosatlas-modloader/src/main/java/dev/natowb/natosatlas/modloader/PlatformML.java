@@ -1,40 +1,35 @@
-package dev.natowb.natosatlas.stapi;
+package dev.natowb.natosatlas.modloader;
 
 import dev.natowb.natosatlas.core.platform.Platform;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.src.ModLoader;
 
 import java.nio.file.Path;
 
-public class PlatformST extends Platform {
-
-    public PlatformST() {
-        super(new PlatformPainterST(), new PlatformWorldProviderST());
-
-
+public class PlatformML extends Platform {
+    public PlatformML() {
+        super(new PlatformPainterML(), new PlatformWorldProviderML());
     }
-
 
     @Override
     public Path getMinecraftDirectory() {
-        return FabricLoader.getInstance().getGameDir();
+        return Minecraft.getRunDirectory().toPath();
     }
 
     @Override
     public void openNacScreen(UIScreen screen) {
-        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
+        Minecraft mc = ModLoader.getMinecraftInstance();
         if (screen == null) {
             mc.setScreen(null);
         } else {
-            mc.setScreen(new UIScreenWrapperST(screen));
+            mc.setScreen(new UIScreenWrapperML(screen));
         }
     }
 
     @Override
     public void playSound(String sound, float volume, float pitch) {
-        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
+        Minecraft mc = ModLoader.getMinecraftInstance();
         mc.soundManager.playSound(sound, volume, pitch);
-
     }
 }

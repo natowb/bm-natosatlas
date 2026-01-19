@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.stapi;
+package dev.natowb.natosatlas.stationapi;
 
 import dev.natowb.natosatlas.core.platform.PlatformPainterDefault;
 import net.fabricmc.loader.api.FabricLoader;

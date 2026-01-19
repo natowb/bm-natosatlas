@@ -1,0 +1,7 @@
+tiny	2	0	source	runtime
+c	net/minecraft/src/BaseMod	BaseMod
+c	net/minecraft/src/EntityRendererProxy	EntityRendererProxy
+c	net/minecraft/src/MLProp	MLProp
+c	net/minecraft/src/ModLoader	ModLoader
+c	net/minecraft/src/ModTextureAnimation	ModTextureAnimation
+c	net/minecraft/src/ModTextureStatic	ModTextureStatic

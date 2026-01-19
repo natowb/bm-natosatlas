@@ -21,7 +21,7 @@
     "stationapi:event_bus": [
     ],
     "stationapi:event_bus_client": [
-      "dev.natowb.natosatlas.stapi.NatosAtlasST"
+      "dev.natowb.natosatlas.stationapi.NatosAtlasST"
     ],
     "stationapi:event_bus_server": [
     ]
