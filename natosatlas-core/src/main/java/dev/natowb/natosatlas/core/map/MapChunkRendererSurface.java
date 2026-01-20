@@ -1,12 +1,10 @@
 package dev.natowb.natosatlas.core.map;
 
+import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.utils.ColorMapperUtil;
 
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.*;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_LAVA_MOVING_ID;
 import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_CANVAS_REGION;
 import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CHUNK;
 
@@ -33,23 +31,20 @@ public class MapChunkRendererSurface implements MapChunkRenderer {
     private int getBlockColor(int localBlockX, int localBlockZ, NAChunk chunk) {
         int localIndex = NAChunk.index(localBlockX, localBlockZ);
 
+
         int height = chunk.heights[localIndex];
-        if (height <= 0) return 0xFF000000;
+        if (height < 0) return 0xFF000000;
 
         int blockId = chunk.blockIds[localIndex];
         int blockMeta = chunk.meta[localIndex];
-        int baseColor = ColorMapperUtil.get(blockId, blockMeta);
+        int baseColor = NatosAtlas.get().platform.worldProvider.getBlockColor(blockId, blockMeta);
         NABiome biome = chunk.biome[localIndex];
 
-        if (blockId == BLOCK_GRASS_ID) {
+        if (NatosAtlas.get().platform.worldProvider.isBlockGrass(blockId)) {
             baseColor = mixColors(baseColor, biome.grassColor, 0.1f);
         }
 
-        if (blockId == BLOCK_LEAVES_ID) {
-            baseColor = mixColors(baseColor, biome.foliageColor, 0.4f);
-        }
-
-        if (isFluid(blockId))
+        if (NatosAtlas.get().platform.worldProvider.isBlockFluid(blockId))
             return waterColor(localBlockX, localBlockZ, chunk, baseColor);
 
         int prevLocalZ = Math.max(0, localBlockZ - 1);
@@ -62,12 +57,6 @@ public class MapChunkRendererSurface implements MapChunkRenderer {
 
     private final int[] BRIGHTNESS = {180, 220, 255, 135};
 
-    public boolean isFluid(int blockId) {
-        return blockId == BLOCK_WATER_STILL_ID ||
-                blockId == BLOCK_WATER_MOVING_ID ||
-                blockId == BLOCK_LAVA_STILL_ID ||
-                blockId == BLOCK_LAVA_MOVING_ID;
-    }
 
     public int waterColor(int localBlockX, int localBlockZ, NAChunk chunk, int baseColor) {
         int localIndex = localBlockZ * 16 + localBlockX;

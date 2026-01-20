@@ -3,9 +3,11 @@ package dev.natowb.natosatlas.stationapi;
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.platform.PlatformWorldProvider;
+import dev.natowb.natosatlas.core.utils.ColorMapperUtil;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -16,32 +18,13 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.RegionFile;
 import net.modificationstation.stationapi.impl.world.chunk.FlattenedWorldChunkLoader;
 
+import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.*;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_BUTTON_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_FIRE_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_FLOWER_RED_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_FLOWER_YELLOW_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_LAVA_MOVING_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_LAVA_STILL_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_MUSHROOM_BROWN_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_MUSHROOM_RED_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_REDSTONE_TORCH_ACTIVE_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_REDSTONE_TORCH_IDLE_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_REDSTONE_WIRE_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_REED_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_SAPLING_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_SIGN_POST_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_SIGN_WALL_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_TORCH_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_WATER_MOVING_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_WATER_STILL_ID;
-import static dev.natowb.natosatlas.core.utils.ColorMapperUtil.BLOCK_WEB_ID;
 import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CHUNK;
+import static dev.natowb.natosatlas.core.utils.Constants.CHUNKS_PER_MINECRAFT_REGION;
 
 public class PlatformWorldProviderST implements PlatformWorldProvider {
     Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
@@ -53,7 +36,7 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
         long time = mc.world.getTime();
 
         String name;
-        if (mc.isWorldRemote()) {
+        if (isServer) {
             name = mc.options.lastServer;
         } else {
             name = mc.world.getProperties().getName();
@@ -63,13 +46,13 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
 
     @Override
     public List<NAEntity> getEntities() {
-        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
-
         List<NAEntity> entities = new ArrayList<>();
 
         for (Object o : mc.world.entities) {
-            if (!(o instanceof LivingEntity e)) continue;
-            if (e instanceof PlayerEntity) continue;
+            if (!(o instanceof LivingEntity)) continue;
+            if (o instanceof PlayerEntity) continue;
+
+            LivingEntity e = (LivingEntity) o;
 
             NAEntity.NAEntityType type = NAEntity.NAEntityType.Mob;
 
@@ -85,11 +68,11 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
 
     @Override
     public List<NAEntity> getPlayers() {
-        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
         List<NAEntity> players = new ArrayList<>();
 
         for (Object o : mc.world.players) {
-            if (!(o instanceof PlayerEntity p)) continue;
+            if (!(o instanceof PlayerEntity)) continue;
+            PlayerEntity p = (PlayerEntity) o;
             players.add(new NAEntity(p.x, p.y, p.z, p.yaw, NAEntity.NAEntityType.Player));
         }
 
@@ -98,8 +81,8 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
 
     @Override
     public NAEntity getPlayer() {
-        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
-        return new NAEntity(mc.player.x, mc.player.y, mc.player.z, mc.player.yaw, NAEntity.NAEntityType.Player);
+        PlayerEntity p = mc.player;
+        return new NAEntity(p.x, p.y, p.z, p.yaw, NAEntity.NAEntityType.Player);
     }
 
 
@@ -107,6 +90,34 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
     public NABiome getBiome(NACoord blockCoord) {
         Biome biome = mc.world.method_1781().getBiome(blockCoord.x, blockCoord.z);
         return new NABiome(biome.grassColor, biome.foliageColor);
+    }
+
+    @Override
+    public int getBlockColor(int blockId, int blockMeta) {
+
+        int overrideColor = ColorMapperUtil.getOverrideColor(Block.BLOCKS[blockId].getTranslationKey());
+
+        if (overrideColor != -1) {
+            return overrideColor;
+        }
+
+        if (blockId == Block.WOOL.id) {
+            return ColorMapperUtil.getWoolColor(blockMeta);
+        }
+
+        if (blockId == Block.LEAVES.id) {
+            return Block.LEAVES.getColor(blockMeta);
+        }
+
+        if (Block.BLOCKS[blockId].material == null) {
+            return 0xFF800080;
+        }
+        return Block.BLOCKS[blockId].material.mapColor.color;
+    }
+
+    @Override
+    public boolean isBlockGrass(int blockId) {
+        return blockId == Block.GRASS_BLOCK.id;
     }
 
 
@@ -138,46 +149,55 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
             RegionFile rf = new RegionFile(regionFile);
 
             int processed = 0;
-            for (int x = 0; x < 32; x++) {
-                for (int z = 0; z < 32; z++) {
-
-
+            for (int x = 0; x < CHUNKS_PER_MINECRAFT_REGION; x++) {
+                for (int z = 0; z < CHUNKS_PER_MINECRAFT_REGION; z++) {
                     if (!rf.hasChunkData(x, z)) {
                         continue;
                     }
                     processed++;
 
-                    int worldChunkX = rx * 32 + x;
-                    int worldChunkZ = rz * 32 + z;
+                    int worldChunkX = rx * CHUNKS_PER_MINECRAFT_REGION + x;
+                    int worldChunkZ = rz * CHUNKS_PER_MINECRAFT_REGION + z;
 
                     NACoord chunkCoord = NACoord.from(worldChunkX, worldChunkZ);
 
                     NAChunk chunk = getChunkFromDisk(chunkCoord);
-                    NatosAtlas.get().renderer.renderChunk(chunkCoord, chunk);
+                    if (chunk != null) {
+                        NatosAtlas.get().renderer.renderChunk(chunkCoord, chunk);
+                    }
                 }
             }
             LogUtil.info("Finished region r({}, {})  ({} chunks found)", rx, rz, processed);
+
             rf.close();
+
         }
 
         LogUtil.info("All regions scanned.");
     }
 
 
+    @Override
     public NAChunk getChunk(NACoord chunkCoord) {
         Chunk chunk = mc.world.getChunk(chunkCoord.x, chunkCoord.z);
         NAChunk nac = new NAChunk();
         for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
             for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
+                int worldBlockX = chunkCoord.x * BLOCKS_PER_MINECRAFT_CHUNK + x;
+                int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
 
-                int height = getBlockHeight(chunk, x, z);
+                int height = mc.world.getTopSolidBlockY(worldBlockX, worldBlockZ) - 1;
+                int aboveId = chunk.getBlockId(x, height + 1, z);
+                final int SNOW_LAYER_ID = Block.SNOW.id;
+                if (aboveId == SNOW_LAYER_ID) {
+                    height = height + 1;
+                }
+
+
                 int blockId = chunk.getBlockId(x, height, z);
                 int depth = computeFluidDepth(chunk, x, height, z);
                 int blockLight = safeBlockLight(chunk, x, height + 1, z);
                 int meta = chunk.getBlockMeta(x, height, z);
-
-                int worldBlockX = chunkCoord.x * 16 + x;
-                int worldBlockZ = chunkCoord.z * 16 + z;
                 NABiome biome = getBiome(NACoord.from(worldBlockX, worldBlockZ));
 
                 nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
@@ -193,17 +213,30 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
         FlattenedWorldChunkLoader chunkLoader = new FlattenedWorldChunkLoader(NAPaths.getWorldSavePath().toFile());
         Chunk chunk = chunkLoader.loadChunk(mc.world, chunkCoord.x, chunkCoord.z);
 
+        if (chunk == null) {
+            return null;
+        }
+
         NAChunk nac = new NAChunk();
         for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
             for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
-                int height = getBlockHeight(chunk, x, z);
+                int worldBlockX = chunkCoord.x * BLOCKS_PER_MINECRAFT_CHUNK + x;
+                int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
+
+
+                int height = mc.world.getTopSolidBlockY(worldBlockX, worldBlockZ) - 1;
+                int aboveId = chunk.getBlockId(x, height + 1, z);
+                final int SNOW_LAYER_ID = Block.SNOW.id;
+                if (aboveId == SNOW_LAYER_ID) {
+                    height = height + 1;
+                }
+
                 int blockId = chunk.getBlockId(x, height, z);
                 int depth = computeFluidDepth(chunk, x, height, z);
                 int blockLight = safeBlockLight(chunk, x, height + 1, z);
                 int meta = chunk.getBlockMeta(x, height, z);
-                int worldBlockX = chunkCoord.x * 16 + x;
-                int worldBlockZ = chunkCoord.z * 16 + z;
                 NABiome biome = getBiome(NACoord.from(worldBlockX, worldBlockZ));
+
                 nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
             }
         }
@@ -211,46 +244,20 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
         return nac;
     }
 
-    private static final Set<Integer> SURFACE_BLACKLIST = Set.of(
-            BLOCK_AIR_ID,
-            BLOCK_TALL_GRASS_ID,
-            BLOCK_DEAD_BUSH_ID,
-            BLOCK_FLOWER_YELLOW_ID,
-            BLOCK_FLOWER_RED_ID,
-            BLOCK_MUSHROOM_BROWN_ID,
-            BLOCK_MUSHROOM_RED_ID,
-            BLOCK_TORCH_ID,
-            BLOCK_REDSTONE_TORCH_IDLE_ID,
-            BLOCK_REDSTONE_TORCH_ACTIVE_ID,
-            BLOCK_REDSTONE_WIRE_ID,
-            BLOCK_BUTTON_ID,
-            BLOCK_SIGN_POST_ID,
-            BLOCK_SIGN_WALL_ID,
-            BLOCK_REED_ID,
-            BLOCK_SAPLING_ID,
-            BLOCK_WEB_ID,
-            BLOCK_FIRE_ID
-    );
 
-
-    private int getBlockHeight(Chunk chunk, int x, int z) {
-        int y = chunk.getHeight(x, z);
-        int id = chunk.getBlockId(x, y, z);
-        if (!SURFACE_BLACKLIST.contains(id)) {
-            return y;
+    @Override
+    public boolean isBlockFluid(int blockId) {
+        Block block = Block.BLOCKS[blockId];
+        if (block == null) {
+            return false;
         }
 
-        while (y > 0) {
-            y--;
-            id = chunk.getBlockId(x, y, z);
-            if (SURFACE_BLACKLIST.contains(id)) {
-                continue;
-            }
-            return y;
+        if (block.material == null) {
+            return false;
         }
-        return 0;
+
+        return block.material.isFluid();
     }
-
 
     private int computeFluidDepth(Chunk chunk, int x, int y, int z) {
         if (y < 0) return 0;
@@ -259,18 +266,10 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
 
         while (y > 0) {
             int id = chunk.getBlockId(x, y, z);
-
-            if (id != BLOCK_WATER_STILL_ID &&
-                    id != BLOCK_WATER_MOVING_ID &&
-                    id != BLOCK_LAVA_MOVING_ID &&
-                    id != BLOCK_LAVA_STILL_ID) {
-                break;
-            }
-
+            if (!isBlockFluid(id)) break;
             depth++;
             y--;
         }
-
         return depth;
     }
 
