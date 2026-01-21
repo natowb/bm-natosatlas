@@ -1,7 +1,6 @@
 package dev.natowb.natosatlas.core.map;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
-import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.data.NAWorldInfo;
@@ -112,14 +111,13 @@ public class MapPainter {
         }
 
         for (NAEntity p : NatosAtlas.get().platform.worldProvider.getPlayers()) {
-            renderEntity(p, ctx.zoom);
+            renderMapMarker(p, ctx.zoom);
         }
     }
 
     public void drawWaypoints(MapContext ctx) {
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
         for (Waypoint wp : Waypoints.getAll()) {
-            renderEntity(new NAEntity(wp.x, wp.y, wp.z, 0, NAEntity.NAEntityType.Waypoint), ctx.zoom);
+            renderMapMarker(new NAEntity(wp.x, wp.y, wp.z, 0, NAEntity.NAEntityType.Waypoint), ctx.zoom);
         }
 
         for (Waypoint wp : Waypoints.getAll()) {
@@ -142,7 +140,32 @@ public class MapPainter {
 
 
     private void renderEntity(NAEntity e, double zoom) {
+        GL11.glBindTexture(
+                GL11.GL_TEXTURE_2D,
+                NatosAtlas.get().platform.painter.getMinecraftTextureId(e.texturePath)
+        );
 
+        double worldX = e.x * Constants.PIXELS_PER_CANVAS_UNIT;
+        double worldZ = e.z * Constants.PIXELS_PER_CANVAS_UNIT;
+
+        NAEntity.UV uv = NAEntity.getUV(e.texturePath);
+
+        double scale = 6 / zoom;
+
+        GL11.glPushMatrix();
+        GL11.glTranslated(worldX, worldZ, 0);
+        GL11.glRotated(180, 0, 0, 1);
+        GL11.glScaled(scale, scale, 1);
+
+        NatosAtlas.get().platform.painter.drawTexturedQuad(
+                uv.u1, uv.v1, uv.u2, uv.v2
+        );
+
+        GL11.glPopMatrix();
+    }
+
+    private void renderMapMarker(NAEntity e, double zoom) {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
         double worldX = e.x * Constants.PIXELS_PER_CANVAS_UNIT;
         double worldZ = e.z * Constants.PIXELS_PER_CANVAS_UNIT;
 

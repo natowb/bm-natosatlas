@@ -62,7 +62,7 @@ public class PlatformWorldProviderBTA implements PlatformWorldProvider {
 				type = NAEntity.NAEntityType.Animal;
 			}
 
-			entities.add(new NAEntity(e.x, e.y, e.z, e.yRot, type));
+			entities.add(new NAEntity(e.x, e.y, e.z, e.yRot, type).setTexturePath(e.getEntityTexture()));
 		}
 
 		return entities;
