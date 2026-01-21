@@ -60,7 +60,7 @@ public class PlatformWorldProviderML implements PlatformWorldProvider {
                 type = NAEntity.NAEntityType.Animal;
             }
 
-            entities.add(new NAEntity(e.x, e.y, e.z, e.yaw, type));
+            entities.add(new NAEntity(e.x, e.y, e.z, e.yaw, type).setTexturePath(e.getTexture()));
         }
 
         return entities;

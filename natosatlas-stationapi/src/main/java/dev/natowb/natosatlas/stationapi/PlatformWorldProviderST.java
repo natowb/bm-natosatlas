@@ -9,6 +9,8 @@ import dev.natowb.natosatlas.core.utils.NAPaths;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -60,7 +62,7 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
                 type = NAEntity.NAEntityType.Animal;
             }
 
-            entities.add(new NAEntity(e.x, e.y, e.z, e.yaw, type));
+            entities.add(new NAEntity(e.x, e.y, e.z, e.yaw, type).setTexturePath(e.getTexture()));
         }
 
         return entities;
