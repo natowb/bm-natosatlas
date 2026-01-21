@@ -1,9 +1,7 @@
 subprojects {
-    apply(plugin = "java-library")
+    apply(plugin = "java")
 
-    val archivesName = "${project.properties["mod_id"]}-${project.name}"
-
-    (project.extensions.getByName("base") as BasePluginExtension).archivesName = archivesName
+    (project.extensions.getByName("base") as BasePluginExtension).archivesName = "${project.properties["mod_id"]}-${project.name}"
     version = project.properties["mod_version"] as String
     group = project.properties["maven_group"] as String
 

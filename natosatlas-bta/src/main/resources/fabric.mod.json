@@ -1,0 +1,43 @@
+{
+	"schemaVersion": 1,
+	"id": "natosatlas",
+	"version": "${version}",
+	"name": "Natos Atlas",
+	"description": "world map mod for minecraft 1.7.3 ported to BTA",
+	"authors": [
+		"Turnip Labs"
+	],
+	"contact": {
+		"homepage": "",
+		"sources": ""
+	},
+	"icon": "icon.png",
+	"license": "MIT",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"dev.natowb.natosatlas.bta.NatoAtlasBTA"
+		],
+		"beforeGameStart": [
+			"dev.natowb.natosatlas.bta.NatoAtlasBTA"
+		],
+		"afterGameStart": [
+			"dev.natowb.natosatlas.bta.NatoAtlasBTA"
+		],
+		"recipesReady": [
+			"dev.natowb.natosatlas.bta.NatoAtlasBTA"
+		]
+	},
+	"mixins": [
+		"natosatlas.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=${fabricloader}",
+		"halplibe": ">=${halplibe}",
+		"minecraft": "*",
+		"java": ">=${java}"
+	},
+	"suggests": {
+		"modmenu": ">=${modmenu}"
+	}
+}
