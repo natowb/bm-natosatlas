@@ -88,6 +88,6 @@ public class mod_NatosMap extends BaseMod {
 
     @Override
     public String Version() {
-        return "Nato's Map v1.0";
+        return NatosAtlas.class.getPackage().getImplementationVersion();
     }
 }

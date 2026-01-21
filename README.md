@@ -26,12 +26,12 @@ simply download the latest build from the [Releases page](https://github.com/nat
 
 ## 🖼️ Preview
 <p align="center">
-  <img src="https://github.com/natowb/bm-natosatlas/blob/818d4af139058d465cc07f18af0e9747cc59d96d/screenshots/dayAndNight.png" width="48%" alt="Preview 1">
-  <img src="https://github.com/natowb/bm-natosatlas/blob/818d4af139058d465cc07f18af0e9747cc59d96d/screenshots/settingsMenu.png" width="48%" alt="Preview 2">
+  <img src="screenshots/dayAndNight.png" width="48%" alt="Preview 1">
+  <img src="screenshots/settingsMenu.png" width="48%" alt="Preview 2">
 </p>
 
 <p align="center">
-  <img src="https://github.com/natowb/bm-natosatlas/blob/818d4af139058d465cc07f18af0e9747cc59d96d/screenshots/waypointsList.png" width="48%" alt="Preview 3">
-  <img src="https://github.com/natowb/bm-natosatlas/blob/818d4af139058d465cc07f18af0e9747cc59d96d/screenshots/waypointsCreate.png" width="48%" alt="Preview 4">
+  <img src="screenshots/waypointsList.png" width="48%" alt="Preview 3">
+  <img src="screenshots/waypointsCreate.png" width="48%" alt="Preview 4">
 </p>
 

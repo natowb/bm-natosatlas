@@ -1,7 +1,7 @@
 plugins {
     id("maven-publish")
-    id("net.fabricmc.fabric-loom-remap") version "1.14-SNAPSHOT"
-    id("babric-loom-extension") version "1.14-SNAPSHOT"
+    id("net.fabricmc.fabric-loom-remap")
+    id("babric-loom-extension")
 }
 
 loom {
@@ -21,12 +21,9 @@ dependencies {
 
 configurations.all {
     exclude("babric")
-    // TODO: Gambac causes unfixable conflicts because it gets picked up as a fabric mod which loom tries to remap
+    // Gambac causes unfixable conflicts because it gets picked up as a fabric mod which loom tries to remap using
+    // intermediary mappings, which we currently do not use.
     exclude("net.danygames2014")
-}
-
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
 }
 
 java {
@@ -34,33 +31,60 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-tasks.jar {
-    from("../LICENSE") {
-        rename { "${it}_${base.archivesName.get()}" }
+tasks {
+    withType<JavaCompile> {
+        configureEach {
+            options.encoding = "UTF-8"
+            options.compilerArgs.add("-Xlint:-options")
+        }
     }
 
-    from(project(":core").sourceSets.main.get().output)
+    jar {
+        from(rootProject.layout.projectDirectory.file("LICENSE")) {
+            rename { "${it}_${base.archivesName.get()}" }
+        }
+
+        from(project(":core").sourceSets.main.map { it.output })
+
+        manifest {
+            attributes("Implementation-Version" to version)
+        }
+    }
+
+    // Hide/Disable the runClient task because it doesn't work yet™
+    runClient {
+        group = null
+        enabled = false
+    }
 }
 
-tasks.remapJar {
-    archiveFileName = "unprocessed.jar"
-}
+// The section below handles remapping modloader from net.minecraft.src to the base package.
+//
+// There is probably a less hacky way to do this, e.g. shadowJar, but that causes modloader
+// to crash when trying to load the mod, once the cause for that is found, this can and will
+// be replaced.
 
-tasks.register("remapJarForModLoader", net.fabricmc.loom.task.RemapJarTask::class) {
-    inputFile = tasks.remapJar.get().archiveFile
+tasks {
+    remapJar {
+        archiveFileName = archiveFile.get().asFile.nameWithoutExtension + "-unprocessed.jar"
+    }
 
-    customMappings.from("modloader/mappings.tiny")
-    sourceNamespace = "source"
-    targetNamespace = "runtime"
+    register("remapJarForModLoader", net.fabricmc.loom.task.RemapJarTask::class) {
+        inputFile = remapJar.flatMap { it.archiveFile }
 
-    archiveBaseName = base.archivesName
-    archiveVersion = version as String
-}
+        customMappings.from("modloader/mappings.tiny")
+        sourceNamespace = "source"
+        targetNamespace = "runtime"
 
-tasks.assemble {
-    finalizedBy("remapJarForModLoader")
-}
+        archiveBaseName = base.archivesName
+        archiveVersion = version as String
+    }
 
-tasks.build {
-    dependsOn("remapJarForModLoader")
+    assemble {
+        finalizedBy("remapJarForModLoader")
+    }
+
+    build {
+        dependsOn("remapJarForModLoader")
+    }
 }
