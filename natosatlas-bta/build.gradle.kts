@@ -60,8 +60,8 @@ dependencies {
     implementation(libs.log4j.api12)
     implementation(libs.gson)
 
-    implementation(libs.commonsLang3)
-    include(libs.commonsLang3)
+    // implementation(libs.commonsLang3)
+    // include(libs.commonsLang3)
 }
 
 java {
