@@ -1,25 +1,52 @@
 package dev.natowb.natosatlas.core.waypoint;
 
+import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.data.NAWorldInfo;
+import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 public final class Waypoints {
 
-    private static final WaypointsStorage STORAGE = new WaypointsStorage();
+
+    private static final WaypointStorage STORAGE = new WaypointStorage();
 
     private Waypoints() {
     }
 
+    private static File getFile() {
+        NAWorldInfo info = NatosAtlas.get().platform.worldProvider.getWorldInfo();
+        String fileName = String.format("%s.DIM%d.points", NAPaths.getWorldSaveName(), info.worldDimension);
+        if (!Settings.useReiMinimapWaypointStorage) {
+            return new File(NAPaths.getWorldDataPath().toFile(), fileName);
+        }
+
+
+        Path minimapPath = NAPaths.getMinecraftPath().resolve("mods/rei_minimap");
+
+        try {
+            Files.createDirectories(minimapPath);
+        } catch (IOException ignored) {
+        }
+
+        return new File(minimapPath.toFile(), fileName);
+    }
+
     public static void load() {
-        STORAGE.load(new File(NAPaths.getWorldDataPath().toFile(), "waypoints.txt"));
+        STORAGE.load(getFile());
         LogUtil.info("Loaded {} waypoints", STORAGE.getAll().size());
     }
 
     public static void save() {
-        STORAGE.save(new File(NAPaths.getWorldDataPath().toFile(), "waypoints.txt"));
+        STORAGE.save(getFile());
         LogUtil.info("Saved {} waypoints", STORAGE.getAll().size());
     }
 

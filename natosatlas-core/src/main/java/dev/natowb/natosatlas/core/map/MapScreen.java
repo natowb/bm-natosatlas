@@ -15,6 +15,7 @@ import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementOptionButton;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import dev.natowb.natosatlas.core.waypoint.WaypointListScreen;
+import dev.natowb.natosatlas.core.waypoint.Waypoints;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -32,6 +33,7 @@ public class MapScreen extends UIScreen {
 
     public MapScreen(UIScreen parent) {
         super(parent);
+        Waypoints.load();
     }
 
     @Override
@@ -116,6 +118,8 @@ public class MapScreen extends UIScreen {
 
     @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
+        NatosAtlas.get().platform.painter.drawRect(0, 0, width, height, UITheme.PANEL_BG);
+
         viewport.updateMouse(mouseX, mouseY);
 
         viewport.begin(scaleInfo);

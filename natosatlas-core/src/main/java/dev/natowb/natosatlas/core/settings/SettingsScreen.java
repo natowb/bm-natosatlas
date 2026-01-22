@@ -49,7 +49,15 @@ public class SettingsScreen extends UIScreen {
                 SettingsOption.DEBUG_INFO
         ));
 
-        generateExistingButton = new UIElementButton(201, centerX, baseY + rowH * 3, 150, 20, "Generate Existing");
+
+        addButton(new UIElementOptionButton(
+                SettingsOption.USE_REIMINIMAP_WAYPOINTS.ordinal(),
+                centerX, baseY + rowH * 3,
+                150, 20,
+                SettingsOption.USE_REIMINIMAP_WAYPOINTS
+        ));
+
+        generateExistingButton = new UIElementButton(201, centerX, baseY + rowH * 4, 150, 20, "Generate Existing");
         if (NatosAtlas.get().platform.worldProvider.getWorldInfo().isServer)
             generateExistingButton.active = false;
 
@@ -60,7 +68,7 @@ public class SettingsScreen extends UIScreen {
 
         zoomSlider = new UIElementSlider(
                 3000,
-                centerX, baseY + rowH * 4,
+                centerX, baseY + rowH * 5,
                 150, 20,
                 normalized,
                 "Default Zoom",

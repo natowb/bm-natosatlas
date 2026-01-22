@@ -44,6 +44,9 @@ public class MapRenderEntities implements MapRenderStage {
         }
 
         for (Waypoint wp : Waypoints.getAll()) {
+
+            if (!wp.visible) continue;
+
             double x = wp.x * Constants.PIXELS_PER_CANVAS_UNIT;
             double z = wp.z * Constants.PIXELS_PER_CANVAS_UNIT;
             double s = 1 / ctx.zoom;
@@ -77,7 +80,7 @@ public class MapRenderEntities implements MapRenderStage {
 
         double x = e.x * Constants.PIXELS_PER_CANVAS_UNIT;
         double z = e.z * Constants.PIXELS_PER_CANVAS_UNIT;
-        double s = 4 / zoom;
+        double s = 6 / zoom;
 
         int idx;
         switch (e.type) {

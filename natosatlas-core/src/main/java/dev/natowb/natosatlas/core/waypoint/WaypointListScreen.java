@@ -1,6 +1,7 @@
 package dev.natowb.natosatlas.core.waypoint;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementList;
@@ -19,6 +20,7 @@ public class WaypointListScreen extends UIScreen {
 
     public WaypointListScreen(UIScreen parent) {
         super(parent);
+        Waypoints.load();
     }
 
     @Override
@@ -76,22 +78,30 @@ public class WaypointListScreen extends UIScreen {
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
         PlatformPainter p = NatosAtlas.get().platform.painter;
 
+        if (Settings.useReiMinimapWaypointStorage) {
+            p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
+            p.drawCenteredString("Use Rei's Minimap to manage waypoints", width / 2, height / 2, UITheme.TITLE_TEXT);
+            return;
+        }
+
         p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
         p.drawCenteredString("Waypoints", width / 2, 20, UITheme.TITLE_TEXT);
 
         list.render(mouseX, mouseY);
 
-
         super.render(mouseX, mouseY, delta, scaleInfo);
     }
 
+
     @Override
     public void mouseScroll(int amount) {
+        if (Settings.useReiMinimapWaypointStorage) return;
         list.mouseScroll(amount);
     }
 
     @Override
     public void mouseDown(int mouseX, int mouseY, int button) {
+        if (Settings.useReiMinimapWaypointStorage) return;
         if (button != 0) return;
 
         boolean doubleClick = list.mouseDown(mouseX, mouseY);
@@ -105,12 +115,14 @@ public class WaypointListScreen extends UIScreen {
 
     @Override
     public void mouseUp(int mouseX, int mouseY, int button) {
+        if (Settings.useReiMinimapWaypointStorage) return;
         super.mouseUp(mouseX, mouseY, button);
         if (button == 0) list.mouseUp();
     }
 
     @Override
     protected void onClick(UIElementButton btn) {
+        if (Settings.useReiMinimapWaypointStorage) return;
 
         if (btn.id == editButton.id) {
             int index = list.getSelectedIndex();
@@ -138,4 +150,5 @@ public class WaypointListScreen extends UIScreen {
             NatosAtlas.get().platform.openNacScreen(parent);
         }
     }
+
 }
