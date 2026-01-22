@@ -183,6 +183,10 @@ public class MapScreen extends UIScreen {
                 viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
             }
         }
+
+        if (keyCode == Keyboard.KEY_P) {
+            MapExporter.exportAllLayers();
+        }
     }
 
     @Override
