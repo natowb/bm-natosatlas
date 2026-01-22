@@ -113,7 +113,8 @@ public class PlatformWorldProviderBTA implements PlatformWorldProvider {
 
 	@Override
 	public void generateExistingChunks() {
-		File regionDir = new File(NAPaths.getWorldSavePath().toFile(), "region");
+		String path = String.format("dimensions/%d/region", mc.currentWorld.dimension.id);
+		File regionDir = new File(NAPaths.getWorldSavePath().toFile(), path);
 
 		File[] regionFiles = regionDir.listFiles((dir, name) -> name.endsWith(".mcr"));
 		if (regionFiles == null || regionFiles.length == 0) {
@@ -128,8 +129,8 @@ public class PlatformWorldProviderBTA implements PlatformWorldProvider {
 			regionIndex++;
 
 			String[] parts = regionFile.getName()
-				.substring(2, regionFile.getName().length() - 4)
-				.split("\\.");
+					.substring(2, regionFile.getName().length() - 4)
+					.split("\\.");
 
 			int rx = Integer.parseInt(parts[0]);
 			int rz = Integer.parseInt(parts[1]);
