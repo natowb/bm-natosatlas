@@ -6,6 +6,7 @@ import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.map.MapCache;
 import dev.natowb.natosatlas.core.map.MapLayer;
 import dev.natowb.natosatlas.core.map.MapRegion;
+import dev.natowb.natosatlas.core.utils.LogUtil;
 
 import java.util.HashMap;
 import java.util.Map;

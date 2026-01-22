@@ -13,8 +13,6 @@ import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -41,17 +39,17 @@ public class MapStorage {
     }
 
 
-    public File getRegionFile(int layerId, NACoord regionCoord) {
+    public File getRegionPngFile(int layerId, NACoord regionCoord) {
         return NAPaths.getWorldMapStoragePath(layerId).resolve("region_" + regionCoord.x + "_" + regionCoord.z + ".png").toFile();
     }
 
     public void saveRegion(int layerId, NACoord coord, MapRegion region) {
-        MapSaveWorker.enqueue(this, coord, region, getRegionFile(layerId, coord));
+        MapSaveWorker.enqueue(this, coord, region, getRegionPngFile(layerId, coord));
     }
 
 
     public Optional<MapRegion> loadRegion(int layerId, NACoord coord) {
-        File file = getRegionFile(layerId, coord);
+        File file = getRegionPngFile(layerId, coord);
 
         if (!file.exists()) {
             return Optional.empty();

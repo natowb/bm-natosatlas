@@ -1,14 +1,24 @@
 package dev.natowb.natosatlas.core.settings;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.data.NAChunk;
+import dev.natowb.natosatlas.core.data.NACoord;
+import dev.natowb.natosatlas.core.data.NARegionFile;
+import dev.natowb.natosatlas.core.map.*;
+import dev.natowb.natosatlas.core.tasks.MapSaveScheduler;
+import dev.natowb.natosatlas.core.tasks.MapSaveWorker;
+import dev.natowb.natosatlas.core.tasks.MapUpdateScheduler;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementOptionButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementSlider;
 import dev.natowb.natosatlas.core.ui.UITheme;
 import dev.natowb.natosatlas.core.platform.PlatformPainter;
-import dev.natowb.natosatlas.core.map.MapConfig;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
+import dev.natowb.natosatlas.core.utils.LogUtil;
+
+import java.io.File;
+import java.util.List;
 
 public class SettingsScreen extends UIScreen {
 
@@ -114,7 +124,9 @@ public class SettingsScreen extends UIScreen {
         }
 
         if(button.id == generateExistingButton.id) {
-            NatosAtlas.get().platform.worldProvider.generateExistingChunks();
+            NatosAtlas.get().generateExistingChunks();
         }
     }
+
+
 }

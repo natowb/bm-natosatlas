@@ -1,9 +1,7 @@
 package dev.natowb.natosatlas.stationapi;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.platform.PlatformWorldProvider;
-import dev.natowb.natosatlas.core.tasks.MapUpdateScheduler;
 import dev.natowb.natosatlas.core.utils.ColorMapperUtil;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
@@ -19,14 +17,12 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.RegionChunkStorage;
 import net.minecraft.world.chunk.storage.RegionFile;
-import net.modificationstation.stationapi.impl.world.chunk.FlattenedWorldChunkLoader;
 
 import java.io.File;
 import java.util.*;
 import java.util.List;
 
 import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CHUNK;
-import static dev.natowb.natosatlas.core.utils.Constants.CHUNKS_PER_MINECRAFT_REGION;
 
 public class PlatformWorldProviderST implements PlatformWorldProvider {
     Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
@@ -122,60 +118,60 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
         return blockId == Block.GRASS_BLOCK.id;
     }
 
-
     @Override
-    public void generateExistingChunks() {
-        File regionDir = new File(NAPaths.getWorldSavePath().toFile(), "region");
+    public List<NARegionFile> getRegionMetadata() {
+        List<NARegionFile> result = new ArrayList<>();
 
-        File[] regionFiles = regionDir.listFiles((dir, name) -> name.endsWith(".mcr"));
+        File regionDir = new File(NAPaths.getWorldSavePath().toFile(), "region");
+        File[] regionFiles = regionDir.listFiles((dir, name) -> name.endsWith(".mcr") || name.endsWith(".mca"));
         if (regionFiles == null || regionFiles.length == 0) {
-            LogUtil.info("No region files found.");
-            return;
+            return result;
         }
 
-        int totalRegions = regionFiles.length;
-        int regionIndex = 0;
+        int index = 0;
 
         for (File regionFile : regionFiles) {
-            regionIndex++;
+            index++;
+            boolean success = false;
 
-            String[] parts = regionFile.getName()
-                    .substring(2, regionFile.getName().length() - 4)
-                    .split("\\.");
+            try {
+                String name = regionFile.getName();
+                String[] parts = name.substring(2, name.length() - 4).split("\\.");
+                if (parts.length != 2) {
+                    continue;
+                }
 
-            int rx = Integer.parseInt(parts[0]);
-            int rz = Integer.parseInt(parts[1]);
+                int rx = Integer.parseInt(parts[0]);
+                int rz = Integer.parseInt(parts[1]);
+                NACoord regionCoord = new NACoord(rx, rz);
 
-            LogUtil.info("Scanning region {} of {} -> r({}, {})", regionIndex, totalRegions, rx, rz);
+                NARegionFile naRegion = new NARegionFile(regionFile, regionCoord);
 
-            RegionFile rf = new RegionFile(regionFile);
-
-            int processed = 0;
-            for (int x = 0; x < CHUNKS_PER_MINECRAFT_REGION; x++) {
-                for (int z = 0; z < CHUNKS_PER_MINECRAFT_REGION; z++) {
-                    if (!rf.hasChunkData(x, z)) {
-                        continue;
-                    }
-                    processed++;
-
-                    int worldChunkX = rx * CHUNKS_PER_MINECRAFT_REGION + x;
-                    int worldChunkZ = rz * CHUNKS_PER_MINECRAFT_REGION + z;
-
-                    NACoord chunkCoord = NACoord.from(worldChunkX, worldChunkZ);
-
-                    NAChunk chunk = getChunkFromDisk(chunkCoord);
-                    if (chunk != null) {
-                        MapUpdateScheduler.enqueue(chunkCoord, chunk);
+                RegionFile rf = new RegionFile(regionFile);
+                for (int x = 0; x < NARegionFile.CHUNKS_PER_REGION; x++) {
+                    for (int z = 0; z < NARegionFile.CHUNKS_PER_REGION; z++) {
+                        if (rf.hasChunkData(x, z)) {
+                            naRegion.chunkExists[x][z] = true;
+                        }
                     }
                 }
+                rf.close();
+
+                result.add(naRegion);
+                success = true;
+
+            } catch (Exception ignored) {
             }
-            LogUtil.info("Finished region r({}, {})  ({} chunks found)", rx, rz, processed);
 
-            rf.close();
+            if (success) {
+                LogUtil.info("[{}/{}] Successfully processed region file: {}", index, regionFiles.length, regionFile.getName());
 
+            } else {
+                LogUtil.info("[{}/{}] Failed to processed region file: {}", index, regionFiles.length, regionFile.getName());
+            }
         }
 
-        LogUtil.info("All regions scanned.");
+        return result;
     }
 
 
@@ -251,7 +247,7 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
         int var4 = 127;
         x &= 15;
 
-        for(int var8 = z & 15; var4 > 0; --var4) {
+        for (int var8 = z & 15; var4 > 0; --var4) {
             int var5 = chunk.getBlockId(x, var4, var8);
             Material var6 = var5 == 0 ? Material.AIR : Block.BLOCKS[var5].material;
             if (var6.blocksMovement() || var6.isFluid()) {

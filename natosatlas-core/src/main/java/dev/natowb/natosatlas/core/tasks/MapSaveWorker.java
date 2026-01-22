@@ -45,25 +45,23 @@ public class MapSaveWorker {
 
         workerThread = new Thread(() -> {
             while (true) {
+                SaveTask task;
                 try {
-                    SaveTask task;
-
                     if (running) {
                         task = QUEUE.take();
                     } else {
                         task = QUEUE.poll();
                         if (task == null) break;
                     }
-
-                    task.storage.saveRegionBlocking(task.coord, task.region, task.regionFile);
-                    pending.remove(task.regionFile.getAbsolutePath());
-
-                } catch (InterruptedException ignored) {
-                    // ignore if we are  interrupted while we are stopping,
-                    // as the loop will save all remaining queue items before stopping.
+                } catch (InterruptedException e) {
+                    if (!running) break;
+                    continue;
                 }
+
+                task.storage.saveRegionBlocking(task.coord, task.region, task.regionFile);
+                pending.remove(task.regionFile.getAbsolutePath());
             }
-        }, "NatosAtlas-RegionSaveWorker");
+        });
 
 
         workerThread.setDaemon(true);
@@ -72,19 +70,20 @@ public class MapSaveWorker {
 
     public static void stop() {
         shutdownRequested = true;
-
         running = false;
 
-        try {
-            if (workerThread != null) {
+        if (workerThread != null) {
+            workerThread.interrupt();
+            try {
                 workerThread.join();
+            } catch (InterruptedException ignored) {
             }
-        } catch (InterruptedException ignored) {
         }
 
         workerThread = null;
         pending.clear();
     }
+
 
     private static final class SaveTask {
         final MapStorage storage;

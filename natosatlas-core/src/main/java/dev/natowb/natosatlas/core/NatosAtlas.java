@@ -1,7 +1,6 @@
 package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.core.data.NAEntity;
-import dev.natowb.natosatlas.core.data.NAWorldInfo;
+import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.map.*;
 import dev.natowb.natosatlas.core.tasks.MapSaveScheduler;
 import dev.natowb.natosatlas.core.platform.Platform;
@@ -10,10 +9,10 @@ import dev.natowb.natosatlas.core.tasks.MapUpdateScheduler;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import dev.natowb.natosatlas.core.waypoint.Waypoints;
-import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.data.NAChunk;
 
+import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class NatosAtlas {
@@ -182,4 +181,77 @@ public class NatosAtlas {
             }
         }
     }
+
+    public void generateExistingChunks() {
+        List<NARegionFile> regions = NatosAtlas.get().platform.worldProvider.getRegionMetadata();
+
+        if (regions.isEmpty()) {
+            LogUtil.info("No region metadata found.");
+            return;
+        }
+
+        MapUpdateScheduler.stop();
+        MapSaveScheduler.stop();
+
+        LogUtil.info("Generating map data for all existing regions (this may take a while...)");
+
+        MapCache cache = NatosAtlas.get().cache;
+        MapStorage storage = cache.getStorage();
+
+        int index = 0;
+        int total = regions.size();
+
+        for (NARegionFile naRegion : regions) {
+            index++;
+
+            NACoord regionCoord = naRegion.regionCoord;
+            boolean success = false;
+
+            try {
+                MapRegion[] layers = new MapRegion[NatosAtlas.get().layers.getLayers().size()];
+                for (int i = 0; i < layers.length; i++) {
+                    layers[i] = new MapRegion();
+                }
+
+                for (NACoord chunkCoord : naRegion.iterateExistingChunks()) {
+                    NAChunk chunk = NatosAtlas.get().platform.worldProvider.getChunkFromDisk(chunkCoord);
+                    if (chunk == null) continue;
+
+                    int layerIndex = 0;
+                    for (MapLayer layer : NatosAtlas.get().layers.getLayers()) {
+                        layer.renderer.applyChunkToRegion(
+                                layers[layerIndex],
+                                chunkCoord,
+                                chunk,
+                                layer.usesBlockLight
+                        );
+                        layerIndex++;
+                    }
+                }
+
+                for (int layerId = 0; layerId < layers.length; layerId++) {
+                    File out = storage.getRegionPngFile(layerId, regionCoord);
+                    storage.saveRegionBlocking(regionCoord, layers[layerId], out);
+                }
+
+                success = true;
+
+            } catch (Exception ignored) {
+            }
+
+            if (success) {
+                LogUtil.info("[{}/{}] Successfully generated region r({}, {})",
+                        index, total, regionCoord.x, regionCoord.z);
+            } else {
+                LogUtil.info("[{}/{}] Failed to generate region r({}, {})",
+                        index, total, regionCoord.x, regionCoord.z);
+            }
+        }
+
+        LogUtil.info("Full region generation complete.");
+        cache.clear();
+        MapSaveScheduler.start();
+        MapUpdateScheduler.start();
+    }
 }
+

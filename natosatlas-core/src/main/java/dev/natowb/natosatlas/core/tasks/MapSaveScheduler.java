@@ -6,6 +6,7 @@ import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.map.MapCache;
 import dev.natowb.natosatlas.core.map.MapRegion;
 import dev.natowb.natosatlas.core.map.MapStorage;
+import dev.natowb.natosatlas.core.utils.LogUtil;
 
 
 public class MapSaveScheduler {
@@ -40,7 +41,7 @@ public class MapSaveScheduler {
             for (int layerId = 0; layerId < cache.getLayerCount(); layerId++) {
                 MapRegion region = layers[layerId];
                 if (region != null) {
-                    MapSaveWorker.enqueue(storage, coord, region, storage.getRegionFile(layerId, coord));
+                    MapSaveWorker.enqueue(storage, coord, region, storage.getRegionPngFile(layerId, coord));
                 }
             }
         }
