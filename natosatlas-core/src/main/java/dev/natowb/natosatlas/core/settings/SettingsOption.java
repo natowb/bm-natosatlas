@@ -82,6 +82,17 @@ public enum SettingsOption {
         public String getValueLabel() {
             return Settings.debugInfo ? "On" : "Off";
         }
+    },
+    USE_REIMINIMAP_WAYPOINTS("Rei's MM Waypoints") {
+        @Override
+        public void cycle() {
+            Settings.useReiMinimapWaypointStorage = !Settings.useReiMinimapWaypointStorage;
+        }
+
+        @Override
+        public String getValueLabel() {
+            return Settings.useReiMinimapWaypointStorage ? "On" : "Off";
+        }
     };
 
     private final String title;

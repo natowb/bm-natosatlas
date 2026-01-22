@@ -6,11 +6,14 @@ public class Waypoint {
     public final int x;
     public final int y;
     public final int z;
+    public boolean visible;
+    public String color;
 
     public Waypoint(String name, int x, int y, int z) {
         this.name = name;
         this.x = x;
         this.y = y;
         this.z = z;
+        this.visible = true;
     }
 }

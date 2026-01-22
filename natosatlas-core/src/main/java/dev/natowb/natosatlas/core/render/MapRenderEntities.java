@@ -12,117 +12,119 @@ import org.lwjgl.opengl.GL11;
 import java.util.Set;
 
 public class MapRenderEntities implements MapRenderStage {
+
     @Override
     public void render(MapContext ctx, Set<Long> visibleRegions) {
         drawEntities(ctx);
         drawWaypoints(ctx);
     }
 
-    public void drawEntities(MapContext ctx) {
+    private void drawEntities(MapContext ctx) {
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.Nothing) return;
 
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D,
+                NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
 
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.All) {
             for (NAEntity e : NatosAtlas.get().platform.worldProvider.getEntities()) {
-                renderEntity(e, ctx.zoom);
+                renderEntity(ctx, e);
             }
         }
 
         for (NAEntity p : NatosAtlas.get().platform.worldProvider.getPlayers()) {
-            renderMapMarker(p, ctx.zoom);
+            renderMapMarker(ctx, p);
         }
     }
 
-    public void drawWaypoints(MapContext ctx) {
+    private void drawWaypoints(MapContext ctx) {
         for (Waypoint wp : Waypoints.getAll()) {
-            renderMapMarker(new NAEntity(wp.x, wp.y, wp.z, 0, NAEntity.NAEntityType.Waypoint), ctx.zoom);
+            renderMapMarker(ctx,
+                    new NAEntity(wp.x, wp.y, wp.z, 0, NAEntity.NAEntityType.Waypoint));
         }
 
         for (Waypoint wp : Waypoints.getAll()) {
-            double worldX = wp.x * Constants.PIXELS_PER_CANVAS_UNIT;
-            double worldZ = wp.z * Constants.PIXELS_PER_CANVAS_UNIT;
 
-            double scale = 1 / ctx.zoom;
-            GL11.glPushMatrix();
-            GL11.glTranslated(worldX, worldZ, 0);
-            GL11.glScaled(scale, scale, 1);
+            if (!wp.visible) continue;
 
-            int nameLength = NatosAtlas.get().platform.painter.getStringWidth(wp.name);
+            double x = wp.x * Constants.PIXELS_PER_CANVAS_UNIT;
+            double z = wp.z * Constants.PIXELS_PER_CANVAS_UNIT;
+            double s = 1 / ctx.zoom;
 
-            NatosAtlas.get().platform.painter.drawString(wp.name, -(nameLength / 2) + 1, 11, 0xFF000000);
-            NatosAtlas.get().platform.painter.drawString(wp.name, -(nameLength / 2), 10, 0xFFFFFFFF);
-            GL11.glPopMatrix();
-
+            drawUpright(ctx, x, z, s, 0, () -> {
+                int w = NatosAtlas.get().platform.painter.getStringWidth(wp.name);
+                NatosAtlas.get().platform.painter.drawString(wp.name, -(w / 2) + 1, 11, 0xFF000000);
+                NatosAtlas.get().platform.painter.drawString(wp.name, -(w / 2), 10, 0xFFFFFFFF);
+            });
         }
     }
 
+    private void renderEntity(MapContext ctx, NAEntity e) {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D,
+                NatosAtlas.get().platform.painter.getMinecraftTextureId(e.texturePath));
 
-    private void renderEntity(NAEntity e, double zoom) {
-        GL11.glBindTexture(
-                GL11.GL_TEXTURE_2D,
-                NatosAtlas.get().platform.painter.getMinecraftTextureId(e.texturePath)
-        );
-
-        double worldX = e.x * Constants.PIXELS_PER_CANVAS_UNIT;
-        double worldZ = e.z * Constants.PIXELS_PER_CANVAS_UNIT;
+        double x = e.x * Constants.PIXELS_PER_CANVAS_UNIT;
+        double z = e.z * Constants.PIXELS_PER_CANVAS_UNIT;
+        double s = 4 / ctx.zoom;
 
         NAEntity.UV uv = NAEntity.getUV(e.texturePath);
 
-        double scale = 6 / zoom;
-
-        GL11.glPushMatrix();
-        GL11.glTranslated(worldX, worldZ, 0);
-        GL11.glRotated(180, 0, 0, 1);
-        GL11.glScaled(scale, scale, 1);
-
-        NatosAtlas.get().platform.painter.drawTexturedQuad(
-                uv.u1, uv.v1, uv.u2, uv.v2
+        drawUpright(ctx, x, z, s, 180, () ->
+                NatosAtlas.get().platform.painter.drawTexturedQuad(uv.u1, uv.v1, uv.u2, uv.v2)
         );
-
-        GL11.glPopMatrix();
     }
 
-    private void renderMapMarker(NAEntity e, double zoom) {
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
-        double worldX = e.x * Constants.PIXELS_PER_CANVAS_UNIT;
-        double worldZ = e.z * Constants.PIXELS_PER_CANVAS_UNIT;
+    private void renderMapMarker(MapContext ctx, NAEntity e) {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D,
+                NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
 
-        int iconIndex = 3;
+        double x = e.x * Constants.PIXELS_PER_CANVAS_UNIT;
+        double z = e.z * Constants.PIXELS_PER_CANVAS_UNIT;
+        double s = 6 / ctx.zoom;
+
+        int idx;
         switch (e.type) {
-            case Player: {
-                iconIndex = 0;
-                break;
-            }
-            case Mob: {
-                iconIndex = 2;
-                break;
-            }
-            case Animal: {
-                iconIndex = 1;
-                break;
-            }
-            case Waypoint: {
-                iconIndex = 4;
-            }
-
+            case Player:  idx = 0; break;
+            case Animal:  idx = 1; break;
+            case Mob:     idx = 2; break;
+            case Waypoint:idx = 4; break;
+            default:      idx = 3; break;
         }
 
-        float u1 = (iconIndex % 4) / 4.0f;
-        float v1 = (iconIndex / 4) / 4.0f;
+        float u1 = (idx % 4) / 4f;
+        float v1 = (idx / 4) / 4f;
         float u2 = u1 + 0.25f;
         float v2 = v1 + 0.25f;
 
-        double scale = 6 / zoom;
+        if (e.type == NAEntity.NAEntityType.Player) {
+            drawPlayerMarker(ctx, x, z, s, e.yaw, () ->
+                    NatosAtlas.get().platform.painter.drawTexturedQuad(u1, v1, u2, v2)
+            );
+        } else {
+            drawUpright(ctx, x, z, s, e.yaw, () ->
+                    NatosAtlas.get().platform.painter.drawTexturedQuad(u1, v1, u2, v2)
+            );
+        }
+    }
 
+
+
+    private void drawPlayerMarker(MapContext ctx, double worldX, double worldZ, double scale, double yaw, Runnable draw) {
         GL11.glPushMatrix();
         GL11.glTranslated(worldX, worldZ, 0);
-        GL11.glRotated(e.yaw, 0, 0, 1);
+        GL11.glRotated(yaw, 0, 0, 1);   // only yaw, no unrotation
         GL11.glScaled(scale, scale, 1);
-
-        NatosAtlas.get().platform.painter.drawTexturedQuad(u1, v1, u2, v2);
+        draw.run();
         GL11.glPopMatrix();
     }
 
 
+    private void drawUpright(MapContext ctx, double worldX, double worldZ, double scale, double yaw, Runnable draw) {
+        GL11.glPushMatrix();
+        GL11.glTranslated(worldX, worldZ, 0);
+        GL11.glRotated(-Math.toDegrees(ctx.rotation), 0, 0, 1);
+        if (yaw != 0) GL11.glRotated(yaw, 0, 0, 1);
+        GL11.glScaled(scale, scale, 1);
+        draw.run();
+        GL11.glPopMatrix();
+    }
 }

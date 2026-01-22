@@ -9,7 +9,7 @@ import java.util.List;
 
 public class UIElementList<T> {
 
-    private final int x, y, w, h;
+    protected final int x, y, w, h;
     private final int entryHeight;
 
     private List<T> items;
@@ -20,6 +20,19 @@ public class UIElementList<T> {
 
     private int lastClickedIndex = -1;
     private long lastClickTime = 0;
+
+    public int getScrollOffset() {
+        return scrollOffset;
+    }
+
+    public List<T> getItems() {
+        return items;
+    }
+
+    public int getEntryHeight() {
+        return entryHeight;
+    }
+
     private boolean wasMouseDown = false;
 
     public interface NacListRenderer<T> {
