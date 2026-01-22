@@ -3,7 +3,6 @@ package dev.natowb.natosatlas.core.ui.elements;
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.platform.PlatformPainter;
 import dev.natowb.natosatlas.core.ui.UITheme;
-import org.lwjgl.input.Mouse;
 
 public class UIElementButton {
 
@@ -11,8 +10,6 @@ public class UIElementButton {
     public int x, y, w, h;
     public String label;
     public boolean active = true;
-
-    private boolean wasMouseDown = false;
 
     public UIElementButton(int id, int x, int y, int w, int h, String label) {
         this.id = id;
@@ -23,15 +20,17 @@ public class UIElementButton {
         this.label = label;
     }
 
+    public boolean isInside(int mouseX, int mouseY) {
+        return mouseX >= x && mouseX <= x + w &&
+                mouseY >= y && mouseY <= y + h;
+    }
+
     public void render(int mouseX, int mouseY) {
         PlatformPainter p = NatosAtlas.get().platform.painter;
 
-        boolean hovered = mouseX >= x && mouseX <= x + w &&
-                mouseY >= y && mouseY <= y + h;
+        boolean hovered = isInside(mouseX, mouseY);
 
-        int bg;
-        int border;
-        int text;
+        int bg, border, text;
 
         if (!active) {
             bg = UITheme.BUTTON_BG_DISABLED;
@@ -47,9 +46,7 @@ public class UIElementButton {
             text = UITheme.BUTTON_TEXT;
         }
 
-
         p.drawRect(x, y, x + w, y + h, bg);
-
         p.drawRect(x, y, x + w, y + 1, border);
         p.drawRect(x, y + h - 1, x + w, y + h, border);
         p.drawRect(x, y, x + 1, y + h, border);
@@ -61,28 +58,5 @@ public class UIElementButton {
 
         p.drawString(label, tx, ty, text, false);
     }
-
-
-    public boolean handleClick(int mouseX, int mouseY) {
-        boolean mouseDown = Mouse.isButtonDown(0);
-
-        if (mouseDown && !wasMouseDown) {
-            if (active &&
-                    mouseX >= x && mouseX <= x + w &&
-                    mouseY >= y && mouseY <= y + h) {
-
-                wasMouseDown = mouseDown;
-                NatosAtlas.get().platform.playSound("random.click", 1.0F, 1.0F);
-                return true;
-            }
-        }
-
-        wasMouseDown = mouseDown;
-        return false;
-    }
-
-    public void resetClickState() {
-        wasMouseDown = false;
-    }
-
 }
+

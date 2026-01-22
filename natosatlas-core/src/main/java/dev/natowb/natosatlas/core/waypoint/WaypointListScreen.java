@@ -8,10 +8,7 @@ import dev.natowb.natosatlas.core.ui.UITheme;
 import dev.natowb.natosatlas.core.platform.PlatformPainter;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 
-import java.util.Collections;
-
 public class WaypointListScreen extends UIScreen {
-
 
     private UIElementList<Waypoint> list;
 
@@ -55,6 +52,11 @@ public class WaypointListScreen extends UIScreen {
         createButton = new UIElementButton(1001, rightX, topY, largeW, buttonH, "Create");
         backButton = new UIElementButton(1000, rightX, bottomY, largeW, buttonH, "Back");
 
+        addButton(editButton);
+        addButton(deleteButton);
+        addButton(createButton);
+        addButton(backButton);
+
         editButton.active = false;
         deleteButton.active = false;
     }
@@ -79,10 +81,8 @@ public class WaypointListScreen extends UIScreen {
 
         list.render(mouseX, mouseY);
 
-        editButton.render(mouseX, mouseY);
-        deleteButton.render(mouseX, mouseY);
-        createButton.render(mouseX, mouseY);
-        backButton.render(mouseX, mouseY);
+
+        super.render(mouseX, mouseY, delta, scaleInfo);
     }
 
     @Override
@@ -95,20 +95,30 @@ public class WaypointListScreen extends UIScreen {
         if (button != 0) return;
 
         boolean doubleClick = list.mouseDown(mouseX, mouseY);
-
         updateButtonStates();
 
         if (doubleClick) {
             int index = list.getSelectedIndex();
             if (index >= 0) openEditScreen(index);
         }
+    }
 
-        if (editButton.handleClick(mouseX, mouseY)) {
+    @Override
+    public void mouseUp(int mouseX, int mouseY, int button) {
+        super.mouseUp(mouseX, mouseY, button);
+        if (button == 0) list.mouseUp();
+    }
+
+    @Override
+    protected void onClick(UIElementButton btn) {
+
+        if (btn.id == editButton.id) {
             int index = list.getSelectedIndex();
             if (index >= 0) openEditScreen(index);
+            return;
         }
 
-        if (deleteButton.handleClick(mouseX, mouseY)) {
+        if (btn.id == deleteButton.id) {
             int index = list.getSelectedIndex();
             if (index >= 0) {
                 Waypoint wp = Waypoints.getAll().get(index);
@@ -116,29 +126,16 @@ public class WaypointListScreen extends UIScreen {
                 list.setItems(Waypoints.getAll());
                 updateButtonStates();
             }
+            return;
         }
 
-        if (createButton.handleClick(mouseX, mouseY)) {
+        if (btn.id == createButton.id) {
             NatosAtlas.get().platform.openNacScreen(new WaypointCreateScreen(this));
+            return;
         }
 
-        if (backButton.handleClick(mouseX, mouseY)) {
+        if (btn.id == backButton.id) {
             NatosAtlas.get().platform.openNacScreen(parent);
         }
-    }
-
-    @Override
-    public void mouseUp(int mouseX, int mouseY, int button) {
-        if (button == 0) {
-            list.mouseUp();
-        }
-    }
-
-    @Override
-    public void resetAllButtonsClickState() {
-        editButton.resetClickState();
-        deleteButton.resetClickState();
-        createButton.resetClickState();
-        backButton.resetClickState();
     }
 }

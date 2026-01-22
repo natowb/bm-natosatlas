@@ -49,6 +49,8 @@ public class WaypointCreateScreen extends UIScreen {
         nameField.setMaxLength(32);
         nameField.setFocused(true);
 
+        addTextField(nameField);
+
         xField = new UIElementTextField(px + 20, py + 80, 60, 20,
                 editMode ? Integer.toString(editing.x) : "");
         yField = new UIElementTextField(px + 100, py + 80, 60, 20,
@@ -60,6 +62,11 @@ public class WaypointCreateScreen extends UIScreen {
         yField.setMaxLength(8);
         zField.setMaxLength(8);
 
+
+        addTextField(xField);
+        addTextField(yField);
+        addTextField(zField);
+
         int buttonW = 100;
         int buttonH = 20;
         int gap = 10;
@@ -69,9 +76,14 @@ public class WaypointCreateScreen extends UIScreen {
         int buttonY = py + panelH - buttonH - 10;
 
         cancelButton = new UIElementButton(3000, blockX, buttonY, buttonW, buttonH, "Cancel");
+
+        addButton(cancelButton);
+
         actionButton = new UIElementButton(3001, blockX + buttonW + gap, buttonY, buttonW, buttonH,
                 editMode ? "Save" : "Create");
         actionButton.active = false;
+
+        addButton(actionButton);
 
         if (!editMode) {
             NAEntity player = NatosAtlas.get().platform.worldProvider.getPlayer();
@@ -137,51 +149,20 @@ public class WaypointCreateScreen extends UIScreen {
         p.drawString("Y", px + 100, py + 68, UITheme.LABEL_TEXT, false);
         p.drawString("Z", px + 180, py + 68, UITheme.LABEL_TEXT, false);
 
-        nameField.render();
-        xField.render();
-        yField.render();
-        zField.render();
 
-        cancelButton.render(mouseX, mouseY);
-        actionButton.render(mouseX, mouseY);
+        super.render(mouseX, mouseY, delta, scaleInfo);
     }
 
+
     @Override
-    public void mouseDown(int mouseX, int mouseY, int button) {
-        if (button != 0) return;
-
-        nameField.mouseClicked(mouseX, mouseY, button);
-        xField.mouseClicked(mouseX, mouseY, button);
-        yField.mouseClicked(mouseX, mouseY, button);
-        zField.mouseClicked(mouseX, mouseY, button);
-
-        if (cancelButton.handleClick(mouseX, mouseY)) {
+    protected void onClick(UIElementButton button) {
+        if (button.id == cancelButton.id) {
             NatosAtlas.get().platform.openNacScreen(parent);
             return;
         }
-
-        if (actionButton.handleClick(mouseX, mouseY) && actionButton.active) {
+        if (button.id == actionButton.id) {
             handleAction();
         }
-    }
-
-    @Override
-    public void mouseDrag(int mouseX, int mouseY, int button) {
-        nameField.mouseDragged(mouseX, mouseY, button);
-        xField.mouseDragged(mouseX, mouseY, button);
-        yField.mouseDragged(mouseX, mouseY, button);
-        zField.mouseDragged(mouseX, mouseY, button);
-    }
-
-    @Override
-    public void mouseUp(int mouseX, int mouseY, int button) {
-        nameField.mouseUp(mouseX, mouseY, button);
-        xField.mouseUp(mouseX, mouseY, button);
-        yField.mouseUp(mouseX, mouseY, button);
-        zField.mouseUp(mouseX, mouseY, button);
-
-        cancelButton.resetClickState();
-        actionButton.resetClickState();
     }
 
 
@@ -191,18 +172,6 @@ public class WaypointCreateScreen extends UIScreen {
 
         if (keyCode == Keyboard.KEY_TAB) {
             handleTab();
-            return;
-        }
-
-        if (nameField.focused) {
-            nameField.keyPressed(character, keyCode);
-            return;
-        }
-
-        if (xField.focused || yField.focused || zField.focused) {
-            if (xField.focused) xField.keyPressed(character, keyCode);
-            else if (yField.focused) yField.keyPressed(character, keyCode);
-            else if (zField.focused) zField.keyPressed(character, keyCode);
             return;
         }
 
@@ -242,11 +211,5 @@ public class WaypointCreateScreen extends UIScreen {
         }
 
         NatosAtlas.get().platform.openNacScreen(parent);
-    }
-
-    @Override
-    public void resetAllButtonsClickState() {
-        cancelButton.resetClickState();
-        actionButton.resetClickState();
     }
 }
