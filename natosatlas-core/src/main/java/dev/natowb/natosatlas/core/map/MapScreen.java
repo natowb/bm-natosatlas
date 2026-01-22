@@ -256,6 +256,34 @@ public class MapScreen extends UIScreen {
         int blockX = (int) (worldPixelX / 8.0);
         int blockZ = (int) (worldPixelZ / 8.0);
 
+    private void renderDebugInfo() {
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        PlatformPainter painter = NatosAtlas.get().platform.painter;
+
+        int y = 5;
+        painter.drawString("Canvas", 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("Size: %d x %d", ctx.canvasW, ctx.canvasH), 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("Scroll: %.2f, %.2f", ctx.scrollX, ctx.scrollY), 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("Zoom: %.2f", ctx.zoom), 5, y, 0xFFFFFF);
+
+        y += 15;
+        painter.drawString("Cache", 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("Total Cache Size: %d",
+                NatosAtlas.get().cache.getCacheSize()), 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("Dirty Queue Size: %d",
+                NatosAtlas.get().cache.getDirtyQueueSize()), 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("PNG Cache Size: %d",
+                NatosAtlas.get().cache.getPngCacheSize()), 5, y, 0xFFFFFF);
+    }
+
+    private void renderFooter() {
+        PlatformPainter painter = NatosAtlas.get().platform.painter;
 
         String blockInfo = "Block: " + blockX + ", " + blockZ;
         String shortcuts = "[LM Drag] Pan | [RM Drag] Rotate | [Space] Reset Viewport";
