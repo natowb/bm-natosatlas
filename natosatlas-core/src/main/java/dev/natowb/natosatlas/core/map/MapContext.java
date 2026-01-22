@@ -7,4 +7,5 @@ public class MapContext {
     public float scrollY = 0;
     public float zoom = 1.0f;
     public int mouseX, mouseY;
+    public float rotation = 0f;
 }

@@ -15,6 +15,7 @@ import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementOptionButton;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import dev.natowb.natosatlas.core.waypoint.WaypointListScreen;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Set;
@@ -138,24 +139,47 @@ public class MapScreen extends UIScreen {
     @Override
     public void mouseDown(int x, int y, int button) {
         super.mouseDown(x, y, button);
+
         if (button == 0) viewport.dragStart(x, y);
+        if (button == 1) viewport.rotateStart(x, y);
     }
 
     @Override
     public void mouseDrag(int x, int y, int button) {
         super.mouseDrag(x, y, button);
+
         if (button == 0) viewport.dragMove(x, y);
+        if (button == 1) viewport.rotateMove(x, y);
     }
 
     @Override
     public void mouseUp(int x, int y, int button) {
         super.mouseUp(x, y, button);
+
         if (button == 0) viewport.dragEnd();
+        if (button == 1) viewport.rotateEnd();
     }
+
 
     @Override
     public void mouseScroll(int amount) {
         viewport.zoom(amount);
+    }
+
+    @Override
+    public void keyPressed(char character, int keyCode) {
+        super.keyPressed(character, keyCode);
+
+        if (keyCode == Keyboard.KEY_SPACE) {
+            NAEntity player = NatosAtlas.get().platform.worldProvider.getPlayer();
+            if (player != null) {
+                viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
+            }
+        }
+
+        if (keyCode == Keyboard.KEY_R) {
+            viewport.setRotation(0);
+        }
     }
 
     @Override
@@ -188,6 +212,7 @@ public class MapScreen extends UIScreen {
     }
 
     private void renderDebugInfo(MapContext ctx) {
+        if (!Settings.debugInfo) return;
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         PlatformPainter painter = NatosAtlas.get().platform.painter;
 
@@ -232,7 +257,7 @@ public class MapScreen extends UIScreen {
 
 
         String blockInfo = "Block: " + blockX + ", " + blockZ;
-        String shortcuts = "[Space] Center on Player  |  Drag: Move Map";
+        String shortcuts = "[Space] Reset Offset | [R] Reset Rotation";
 
         int padding = 6;
 

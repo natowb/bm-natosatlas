@@ -62,6 +62,7 @@ public abstract class UIScreen {
     public void handleRawMouseEvent(int x, int y, int button, boolean pressed, int wheel) {
         if (wheel != 0) {
             mouseScroll(wheel);
+            return;
         }
 
         if (ignoreNextClick) {
@@ -69,21 +70,30 @@ public abstract class UIScreen {
             return;
         }
 
-        if (button == 0) {
+        if (button >= 0 && button <= 2) {
+
             if (pressed) {
-                mouseButtons[0] = true;
-                mouseDown(x, y, 0);
-            } else {
-                mouseButtons[0] = false;
-                mouseUp(x, y, 0);
+                mouseButtons[button] = true;
+                mouseDown(x, y, button);
+                return;
+            }
+
+            mouseButtons[button] = false;
+            mouseUp(x, y, button);
+
+            if (button == 0) {
                 handleClickDispatch(x, y);
             }
+            return;
         }
 
-        if (mouseButtons[0]) {
-            mouseDrag(x, y, 0);
+        for (int b = 0; b < 3; b++) {
+            if (mouseButtons[b]) {
+                mouseDrag(x, y, b);
+            }
         }
     }
+
 
     private void handleClickDispatch(int mouseX, int mouseY) {
         for (UIElementButton btn : buttons) {

@@ -16,6 +16,11 @@ public class MapViewport {
     private int dragStartX = -1;
     private int dragStartY = -1;
 
+    private boolean rotating = false;
+    private int rotateStartX = -1;
+    private float rotateStartAngle = 0f;
+
+
     private final Set<Long> visibleRegions = new HashSet<>();
 
     public void initViewport(int x, int y, int w, int h) {
@@ -39,8 +44,17 @@ public class MapViewport {
     public void dragMove(int mouseX, int mouseY) {
         if (!dragging) return;
 
-        ctx.scrollX -= (mouseX - dragStartX) / ctx.zoom;
-        ctx.scrollY -= (mouseY - dragStartY) / ctx.zoom;
+        float dx = mouseX - dragStartX;
+        float dy = mouseY - dragStartY;
+
+        float cos = (float) Math.cos(-ctx.rotation);
+        float sin = (float) Math.sin(-ctx.rotation);
+
+        float worldDX = (dx * cos - dy * sin) / ctx.zoom;
+        float worldDY = (dx * sin + dy * cos) / ctx.zoom;
+
+        ctx.scrollX -= worldDX;
+        ctx.scrollY -= worldDY;
 
         dragStartX = mouseX;
         dragStartY = mouseY;
@@ -48,6 +62,30 @@ public class MapViewport {
 
     public void dragEnd() {
         dragging = false;
+    }
+
+    public void rotateStart(int mouseX, int mouseY) {
+        rotating = true;
+        rotateStartX = mouseX;
+        rotateStartAngle = ctx.rotation;
+    }
+
+    public void rotateMove(int mouseX, int mouseY) {
+        if (!rotating) return;
+
+        float dx = mouseX - rotateStartX;
+
+        float deltaAngle = dx * (float) Math.PI / 200f;
+
+        ctx.rotation = rotateStartAngle + deltaAngle;
+    }
+
+    public void rotateEnd() {
+        rotating = false;
+    }
+
+    public void setRotation(float rot) {
+        this.ctx.rotation = rot;
     }
 
     public void zoom(int amount) {
@@ -60,12 +98,19 @@ public class MapViewport {
         float localX = ctx.mouseX - ctx.canvasX;
         float localY = ctx.mouseY - ctx.canvasY;
 
-        float worldX = ctx.scrollX + localX / oldZoom;
-        float worldY = ctx.scrollY + localY / oldZoom;
+        float cos = (float) Math.cos(ctx.rotation);
+        float sin = (float) Math.sin(ctx.rotation);
 
-        ctx.scrollX = worldX - localX / ctx.zoom;
-        ctx.scrollY = worldY - localY / ctx.zoom;
+        float rotatedX = localX * cos + localY * sin;
+        float rotatedY = -localX * sin + localY * cos;
+
+        float worldX = ctx.scrollX + rotatedX / oldZoom;
+        float worldY = ctx.scrollY + rotatedY / oldZoom;
+
+        ctx.scrollX = worldX - rotatedX / ctx.zoom;
+        ctx.scrollY = worldY - rotatedY / ctx.zoom;
     }
+
 
     public void centerOn(float pixelX, float pixelZ) {
         ctx.scrollX = pixelX - (ctx.canvasW / 2f) / ctx.zoom;
@@ -83,9 +128,19 @@ public class MapViewport {
         );
 
         GL11.glPushMatrix();
+
         GL11.glTranslatef(ctx.canvasX, ctx.canvasY, 0);
+
         GL11.glScalef(ctx.zoom, ctx.zoom, 1);
+
         GL11.glTranslatef(-ctx.scrollX, -ctx.scrollY, 0);
+
+        float pivotX = ctx.scrollX + (ctx.canvasW / 2f) / ctx.zoom;
+        float pivotY = ctx.scrollY + (ctx.canvasH / 2f) / ctx.zoom;
+
+        GL11.glTranslatef(pivotX, pivotY, 0);
+        GL11.glRotatef((float) Math.toDegrees(ctx.rotation), 0, 0, 1);
+        GL11.glTranslatef(-pivotX, -pivotY, 0);
     }
 
     public void end() {
@@ -124,3 +179,4 @@ public class MapViewport {
         return ctx;
     }
 }
+
