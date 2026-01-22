@@ -3,6 +3,7 @@ package dev.natowb.natosatlas.modloader;
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.platform.PlatformWorldProvider;
+import dev.natowb.natosatlas.core.tasks.MapUpdateScheduler;
 import dev.natowb.natosatlas.core.utils.ColorMapperUtil;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
@@ -18,7 +19,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.RegionChunkStorage;
 import net.minecraft.world.chunk.storage.RegionFile;
 
-import java.awt.*;
 import java.io.File;
 import java.util.*;
 import java.util.List;
@@ -163,7 +163,7 @@ public class PlatformWorldProviderML implements PlatformWorldProvider {
 
                     NAChunk chunk = getChunkFromDisk(chunkCoord);
                     if (chunk != null) {
-                        NatosAtlas.get().renderer.renderChunk(chunkCoord, chunk);
+                        MapUpdateScheduler.enqueue(chunkCoord, chunk);
                     }
                 }
             }
