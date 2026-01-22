@@ -95,8 +95,8 @@ public class MapViewport {
         ctx.zoom *= (amount > 0) ? 1.1f : 1f / 1.1f;
         ctx.zoom = Math.max(MapConfig.MIN_ZOOM, Math.min(MapConfig.MAX_ZOOM, ctx.zoom));
 
-        float localX = ctx.mouseX - ctx.canvasX;
-        float localY = ctx.mouseY - ctx.canvasY;
+        float localX = ctx.mouseX - ctx.canvasX - ctx.canvasW / 2f;
+        float localY = ctx.mouseY - ctx.canvasY - ctx.canvasH / 2f;
 
         float cos = (float) Math.cos(ctx.rotation);
         float sin = (float) Math.sin(ctx.rotation);
@@ -112,9 +112,9 @@ public class MapViewport {
     }
 
 
-    public void centerOn(float pixelX, float pixelZ) {
-        ctx.scrollX = pixelX - (ctx.canvasW / 2f) / ctx.zoom;
-        ctx.scrollY = pixelZ - (ctx.canvasH / 2f) / ctx.zoom;
+    public void centerOn(float worldX, float worldY) {
+        ctx.scrollX = worldX - (ctx.canvasW / 2f);
+        ctx.scrollY = worldY - (ctx.canvasH / 2f);
     }
 
     public void begin(UIScaleInfo scaleInfo) {
@@ -131,17 +131,17 @@ public class MapViewport {
 
         GL11.glTranslatef(ctx.canvasX, ctx.canvasY, 0);
 
-        GL11.glScalef(ctx.zoom, ctx.zoom, 1);
-
-        GL11.glTranslatef(-ctx.scrollX, -ctx.scrollY, 0);
-
-        float pivotX = ctx.scrollX + (ctx.canvasW / 2f) / ctx.zoom;
-        float pivotY = ctx.scrollY + (ctx.canvasH / 2f) / ctx.zoom;
+        float pivotX = ctx.canvasW / 2f;
+        float pivotY = ctx.canvasH / 2f;
 
         GL11.glTranslatef(pivotX, pivotY, 0);
         GL11.glRotatef((float) Math.toDegrees(ctx.rotation), 0, 0, 1);
+        GL11.glScalef(ctx.zoom, ctx.zoom, 1);
         GL11.glTranslatef(-pivotX, -pivotY, 0);
+
+        GL11.glTranslatef(-ctx.scrollX, -ctx.scrollY, 0);
     }
+
 
     public void end() {
         GL11.glPopMatrix();
@@ -161,10 +161,10 @@ public class MapViewport {
         int startChunkZ = (int) Math.floor(topBlock / 16);
         int endChunkZ = (int) Math.floor(bottomBlock / 16);
 
-        int startRegionX = startChunkX / 32 - 1;
-        int endRegionX = endChunkX / 32 + 1;
-        int startRegionZ = startChunkZ / 32 - 1;
-        int endRegionZ = endChunkZ / 32 + 1;
+        int startRegionX = startChunkX / 32 - 2;
+        int endRegionX = endChunkX / 32 + 2;
+        int startRegionZ = startChunkZ / 32 - 2;
+        int endRegionZ = endChunkZ / 32 + 2;
 
         for (int rx = startRegionX; rx <= endRegionX; rx++) {
             for (int rz = startRegionZ; rz <= endRegionZ; rz++) {

@@ -27,20 +27,19 @@ public class MapRenderEntities implements MapRenderStage {
 
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.All) {
             for (NAEntity e : NatosAtlas.get().platform.worldProvider.getEntities()) {
-                renderEntity(ctx, e, ctx.zoom);
+                renderEntity(ctx, e);
             }
         }
 
         for (NAEntity p : NatosAtlas.get().platform.worldProvider.getPlayers()) {
-            renderMapMarker(ctx, p, ctx.zoom);
+            renderMapMarker(ctx, p);
         }
     }
 
     private void drawWaypoints(MapContext ctx) {
         for (Waypoint wp : Waypoints.getAll()) {
             renderMapMarker(ctx,
-                    new NAEntity(wp.x, wp.y, wp.z, 0, NAEntity.NAEntityType.Waypoint),
-                    ctx.zoom);
+                    new NAEntity(wp.x, wp.y, wp.z, 0, NAEntity.NAEntityType.Waypoint));
         }
 
         for (Waypoint wp : Waypoints.getAll()) {
@@ -59,13 +58,13 @@ public class MapRenderEntities implements MapRenderStage {
         }
     }
 
-    private void renderEntity(MapContext ctx, NAEntity e, double zoom) {
+    private void renderEntity(MapContext ctx, NAEntity e) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,
                 NatosAtlas.get().platform.painter.getMinecraftTextureId(e.texturePath));
 
         double x = e.x * Constants.PIXELS_PER_CANVAS_UNIT;
         double z = e.z * Constants.PIXELS_PER_CANVAS_UNIT;
-        double s = 4 / zoom;
+        double s = 4 / ctx.zoom;
 
         NAEntity.UV uv = NAEntity.getUV(e.texturePath);
 
@@ -74,31 +73,21 @@ public class MapRenderEntities implements MapRenderStage {
         );
     }
 
-    private void renderMapMarker(MapContext ctx, NAEntity e, double zoom) {
+    private void renderMapMarker(MapContext ctx, NAEntity e) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,
                 NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
 
         double x = e.x * Constants.PIXELS_PER_CANVAS_UNIT;
         double z = e.z * Constants.PIXELS_PER_CANVAS_UNIT;
-        double s = 6 / zoom;
+        double s = 6 / ctx.zoom;
 
         int idx;
         switch (e.type) {
-            case Player:
-                idx = 0;
-                break;
-            case Animal:
-                idx = 1;
-                break;
-            case Mob:
-                idx = 2;
-                break;
-            case Waypoint:
-                idx = 4;
-                break;
-            default:
-                idx = 3;
-                break;
+            case Player:  idx = 0; break;
+            case Animal:  idx = 1; break;
+            case Mob:     idx = 2; break;
+            case Waypoint:idx = 4; break;
+            default:      idx = 3; break;
         }
 
         float u1 = (idx % 4) / 4f;
@@ -106,10 +95,28 @@ public class MapRenderEntities implements MapRenderStage {
         float u2 = u1 + 0.25f;
         float v2 = v1 + 0.25f;
 
-        drawUpright(ctx, x, z, s, e.yaw, () ->
-                NatosAtlas.get().platform.painter.drawTexturedQuad(u1, v1, u2, v2)
-        );
+        if (e.type == NAEntity.NAEntityType.Player) {
+            drawPlayerMarker(ctx, x, z, s, e.yaw, () ->
+                    NatosAtlas.get().platform.painter.drawTexturedQuad(u1, v1, u2, v2)
+            );
+        } else {
+            drawUpright(ctx, x, z, s, e.yaw, () ->
+                    NatosAtlas.get().platform.painter.drawTexturedQuad(u1, v1, u2, v2)
+            );
+        }
     }
+
+
+
+    private void drawPlayerMarker(MapContext ctx, double worldX, double worldZ, double scale, double yaw, Runnable draw) {
+        GL11.glPushMatrix();
+        GL11.glTranslated(worldX, worldZ, 0);
+        GL11.glRotated(yaw, 0, 0, 1);   // only yaw, no unrotation
+        GL11.glScaled(scale, scale, 1);
+        draw.run();
+        GL11.glPopMatrix();
+    }
+
 
     private void drawUpright(MapContext ctx, double worldX, double worldZ, double scale, double yaw, Runnable draw) {
         GL11.glPushMatrix();

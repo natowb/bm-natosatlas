@@ -175,14 +175,11 @@ public class MapScreen extends UIScreen {
         super.keyPressed(character, keyCode);
 
         if (keyCode == Keyboard.KEY_SPACE) {
+            viewport.setRotation(0);
             NAEntity player = NatosAtlas.get().platform.worldProvider.getPlayer();
             if (player != null) {
                 viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
             }
-        }
-
-        if (keyCode == Keyboard.KEY_R) {
-            viewport.setRotation(0);
         }
     }
 
@@ -261,7 +258,7 @@ public class MapScreen extends UIScreen {
 
 
         String blockInfo = "Block: " + blockX + ", " + blockZ;
-        String shortcuts = "[Space] Reset Offset | [R] Reset Rotation";
+        String shortcuts = "[LM Drag] Pan | [RM Drag] Rotate | [Space] Reset Viewport";
 
         int padding = 6;
 
