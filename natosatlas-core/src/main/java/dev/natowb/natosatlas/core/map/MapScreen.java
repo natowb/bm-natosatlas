@@ -74,6 +74,8 @@ public class MapScreen extends UIScreen {
                 "X"
         );
 
+        addButton(closeButton);
+
         settingsButton = new UIElementButton(
                 1000,
                 closeButton.x - hGap - buttonW,
@@ -82,6 +84,8 @@ public class MapScreen extends UIScreen {
                 buttonH,
                 "Settings"
         );
+
+        addButton(settingsButton);
 
         waypointsButton = new UIElementButton(
                 1002,
@@ -92,6 +96,8 @@ public class MapScreen extends UIScreen {
                 "Waypoints"
         );
 
+        addButton(waypointsButton);
+
         dayNightButton = new UIElementOptionButton(
                 1003,
                 waypointsButton.x - hGap - buttonW,
@@ -101,6 +107,8 @@ public class MapScreen extends UIScreen {
                 SettingsOption.MAP_RENDER_MODE
         );
 
+        addButton(dayNightButton);
+
         slimeChunksButton = new UIElementOptionButton(
                 1004,
                 dayNightButton.x - hGap - buttonW,
@@ -109,6 +117,8 @@ public class MapScreen extends UIScreen {
                 buttonH,
                 SettingsOption.SLIME_CHUNKS
         );
+
+        addButton(slimeChunksButton);
     }
 
     @Override
@@ -149,39 +159,16 @@ public class MapScreen extends UIScreen {
             renderDebugInfo();
         }
 
-        renderButtons(mouseX, mouseY);
         renderFooter();
+
+        super.render(mouseX, mouseY, delta, scaleInfo);
     }
 
 
     @Override
     public void mouseDown(int mouseX, int mouseY, int button) {
+        super.mouseDown(mouseX, mouseY, button);
         if (button != 0) return;
-
-        if (closeButton.handleClick(mouseX, mouseY)) {
-            NatosAtlas.get().platform.openNacScreen(parent);
-            return;
-        }
-        if (settingsButton.handleClick(mouseX, mouseY)) {
-            NatosAtlas.get().platform.openNacScreen(new SettingsScreen(this));
-            return;
-        }
-        if (waypointsButton.handleClick(mouseX, mouseY)) {
-            NatosAtlas.get().platform.openNacScreen(new WaypointListScreen(this));
-            return;
-        }
-
-        if (dayNightButton.handleClick(mouseX, mouseY)) {
-            dayNightButton.cycle();
-            Settings.save();
-            return;
-        }
-
-        if (slimeChunksButton.handleClick(mouseX, mouseY)) {
-            slimeChunksButton.cycle();
-            Settings.save();
-            return;
-        }
 
         dragging = true;
         dragStartX = mouseX;
@@ -189,7 +176,37 @@ public class MapScreen extends UIScreen {
     }
 
     @Override
+    protected void onClick(UIElementButton btn) {
+        if (btn.id == closeButton.id) {
+            NatosAtlas.get().platform.openNacScreen(parent);
+            return;
+        }
+
+        if (btn.id == settingsButton.id) {
+            NatosAtlas.get().platform.openNacScreen(new SettingsScreen(this));
+            return;
+        }
+
+        if (btn.id == waypointsButton.id) {
+            NatosAtlas.get().platform.openNacScreen(new WaypointListScreen(this));
+            return;
+        }
+
+        if (btn.id == dayNightButton.id) {
+            dayNightButton.cycle();
+            Settings.save();
+            return;
+        }
+
+        if (btn.id == slimeChunksButton.id) {
+            slimeChunksButton.cycle();
+            Settings.save();
+        }
+    }
+
+    @Override
     public void mouseDrag(int mouseX, int mouseY, int button) {
+        super.mouseDrag(mouseX, mouseY, button);
         if (!dragging || button != 0) return;
 
         ctx.scrollX -= (mouseX - dragStartX) / ctx.zoom;
@@ -201,6 +218,7 @@ public class MapScreen extends UIScreen {
 
     @Override
     public void mouseUp(int mouseX, int mouseY, int button) {
+        super.mouseDrag(mouseX, mouseY, button);
         if (button == 0) dragging = false;
     }
 
@@ -235,24 +253,6 @@ public class MapScreen extends UIScreen {
 
             }
         }
-    }
-
-
-    @Override
-    public void resetAllButtonsClickState() {
-        settingsButton.resetClickState();
-        waypointsButton.resetClickState();
-        closeButton.resetClickState();
-        dayNightButton.resetClickState();
-        slimeChunksButton.resetClickState();
-    }
-
-    private void renderButtons(int mouseX, int mouseY) {
-        settingsButton.render(mouseX, mouseY);
-        waypointsButton.render(mouseX, mouseY);
-        closeButton.render(mouseX, mouseY);
-        dayNightButton.render(mouseX, mouseY);
-        slimeChunksButton.render(mouseX, mouseY);
     }
 
     private void renderDebugInfo() {

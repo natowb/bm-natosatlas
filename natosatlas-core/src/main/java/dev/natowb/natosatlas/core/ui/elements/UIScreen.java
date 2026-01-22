@@ -4,6 +4,9 @@ import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import org.lwjgl.input.Keyboard;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class UIScreen {
 
     protected int width;
@@ -12,6 +15,21 @@ public abstract class UIScreen {
 
     private boolean ignoreNextClick = true;
     private final boolean[] mouseButtons = new boolean[3];
+    protected final List<UIElementButton> buttons = new ArrayList<>();
+    protected final List<UIElementSlider> sliders = new ArrayList<>();
+    protected final List<UIElementTextField> textFields = new ArrayList<>();
+
+    protected void addButton(UIElementButton btn) {
+        buttons.add(btn);
+    }
+
+    protected void addSlider(UIElementSlider slider) {
+        sliders.add(slider);
+    }
+
+    protected void addTextField(UIElementTextField tf) {
+        textFields.add(tf);
+    }
 
     protected UIScreen(UIScreen parent) {
         this.parent = parent;
@@ -27,7 +45,19 @@ public abstract class UIScreen {
     }
 
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
+        for (UIElementButton btn : buttons) {
+            btn.render(mouseX, mouseY);
+        }
+
+        for (UIElementSlider slider : sliders) {
+            slider.render(mouseX, mouseY);
+        }
+
+        for (UIElementTextField tf : textFields) {
+            tf.render();
+        }
     }
+
 
     public void handleRawMouseEvent(int x, int y, int button, boolean pressed, int wheel) {
         if (wheel != 0) {
@@ -35,44 +65,90 @@ public abstract class UIScreen {
         }
 
         if (ignoreNextClick) {
-            if (!pressed) {
-                ignoreNextClick = false;
-            }
+            if (!pressed) ignoreNextClick = false;
             return;
         }
 
-        if (button != -1) {
+        if (button == 0) {
             if (pressed) {
-                mouseButtons[button] = true;
-                mouseDown(x, y, button);
+                mouseButtons[0] = true;
+                mouseDown(x, y, 0);
             } else {
-                mouseButtons[button] = false;
-                mouseUp(x, y, button);
-                resetAllButtonsClickState();
+                mouseButtons[0] = false;
+                mouseUp(x, y, 0);
+                handleClickDispatch(x, y);
             }
         }
 
-        for (int i = 0; i < mouseButtons.length; i++) {
-            if (mouseButtons[i]) {
-                mouseDrag(x, y, i);
+        if (mouseButtons[0]) {
+            mouseDrag(x, y, 0);
+        }
+    }
+
+    private void handleClickDispatch(int mouseX, int mouseY) {
+        for (UIElementButton btn : buttons) {
+            if (btn.active && btn.isInside(mouseX, mouseY)) {
+                NatosAtlas.get().platform.playSound("random.click", 1.0F, 1.0F);
+                onClick(btn);
+                return;
             }
         }
+    }
+
+    protected void onClick(UIElementButton button) {
+
     }
 
     public void mouseDown(int mouseX, int mouseY, int button) {
+        if (button != 0) return;
+
+        for (UIElementTextField tf : textFields) {
+            tf.mouseClicked(mouseX, mouseY, button);
+        }
+
+        for (UIElementSlider slider : sliders) {
+            slider.mouseDown(mouseX, mouseY);
+        }
     }
 
+
     public void mouseUp(int mouseX, int mouseY, int button) {
+        if (button != 0) return;
+
+        for (UIElementSlider slider : sliders) {
+            slider.mouseUp();
+        }
+
+        for (UIElementTextField tf : textFields) {
+            tf.mouseUp(mouseX, mouseY, button);
+        }
     }
+
 
     public void mouseScroll(int amount) {
     }
 
     public void mouseDrag(int mouseX, int mouseY, int button) {
+        if (button != 0) return;
 
+        for (UIElementSlider slider : sliders) {
+            slider.mouseDrag(mouseX);
+        }
+
+        for (UIElementTextField tf : textFields) {
+            tf.mouseDragged(mouseX, mouseY, button);
+        }
     }
 
+
     public void keyPressed(char character, int keyCode) {
+        for (UIElementTextField tf : textFields) {
+            if (tf.focused) {
+                tf.keyPressed(character, keyCode);
+                return;
+            }
+        }
+
         if (keyCode == Keyboard.KEY_ESCAPE) {
             NatosAtlas.get().platform.openNacScreen(parent);
         }
@@ -80,9 +156,6 @@ public abstract class UIScreen {
 
     public void handleTab() {
 
-    }
-
-    public void resetAllButtonsClickState() {
     }
 
     public void onClose() {
