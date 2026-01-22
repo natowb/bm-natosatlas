@@ -3,6 +3,8 @@ package dev.natowb.natosatlas.core.map;
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
+import dev.natowb.natosatlas.core.platform.PlatformPainter;
+import dev.natowb.natosatlas.core.render.*;
 import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.settings.SettingsOption;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
@@ -14,6 +16,7 @@ import dev.natowb.natosatlas.core.settings.SettingsScreen;
 import dev.natowb.natosatlas.core.utils.Constants;
 import dev.natowb.natosatlas.core.waypoint.WaypointListScreen;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +25,6 @@ public class MapScreen extends UIScreen {
 
     private final MapContext ctx = new MapContext();
     private final MapViewport viewport = new MapViewport();
-    private final MapPainter mapPainter = new MapPainter();
 
     private UIElementButton settingsButton;
     private UIElementOptionButton dayNightButton;
@@ -137,24 +139,18 @@ public class MapScreen extends UIScreen {
         }
 
         viewport.begin(ctx, scaleInfo);
-        mapPainter.drawRegions(visibleRegions);
-        mapPainter.drawSlimeChunks(visibleRegions);
-        mapPainter.drawGrid(ctx);
-        mapPainter.drawEntities(ctx);
-        mapPainter.drawWaypoints(ctx);
+        new MapRenderRegions().render(ctx, visibleRegions);
+        new MapRenderSlimeChunks().render(ctx, visibleRegions);
+        new MapRenderGrid().render(ctx, visibleRegions);
+        new MapRenderEntities().render(ctx, visibleRegions);
         viewport.end();
 
         if (Settings.debugInfo) {
-            mapPainter.drawDebugInfo(ctx);
+            renderDebugInfo();
         }
 
-        mapPainter.drawFooterBar(ctx);
-
-        settingsButton.render(mouseX, mouseY);
-        waypointsButton.render(mouseX, mouseY);
-        closeButton.render(mouseX, mouseY);
-        dayNightButton.render(mouseX, mouseY);
-        slimeChunksButton.render(mouseX, mouseY);
+        renderButtons(mouseX, mouseY);
+        renderFooter();
     }
 
 
@@ -249,6 +245,69 @@ public class MapScreen extends UIScreen {
         closeButton.resetClickState();
         dayNightButton.resetClickState();
         slimeChunksButton.resetClickState();
+    }
+
+    private void renderButtons(int mouseX, int mouseY) {
+        settingsButton.render(mouseX, mouseY);
+        waypointsButton.render(mouseX, mouseY);
+        closeButton.render(mouseX, mouseY);
+        dayNightButton.render(mouseX, mouseY);
+        slimeChunksButton.render(mouseX, mouseY);
+    }
+
+    private void renderDebugInfo() {
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        PlatformPainter painter = NatosAtlas.get().platform.painter;
+
+        int y = 5;
+        painter.drawString("Canvas", 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("Size: %d x %d", ctx.canvasW, ctx.canvasH), 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("Scroll: %.2f, %.2f", ctx.scrollX, ctx.scrollY), 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("Zoom: %.2f", ctx.zoom), 5, y, 0xFFFFFF);
+
+        y += 15;
+        painter.drawString("Cache", 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("Total Cache Size: %d",
+                NatosAtlas.get().cache.getCacheSize()), 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("Dirty Queue Size: %d",
+                NatosAtlas.get().cache.getDirtyQueueSize()), 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("PNG Cache Size: %d",
+                NatosAtlas.get().cache.getPngCacheSize()), 5, y, 0xFFFFFF);
+    }
+
+    private void renderFooter() {
+        PlatformPainter painter = NatosAtlas.get().platform.painter;
+
+        int barHeight = 20;
+        int x = ctx.canvasX;
+        int y = ctx.canvasY + ctx.canvasH - barHeight;
+        int w = ctx.canvasW;
+        int h = barHeight;
+
+        painter.drawRect(x, y, x + w, y + h, UITheme.ELEMENT_BG);
+
+        double worldPixelX = ctx.scrollX + ctx.mouseX / ctx.zoom;
+        double worldPixelZ = ctx.scrollY + ctx.mouseY / ctx.zoom;
+
+        int blockX = (int) (worldPixelX / 8.0);
+        int blockZ = (int) (worldPixelZ / 8.0);
+
+
+        String blockInfo = "Block: " + blockX + ", " + blockZ;
+        String shortcuts = "[Space] Center on Player  |  Drag: Move Map";
+
+        int padding = 6;
+
+        painter.drawString(blockInfo, x + padding, y + 6, 0xFFFFFF);
+
+        int shortcutsWidth = painter.getStringWidth(shortcuts);
+        painter.drawString(shortcuts, x + w - shortcutsWidth - padding, y + 6, 0xCCCCCC);
     }
 
 
