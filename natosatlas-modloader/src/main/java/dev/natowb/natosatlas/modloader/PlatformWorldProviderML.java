@@ -8,6 +8,7 @@ import dev.natowb.natosatlas.core.utils.ColorMapperUtil;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -224,7 +225,7 @@ public class PlatformWorldProviderML implements PlatformWorldProvider {
                 int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
 
 
-                int height = mc.world.getTopSolidBlockY(worldBlockX, worldBlockZ) - 1;
+                int height = getTopSolidBlockY(chunk, x, z) - 1;
                 int aboveId = chunk.getBlockId(x, height + 1, z);
                 final int SNOW_LAYER_ID = Block.SNOW.id;
                 if (aboveId == SNOW_LAYER_ID) {
@@ -243,6 +244,23 @@ public class PlatformWorldProviderML implements PlatformWorldProvider {
 
         return nac;
     }
+
+
+    private int getTopSolidBlockY(Chunk chunk, int x, int z) {
+        int var4 = 127;
+        x &= 15;
+
+        for(int var8 = z & 15; var4 > 0; --var4) {
+            int var5 = chunk.getBlockId(x, var4, var8);
+            Material var6 = var5 == 0 ? Material.AIR : Block.BLOCKS[var5].material;
+            if (var6.blocksMovement() || var6.isFluid()) {
+                return var4 + 1;
+            }
+        }
+
+        return -1;
+    }
+
 
 
     @Override

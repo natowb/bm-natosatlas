@@ -10,6 +10,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.Blocks;
+import net.minecraft.core.block.material.Material;
 import net.minecraft.core.block.material.MaterialColor;
 import net.minecraft.core.entity.Mob;
 import net.minecraft.core.entity.animal.MobAnimal;
@@ -30,247 +31,262 @@ import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CH
 import static dev.natowb.natosatlas.core.utils.Constants.CHUNKS_PER_MINECRAFT_REGION;
 
 public class PlatformWorldProviderBTA implements PlatformWorldProvider {
-	Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
+    Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
-	@Override
-	public NAWorldInfo getWorldInfo() {
-		int dimension = mc.currentWorld.dimension.id;
-		boolean isServer = mc.isMultiplayerWorld();
-		long time = mc.currentWorld.getWorldTime();
+    @Override
+    public NAWorldInfo getWorldInfo() {
+        int dimension = mc.currentWorld.dimension.id;
+        boolean isServer = mc.isMultiplayerWorld();
+        long time = mc.currentWorld.getWorldTime();
 
-		String name;
-		if (isServer) {
-			name = mc.gameSettings.lastServer.name;
-		} else {
-			name = mc.currentWorld.getLevelData().getWorldName();
-		}
-		return new NAWorldInfo(name, isServer, time, dimension, mc.currentWorld.getLevelData().getRandomSeed());
-	}
+        String name;
+        if (isServer) {
+            name = mc.gameSettings.lastServer.name;
+        } else {
+            name = mc.currentWorld.getLevelData().getWorldName();
+        }
+        return new NAWorldInfo(name, isServer, time, dimension, mc.currentWorld.getLevelData().getRandomSeed());
+    }
 
-	@Override
-	public List<NAEntity> getEntities() {
-		List<NAEntity> entities = new ArrayList<>();
+    @Override
+    public List<NAEntity> getEntities() {
+        List<NAEntity> entities = new ArrayList<>();
 
-		for (Object o : mc.currentWorld.loadedEntityList) {
-			if (!(o instanceof Mob)) continue;
-			if (o instanceof Player) continue;
+        for (Object o : mc.currentWorld.loadedEntityList) {
+            if (!(o instanceof Mob)) continue;
+            if (o instanceof Player) continue;
 
-			Mob e = (Mob) o;
+            Mob e = (Mob) o;
 
-			NAEntity.NAEntityType type = NAEntity.NAEntityType.Mob;
+            NAEntity.NAEntityType type = NAEntity.NAEntityType.Mob;
 
-			if (e instanceof MobAnimal) {
-				type = NAEntity.NAEntityType.Animal;
-			}
+            if (e instanceof MobAnimal) {
+                type = NAEntity.NAEntityType.Animal;
+            }
 
-			entities.add(new NAEntity(e.x, e.y, e.z, e.yRot, type).setTexturePath(e.getEntityTexture()));
-		}
+            entities.add(new NAEntity(e.x, e.y, e.z, e.yRot, type).setTexturePath(e.getEntityTexture()));
+        }
 
-		return entities;
-	}
+        return entities;
+    }
 
-	@Override
-	public List<NAEntity> getPlayers() {
-		List<NAEntity> players = new ArrayList<>();
+    @Override
+    public List<NAEntity> getPlayers() {
+        List<NAEntity> players = new ArrayList<>();
 
-		for (Player p : mc.currentWorld.players) {
-			players.add(new NAEntity(p.x, p.y, p.z, p.yRot, NAEntity.NAEntityType.Player));
-		}
+        for (Player p : mc.currentWorld.players) {
+            players.add(new NAEntity(p.x, p.y, p.z, p.yRot, NAEntity.NAEntityType.Player));
+        }
 
-		return players;
-	}
+        return players;
+    }
 
-	@Override
-	public NAEntity getPlayer() {
-		Player p = mc.thePlayer;
-		return new NAEntity(p.x, p.y, p.z, p.yRot, NAEntity.NAEntityType.Player);
-	}
-
-
-	@Override
-	public NABiome getBiome(NACoord blockCoord) {
-		Biome biome = mc.currentWorld.getBiomeProvider().getBiome(blockCoord.x, 50, blockCoord.z);
-		return new NABiome(biome.topBlock, biome.color);
-	}
-
-	@Override
-	public int getBlockColor(int blockId, int blockMeta) {
-		Block<?> block = Blocks.getBlock(blockId);
-		if (block == null) {
-			return MaterialColor.getColorFromIndex(MaterialColor.none.id);
-		}
-		if (block.getMaterialColor() == null) return 0xFF00FF00;
-
-		assert Blocks.getBlock(blockId) != null;
-		return MaterialColor.getColorFromIndex(Blocks.getBlock(blockId).getMaterialColor().id);
-	}
-
-	@Override
-	public boolean isBlockGrass(int blockId) {
-		return false;
-	}
+    @Override
+    public NAEntity getPlayer() {
+        Player p = mc.thePlayer;
+        return new NAEntity(p.x, p.y, p.z, p.yRot, NAEntity.NAEntityType.Player);
+    }
 
 
-	@Override
-	public void generateExistingChunks() {
-		String path = String.format("dimensions/%d/region", mc.currentWorld.dimension.id);
-		File regionDir = new File(NAPaths.getWorldSavePath().toFile(), path);
+    @Override
+    public NABiome getBiome(NACoord blockCoord) {
+        Biome biome = mc.currentWorld.getBiomeProvider().getBiome(blockCoord.x, 50, blockCoord.z);
+        return new NABiome(biome.topBlock, biome.color);
+    }
 
-		File[] regionFiles = regionDir.listFiles((dir, name) -> name.endsWith(".mcr"));
-		if (regionFiles == null || regionFiles.length == 0) {
-			LogUtil.info("No region files found.");
-			return;
-		}
+    @Override
+    public int getBlockColor(int blockId, int blockMeta) {
+        Block<?> block = Blocks.getBlock(blockId);
+        if (block == null) {
+            return MaterialColor.getColorFromIndex(MaterialColor.none.id);
+        }
+        if (block.getMaterialColor() == null) return 0xFF00FF00;
 
-		int totalRegions = regionFiles.length;
-		int regionIndex = 0;
+        assert Blocks.getBlock(blockId) != null;
+        return MaterialColor.getColorFromIndex(Blocks.getBlock(blockId).getMaterialColor().id);
+    }
 
-		for (File regionFile : regionFiles) {
-			regionIndex++;
-
-			String[] parts = regionFile.getName()
-					.substring(2, regionFile.getName().length() - 4)
-					.split("\\.");
-
-			int rx = Integer.parseInt(parts[0]);
-			int rz = Integer.parseInt(parts[1]);
-
-			LogUtil.info("Scanning region {} of {} -> r({}, {})", regionIndex, totalRegions, rx, rz);
-
-			RegionFile rf = new RegionFile(regionFile);
-
-			int processed = 0;
-			for (int x = 0; x < CHUNKS_PER_MINECRAFT_REGION; x++) {
-				for (int z = 0; z < CHUNKS_PER_MINECRAFT_REGION; z++) {
-					if (!rf.chunkExists(x, z)) {
-						continue;
-					}
-					processed++;
-
-					int worldChunkX = rx * CHUNKS_PER_MINECRAFT_REGION + x;
-					int worldChunkZ = rz * CHUNKS_PER_MINECRAFT_REGION + z;
-
-					NACoord chunkCoord = NACoord.from(worldChunkX, worldChunkZ);
-
-					NAChunk chunk = getChunkFromDisk(chunkCoord);
-					if (chunk != null) {
-						MapUpdateScheduler.enqueue(chunkCoord, chunk);
-					}
-				}
-			}
-			LogUtil.info("Finished region r({}, {})  ({} chunks found)", rx, rz, processed);
-
-			try {
-				rf.close();
-			} catch (IOException ignored) {
-			}
-
-		}
-
-		LogUtil.info("All regions scanned.");
-	}
+    @Override
+    public boolean isBlockGrass(int blockId) {
+        return false;
+    }
 
 
-	@Override
-	public NAChunk getChunk(NACoord chunkCoord) {
-		Chunk chunk = mc.currentWorld.getChunkFromChunkCoords(chunkCoord.x, chunkCoord.z);
-		NAChunk nac = new NAChunk();
-		for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
-			for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
-				int worldBlockX = chunkCoord.x * BLOCKS_PER_MINECRAFT_CHUNK + x;
-				int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
+    @Override
+    public void generateExistingChunks() {
+        String path = String.format("dimensions/%d/region", mc.currentWorld.dimension.id);
+        File regionDir = new File(NAPaths.getWorldSavePath().toFile(), path);
 
-				int height = mc.currentWorld.findTopSolidBlock(worldBlockX, worldBlockZ) - 1;
-				int aboveId = chunk.getBlockID(x, height + 1, z);
+        File[] regionFiles = regionDir.listFiles((dir, name) -> name.endsWith(".mcr"));
+        if (regionFiles == null || regionFiles.length == 0) {
+            LogUtil.info("No region files found.");
+            return;
+        }
 
-				final int SNOW_LAYER_ID = Blocks.LAYER_SNOW.id();
-				if (aboveId == SNOW_LAYER_ID) {
-					height = height + 1;
-				}
+        int totalRegions = regionFiles.length;
+        int regionIndex = 0;
 
+        for (File regionFile : regionFiles) {
+            regionIndex++;
 
-				int blockId = chunk.getBlockID(x, height, z);
-				int depth = computeFluidDepth(chunk, x, height, z);
-				int blockLight = safeBlockLight(chunk, x, height + 1, z);
-				int meta = chunk.getBlockMetadata(x, height, z);
-				NABiome biome = getBiome(NACoord.from(worldBlockX, worldBlockZ));
+            String[] parts = regionFile.getName()
+                    .substring(2, regionFile.getName().length() - 4)
+                    .split("\\.");
 
-				nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
-			}
-		}
+            int rx = Integer.parseInt(parts[0]);
+            int rz = Integer.parseInt(parts[1]);
 
-		return nac;
-	}
+            LogUtil.info("Scanning region {} of {} -> r({}, {})", regionIndex, totalRegions, rx, rz);
 
+            RegionFile rf = new RegionFile(regionFile);
 
-	@Override
-	public NAChunk getChunkFromDisk(NACoord chunkCoord) {
-		ChunkLoaderRegion chunkLoader = new ChunkLoaderRegion(NAPaths.getWorldSavePath().toFile());
-		Chunk chunk = null;
-		try {
-			chunk = chunkLoader.loadChunk(mc.currentWorld, chunkCoord.x, chunkCoord.z);
-		} catch (IOException ignored) {
-		}
+            int processed = 0;
+            for (int x = 0; x < CHUNKS_PER_MINECRAFT_REGION; x++) {
+                for (int z = 0; z < CHUNKS_PER_MINECRAFT_REGION; z++) {
+                    if (!rf.chunkExists(x, z)) {
+                        continue;
+                    }
+                    processed++;
 
-		if (chunk == null) {
-			return null;
-		}
+                    int worldChunkX = rx * CHUNKS_PER_MINECRAFT_REGION + x;
+                    int worldChunkZ = rz * CHUNKS_PER_MINECRAFT_REGION + z;
 
-		NAChunk nac = new NAChunk();
-		for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
-			for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
-				int worldBlockX = chunkCoord.x * BLOCKS_PER_MINECRAFT_CHUNK + x;
-				int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
+                    NACoord chunkCoord = NACoord.from(worldChunkX, worldChunkZ);
 
-				int height = mc.currentWorld.getTopBlock(worldBlockX, worldBlockZ) - 1;
-				int aboveId = chunk.getBlockID(x, height + 1, z);
+                    NAChunk chunk = getChunkFromDisk(chunkCoord);
+                    if (chunk != null) {
+                        MapUpdateScheduler.enqueue(chunkCoord, chunk);
+                    }
+                }
+            }
+            LogUtil.info("Finished region r({}, {})  ({} chunks found)", rx, rz, processed);
 
-				final int SNOW_LAYER_ID = Blocks.LAYER_SNOW.id();
-				if (aboveId == SNOW_LAYER_ID) {
-					height = height + 1;
-				}
+            try {
+                rf.close();
+            } catch (IOException ignored) {
+            }
 
+        }
 
-				int blockId = chunk.getBlockID(x, height, z);
-				int depth = computeFluidDepth(chunk, x, height, z);
-				int blockLight = safeBlockLight(chunk, x, height + 1, z);
-				int meta = chunk.getBlockMetadata(x, height, z);
-				NABiome biome = getBiome(NACoord.from(worldBlockX, worldBlockZ));
-
-				nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
-			}
-		}
-
-		return nac;
-	}
+        LogUtil.info("All regions scanned.");
+    }
 
 
-	@Override
-	public boolean isBlockFluid(int blockId) {
-		Block<?> block = Blocks.getBlock(blockId);
-		if (block == null) return false;
-		if (block.getMaterial() == null) return false;
-		return block.getMaterial().isLiquid();
-	}
+    @Override
+    public NAChunk getChunk(NACoord chunkCoord) {
+        Chunk chunk = mc.currentWorld.getChunkFromChunkCoords(chunkCoord.x, chunkCoord.z);
+        NAChunk nac = new NAChunk();
+        for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
+            for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
+                int worldBlockX = chunkCoord.x * BLOCKS_PER_MINECRAFT_CHUNK + x;
+                int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
 
-	private int computeFluidDepth(Chunk chunk, int x, int y, int z) {
-		if (y < 0) return 0;
+                int height = mc.currentWorld.findTopSolidBlock(worldBlockX, worldBlockZ) - 1;
+                int aboveId = chunk.getBlockID(x, height + 1, z);
 
-		int depth = 0;
+                final int SNOW_LAYER_ID = Blocks.LAYER_SNOW.id();
+                if (aboveId == SNOW_LAYER_ID) {
+                    height = height + 1;
+                }
 
-		while (y > 0) {
-			int id = chunk.getBlockID(x, y, z);
-			if (!isBlockFluid(id)) break;
-			depth++;
-			y--;
-		}
-		return depth;
-	}
 
-	private int safeBlockLight(Chunk chunk, int x, int y, int z) {
-		if (y < 0) return 0;
-		if (y > 127) y = 127;
+                int blockId = chunk.getBlockID(x, height, z);
+                int depth = computeFluidDepth(chunk, x, height, z);
+                int blockLight = safeBlockLight(chunk, x, height + 1, z);
+                int meta = chunk.getBlockMetadata(x, height, z);
+                NABiome biome = getBiome(NACoord.from(worldBlockX, worldBlockZ));
 
-		return chunk.getBrightness(LightLayer.Block, x, y, z);
-	}
+                nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
+            }
+        }
+
+        return nac;
+    }
+
+
+    @Override
+    public NAChunk getChunkFromDisk(NACoord chunkCoord) {
+        ChunkLoaderRegion chunkLoader = new ChunkLoaderRegion(NAPaths.getWorldSavePath().toFile());
+        Chunk chunk = null;
+        try {
+            chunk = chunkLoader.loadChunk(mc.currentWorld, chunkCoord.x, chunkCoord.z);
+        } catch (IOException ignored) {
+        }
+
+        if (chunk == null) {
+            return null;
+        }
+
+        NAChunk nac = new NAChunk();
+        for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
+            for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
+                int worldBlockX = chunkCoord.x * BLOCKS_PER_MINECRAFT_CHUNK + x;
+                int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
+
+                int height = getTopSolidBlockY(chunk, x, z) - 1;
+                int aboveId = chunk.getBlockID(x, height + 1, z);
+
+                final int SNOW_LAYER_ID = Blocks.LAYER_SNOW.id();
+                if (aboveId == SNOW_LAYER_ID) {
+                    height = height + 1;
+                }
+
+
+                int blockId = chunk.getBlockID(x, height, z);
+                int depth = computeFluidDepth(chunk, x, height, z);
+                int blockLight = safeBlockLight(chunk, x, height + 1, z);
+                int meta = chunk.getBlockMetadata(x, height, z);
+                NABiome biome = getBiome(NACoord.from(worldBlockX, worldBlockZ));
+
+                nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
+            }
+        }
+
+        return nac;
+    }
+
+    private int getTopSolidBlockY(Chunk chunk, int x, int z) {
+        int var4 = 127;
+        x &= 15;
+
+        for (int var8 = z & 15; var4 > 0; --var4) {
+            int var5 = chunk.getBlockID(x, var4, var8);
+            Material var6 = var5 == 0 ? Material.air : Blocks.getBlock(var5).getMaterial();
+            if (var6.blocksMotion() || var6.isLiquid()) {
+                return var4 + 1;
+            }
+        }
+
+        return -1;
+    }
+
+
+    @Override
+    public boolean isBlockFluid(int blockId) {
+        Block<?> block = Blocks.getBlock(blockId);
+        if (block == null) return false;
+        if (block.getMaterial() == null) return false;
+        return block.getMaterial().isLiquid();
+    }
+
+    private int computeFluidDepth(Chunk chunk, int x, int y, int z) {
+        if (y < 0) return 0;
+
+        int depth = 0;
+
+        while (y > 0) {
+            int id = chunk.getBlockID(x, y, z);
+            if (!isBlockFluid(id)) break;
+            depth++;
+            y--;
+        }
+        return depth;
+    }
+
+    private int safeBlockLight(Chunk chunk, int x, int y, int z) {
+        if (y < 0) return 0;
+        if (y > 127) y = 127;
+
+        return chunk.getBrightness(LightLayer.Block, x, y, z);
+    }
 }

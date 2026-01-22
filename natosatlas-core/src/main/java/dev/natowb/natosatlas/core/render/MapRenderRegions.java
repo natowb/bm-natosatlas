@@ -19,7 +19,6 @@ public class MapRenderRegions implements MapRenderStage {
         }
     }
 
-
     private void drawRegionTexture(int rx, int rz, int texId) {
         double worldX = rx * 32 * 16;
         double worldZ = rz * 32 * 16;
