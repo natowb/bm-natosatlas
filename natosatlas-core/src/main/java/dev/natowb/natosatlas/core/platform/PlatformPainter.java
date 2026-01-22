@@ -3,9 +3,7 @@ package dev.natowb.natosatlas.core.platform;
 public interface PlatformPainter {
     void drawRect(int x1, int y1, int x2, int y2, int argbColor);
 
-    void drawGrid(double cellSize, int canvasW, int canvasH, double scrollX, double scrollY, double zoom, int argbColor);
-
-    void drawLine(int x1, int y1, int x2, int y2);
+    void drawLine(float x1, float y1, float x2, float y2);
 
     void drawTexture(int textureId, int x, int y, int width, int height);
 

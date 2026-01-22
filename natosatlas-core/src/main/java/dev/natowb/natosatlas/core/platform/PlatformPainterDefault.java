@@ -38,46 +38,10 @@ public class PlatformPainterDefault implements PlatformPainter {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    @Override
-    public void drawGrid(
-            double cellSize,
-            int canvasW, int canvasH,
-            double scrollX, double scrollY,
-            double zoom,
-            int argbColor
-    ) {
-        float a = (argbColor >> 24 & 255) / 255f;
-        float r = (argbColor >> 16 & 255) / 255f;
-        float g = (argbColor >> 8 & 255) / 255f;
-        float b = (argbColor & 255) / 255f;
 
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glColor4f(r, g, b, a);
-
-        double left = scrollX;
-        double top = scrollY;
-        double right = scrollX + canvasW / zoom;
-        double bottom = scrollY + canvasH / zoom;
-
-        double startX = Math.floor(left / cellSize) * cellSize;
-        double startY = Math.floor(top / cellSize) * cellSize;
-
-        double maxX = right + cellSize;
-        double maxY = bottom + cellSize;
-
-        for (double x = startX; x <= maxX; x += cellSize) {
-            drawLine((int) x, (int) top - 16, (int) x, (int) bottom + 16);
-        }
-
-        for (double y = startY; y <= maxY; y += cellSize) {
-            drawLine((int) left - 16, (int) y, (int) right + 16, (int) y);
-        }
-
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-    }
 
     @Override
-    public void drawLine(int x1, int y1, int x2, int y2) {
+    public void drawLine(float x1, float y1, float x2, float y2) {
         GL11.glBegin(GL11.GL_LINES);
         GL11.glVertex2f(x1, y1);
         GL11.glVertex2f(x2, y2);
