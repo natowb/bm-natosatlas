@@ -33,6 +33,7 @@ public class NAEntity {
 
     public static class UV {
         public final float u1, v1, u2, v2;
+
         public UV(float u1, float v1, float u2, float v2) {
             this.u1 = u1;
             this.v1 = v1;
@@ -51,11 +52,13 @@ public class NAEntity {
                 2f / 4f
         ));
 
-        UV_MAP.put("squid",   new UV(14f/64f, 15f/32f, 22f/64f, 23f/32f));
-        UV_MAP.put("spider",  new UV(39f/64f, 12f/32f, 49f/64f, 20f/32f));
-        UV_MAP.put("chicken", new UV( 2f/64f,  3f/32f,  8f/64f,  9f/32f));
-        UV_MAP.put("cow",     new UV( 6f/64f,  6f/32f, 14f/64f, 14f/32f));
-        UV_MAP.put("sheep",   new UV( 7f/64f,  7f/32f, 15f/64f, 15f/32f));
+        UV_MAP.put("squid", new UV(14f / 64f, 15f / 32f, 22f / 64f, 23f / 32f));
+        UV_MAP.put("spider", new UV(39f / 64f, 12f / 32f, 49f / 64f, 20f / 32f));
+        UV_MAP.put("chicken", new UV(2f / 64f, 3f / 32f, 8f / 64f, 9f / 32f));
+        UV_MAP.put("cow", new UV(6f / 64f, 6f / 32f, 14f / 64f, 14f / 32f));
+        UV_MAP.put("sheep", new UV(7f / 64f, 7f / 32f, 15f / 64f, 15f / 32f));
+        UV_MAP.put("ghast", new UV(16f / 64f, 16f / 32f, 32 / 64f, 32f / 32f));
+        UV_MAP.put("wolf", new UV(4f / 64f, 4f / 32f, 10f / 64f, 10f / 32f));
     }
 
     public static UV getUV(String texturePath) {
