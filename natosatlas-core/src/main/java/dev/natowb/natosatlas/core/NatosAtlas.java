@@ -33,7 +33,6 @@ public class NatosAtlas {
     private final Set<Long> visibleRegions = new HashSet<>();
 
     public final Platform platform;
-    public final MapRenderer renderer;
     public final MapTextureProvider textures;
     public final MapCache cache;
     public final MapLayerManager layers;
@@ -61,7 +60,6 @@ public class NatosAtlas {
         instance = this;
 
         this.platform = platform;
-        this.renderer = new MapRenderer();
         this.layers = new MapLayerManager();
         this.textures = new MapTextureProvider();
         this.cache = new MapCache(new MapStorage());
@@ -180,7 +178,7 @@ public class NatosAtlas {
                 int wz = activeChunkZ + dz;
 
                 NAChunk chunk = platform.worldProvider.getChunk(NACoord.from(wx, wz));
-                MapUpdateScheduler.enqueue(renderer, NACoord.from(wx, wz), chunk);
+                MapUpdateScheduler.enqueue(NACoord.from(wx, wz), chunk);
             }
         }
     }

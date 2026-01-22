@@ -3,6 +3,7 @@ package dev.natowb.natosatlas.bta;
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.platform.PlatformWorldProvider;
+import dev.natowb.natosatlas.core.tasks.MapUpdateScheduler;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import net.fabricmc.loader.api.FabricLoader;
@@ -152,7 +153,7 @@ public class PlatformWorldProviderBTA implements PlatformWorldProvider {
 
 					NAChunk chunk = getChunkFromDisk(chunkCoord);
 					if (chunk != null) {
-						NatosAtlas.get().renderer.renderChunk(chunkCoord, chunk);
+						MapUpdateScheduler.enqueue(chunkCoord, chunk);
 					}
 				}
 			}
