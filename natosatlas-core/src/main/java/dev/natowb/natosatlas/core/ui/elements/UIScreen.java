@@ -39,6 +39,9 @@ public abstract class UIScreen {
         this.width = width;
         this.height = height;
         ignoreNextClick = true;
+        this.buttons.clear();
+        this.textFields.clear();
+        this.sliders.clear();
     }
 
     public void tick() {
