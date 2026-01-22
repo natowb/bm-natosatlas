@@ -8,6 +8,8 @@ import dev.natowb.natosatlas.core.render.*;
 import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.settings.SettingsOption;
 import dev.natowb.natosatlas.core.settings.SettingsScreen;
+import dev.natowb.natosatlas.core.tasks.MapSaveWorker;
+import dev.natowb.natosatlas.core.tasks.MapUpdateScheduler;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 
 import dev.natowb.natosatlas.core.ui.UITheme;
@@ -225,6 +227,15 @@ public class MapScreen extends UIScreen {
         painter.drawString(String.format("Scroll: %.2f, %.2f", ctx.scrollX, ctx.scrollY), 5, y, 0xFFFFFF);
         y += 10;
         painter.drawString(String.format("Zoom: %.2f", ctx.zoom), 5, y, 0xFFFFFF);
+
+
+        y += 15;
+        painter.drawString("Schedulers", 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("Save Queue Length: %d", MapSaveWorker.getPendingCount()), 5, y, 0xFFFFFF);
+        y += 10;
+        painter.drawString(String.format("Scheduled Updates: %d", MapUpdateScheduler.getPendingCount()), 5, y, 0xFFFFFF);
+
 
         y += 15;
         painter.drawString("Cache", 5, y, 0xFFFFFF);

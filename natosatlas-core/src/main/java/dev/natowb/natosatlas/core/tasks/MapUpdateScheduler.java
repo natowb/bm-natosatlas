@@ -7,8 +7,8 @@ import dev.natowb.natosatlas.core.map.MapCache;
 import dev.natowb.natosatlas.core.map.MapLayer;
 import dev.natowb.natosatlas.core.map.MapRegion;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -17,20 +17,40 @@ public class MapUpdateScheduler {
     private static final int MAX_UPDATES_PER_TICK = 64;
 
     private static final BlockingQueue<ChunkTask> QUEUE = new LinkedBlockingQueue<>();
-    private static final Set<Long> scheduled = new HashSet<>();
+    private static final Map<Long, ChunkTask> pending = new HashMap<>();
+    private static boolean running = false;
 
-    public static void enqueue(NACoord coord, NAChunk chunk) {
-        long key = coord.toKey();
-
-        synchronized (scheduled) {
-            if (scheduled.contains(key)) return;
-            scheduled.add(key);
-        }
-
-        QUEUE.offer(new ChunkTask(coord, chunk));
+    public static int getPendingCount() {
+        return pending.size();
     }
 
-    public static void run() {
+    public static void stop() {
+        running = false;
+        pending.clear();
+        QUEUE.clear();
+    }
+
+    public static void start() {
+        running = true;
+    }
+
+    public static synchronized void enqueue(NACoord coord, NAChunk chunk) {
+        if (!running) return;
+        long key = coord.toKey();
+
+        ChunkTask existing = pending.get(key);
+        if (existing != null) {
+            existing.chunk = chunk;
+            return;
+        }
+
+        ChunkTask task = new ChunkTask(coord, chunk);
+        pending.put(key, task);
+        QUEUE.offer(task);
+    }
+
+    public static void tick() {
+        if (!running) return;
         int processed = 0;
 
         while (processed < MAX_UPDATES_PER_TICK) {
@@ -38,9 +58,7 @@ public class MapUpdateScheduler {
             if (task == null) break;
 
             long key = task.coord.toKey();
-            synchronized (scheduled) {
-                scheduled.remove(key);
-            }
+            pending.remove(key);
 
             generateChunk(task.coord, task.chunk);
             processed++;
@@ -81,7 +99,7 @@ public class MapUpdateScheduler {
 
     private static final class ChunkTask {
         final NACoord coord;
-        final NAChunk chunk;
+        NAChunk chunk;
 
         ChunkTask(NACoord coord, NAChunk chunk) {
             this.coord = coord;

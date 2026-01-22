@@ -10,11 +10,23 @@ import dev.natowb.natosatlas.core.map.MapStorage;
 
 public class MapSaveScheduler {
 
-    private static final int MAX_SAVES_PER_TICK = 4;
+    private static final int MAX_SAVES_PER_TICK = 64;
+    private static boolean running = false;
 
-    public static void run() {
+    public static void start() {
+        MapSaveWorker.start();
+        running = true;
+    }
+
+    public static void stop() {
+        MapSaveWorker.stop();
+        running = false;
+    }
+
+
+    public static void tick() {
+        if (!running) return;
         MapCache cache = NatosAtlas.get().cache;
-
         for (int i = 0; i < MAX_SAVES_PER_TICK; i++) {
             Long key = cache.pollDirty();
             if (key == null) break;

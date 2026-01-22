@@ -4,7 +4,6 @@ import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.data.NAWorldInfo;
 import dev.natowb.natosatlas.core.map.*;
 import dev.natowb.natosatlas.core.tasks.MapSaveScheduler;
-import dev.natowb.natosatlas.core.tasks.MapSaveWorker;
 import dev.natowb.natosatlas.core.platform.Platform;
 import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.tasks.MapUpdateScheduler;
@@ -83,14 +82,16 @@ public class NatosAtlas {
         LogUtil.info("Joined world name={}, saveName={}", worldInfo.worldName, worldSaveName);
         NAPaths.updateWorldPath(saveName);
         Waypoints.load();
-        MapSaveWorker.start();
+        MapSaveScheduler.start();
+        MapUpdateScheduler.start();
     }
 
     public void onWorldLeft() {
 
         if (!enabled) return;
 
-        MapSaveWorker.stop();
+        MapUpdateScheduler.stop();
+        MapSaveScheduler.stop();
         cache.clear();
 
         LogUtil.info("Left world: {}", worldInfo.worldName);
@@ -111,10 +112,9 @@ public class NatosAtlas {
             updateNearbyChunks();
         }
 
-        MapUpdateScheduler.run();
-        MapSaveScheduler.run();
+        MapUpdateScheduler.tick();
+        MapSaveScheduler.tick();
     }
-
 
     private void handleDimensionChange() {
         NAWorldInfo latest = platform.worldProvider.getWorldInfo();
