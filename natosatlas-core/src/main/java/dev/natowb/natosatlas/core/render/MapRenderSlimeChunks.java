@@ -35,10 +35,7 @@ public class MapRenderSlimeChunks implements MapRenderStage {
 
     private boolean isSlimeChunk(int worldChunkX, int worldChunkZ) {
         NAWorldInfo info = NatosAtlas.get().platform.worldProvider.getWorldInfo();
-        return new Random(info.worldSeed + (long) (worldChunkX * worldChunkZ * 4987142) +
-                (long) (worldChunkX * 5947611) + (long) (worldChunkZ * worldChunkZ) * 4392871L +
-                (long) (worldChunkZ * 389711) ^ 987234911L).nextInt(10) == 0;
-
+        return new Random(info.worldSeed + (long) (worldChunkX * worldChunkX) * 4987142L + (long) worldChunkX * 5947611L + (long) (worldChunkZ * worldChunkZ) * 4392871L + (long) worldChunkZ * 389711L ^ 987234911L).nextInt(10) == 0;
     }
 
     private void drawSlimeChunkSquare(int chunkX, int chunkZ) {
