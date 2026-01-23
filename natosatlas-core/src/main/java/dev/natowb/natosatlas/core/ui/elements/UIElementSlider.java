@@ -10,49 +10,47 @@ import org.lwjgl.input.Mouse;
 public class UIElementSlider extends UIElement {
 
     public int id;
+
     private float value;
+    private float min = 0f;
+    private float max = 1f;
+    private float step = 0f;
+
     private boolean dragging = false;
     private boolean wasMouseDown = false;
 
-    private String label;
-    private ValueFormatter formatter;
-    private ValueChangedCallback callback;
+    private final String label;
 
-    public interface ValueFormatter {
-        String format(float value);
-    }
-
-    public interface ValueChangedCallback {
-        void onChanged(float newValue);
-    }
-
-    public UIElementSlider(int id, int x, int y, int w, int h, float initialValue, String label, ValueFormatter formatter, ValueChangedCallback callback) {
+    public UIElementSlider(int id, int x, int y, int w, int h, float initialValue, String label) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
-        this.value = clamp(initialValue);
         this.label = label;
-        this.formatter = formatter != null ? formatter : (v -> String.format("%.2f", v));
-        this.callback = callback;
+        this.value = initialValue;
     }
 
-    public UIElementSlider(int id, UILayout layout, int w, int h, float initialValue, String label, ValueFormatter formatter, ValueChangedCallback callback) {
+    public UIElementSlider(int id, UILayout layout, int w, int h, float initialValue, String label) {
         this.id = id;
         UIPoint p = layout.next(w, h);
         this.x = p.x;
         this.y = p.y;
         this.w = w;
         this.h = h;
-        this.value = clamp(initialValue);
         this.label = label;
-        this.formatter = formatter != null ? formatter : (v -> String.format("%.2f", v));
-        this.callback = callback;
+        this.value = initialValue;
     }
 
-    private float clamp(float v) {
-        return Math.max(0f, Math.min(1f, v));
+    public void setRange(float min, float max) {
+        this.min = min;
+        this.max = max;
+        setValue(value);
+    }
+
+    public void setStep(float step) {
+        this.step = Math.max(0f, step);
+        setValue(value);
     }
 
     public float getValue() {
@@ -60,7 +58,15 @@ public class UIElementSlider extends UIElement {
     }
 
     public void setValue(float v) {
-        this.value = clamp(v);
+        v = Math.max(min, Math.min(max, v));
+        if (step > 0f) {
+            v = min + Math.round((v - min) / step) * step;
+        }
+        this.value = v;
+    }
+
+    protected String getDisplayText() {
+        return String.format("%s: %.2f", label, value);
     }
 
     public void render(int mouseX, int mouseY) {
@@ -78,8 +84,10 @@ public class UIElementSlider extends UIElement {
         p.drawRect(x, y, x + 1, y + h, border);
         p.drawRect(x + w - 1, y, x + w, y + h, border);
 
+        float t = (value - min) / (max - min);
+
         int thumbW = 8;
-        int thumbX = x + 4 + (int) (value * (w - 8 - 8));
+        int thumbX = x + 4 + (int) (t * (w - 8 - 8));
 
         int thumbColor = dragging
                 ? UITheme.BUTTON_TEXT_DISABLED
@@ -87,14 +95,13 @@ public class UIElementSlider extends UIElement {
 
         p.drawRect(thumbX, y + 2, thumbX + thumbW, y + h - 2, thumbColor);
 
-        String text = label + ": " + formatter.format(value);
+        String text = getDisplayText();
         int textWidth = p.getStringWidth(text);
         int tx = x + (w - textWidth) / 2;
         int ty = y + (h - 8) / 2;
 
         p.drawString(text, tx, ty, UITheme.SLIDER_TEXT, false);
     }
-
 
     public boolean mouseDown(int mouseX, int mouseY) {
         boolean mouseDown = Mouse.isButtonDown(0);
@@ -123,8 +130,9 @@ public class UIElementSlider extends UIElement {
     }
 
     private void updateValue(int mouseX) {
-        float newValue = (float) (mouseX - (x + 4)) / (float) (w - 8);
-        value = clamp(newValue);
-        if (callback != null) callback.onChanged(value);
+        float t = (float) (mouseX - (x + 4)) / (float) (w - 8);
+        t = Math.max(0f, Math.min(1f, t));
+        float real = min + t * (max - min);
+        setValue(real);
     }
 }

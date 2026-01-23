@@ -42,6 +42,7 @@ public class MapScreen extends UIScreen {
     public void init(int width, int height) {
         super.init(width, height);
         viewport.initViewport(0, 0, width, height);
+        viewport.setZoom(Settings.defaultZoom);
 
         NAEntity player = NatosAtlas.get().platform.worldProvider.getPlayer();
         if (player != null) {

@@ -88,6 +88,11 @@ public class MapViewport {
         this.ctx.rotation = rot;
     }
 
+
+    public void setZoom(float zoom) {
+        ctx.zoom = zoom;
+    }
+
     public void zoom(int amount) {
         if (amount == 0) return;
 

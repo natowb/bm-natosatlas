@@ -95,10 +95,7 @@ public class WaypointCreateScreen extends UIScreen {
 
     @Override
     public void tick() {
-        nameField.tick();
-        xField.tick();
-        yField.tick();
-        zField.tick();
+        super.tick();
         updateActionButtonState();
     }
 
@@ -126,7 +123,6 @@ public class WaypointCreateScreen extends UIScreen {
             actionButton.active = false;
             return;
         }
-
         actionButton.active = true;
     }
 

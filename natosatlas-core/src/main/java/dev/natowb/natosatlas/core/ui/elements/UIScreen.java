@@ -45,6 +45,9 @@ public abstract class UIScreen {
     }
 
     public void tick() {
+        for (UIElementTextField tf : textFields) {
+            tf.tick();
+        }
     }
 
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
@@ -112,18 +115,25 @@ public abstract class UIScreen {
 
     }
 
+    protected void onSliderChanged(UIElementSlider slider) {
+
+    }
+
     public void mouseDown(int mouseX, int mouseY, int button) {
         if (button != 0) return;
+
+        for (UIElementSlider slider : sliders) {
+            float oldValue = slider.getValue();
+            slider.mouseDown(mouseX, mouseY);
+            if (slider.getValue() != oldValue) {
+                onSliderChanged(slider);
+            }
+        }
 
         for (UIElementTextField tf : textFields) {
             tf.mouseClicked(mouseX, mouseY, button);
         }
-
-        for (UIElementSlider slider : sliders) {
-            slider.mouseDown(mouseX, mouseY);
-        }
     }
-
 
     public void mouseUp(int mouseX, int mouseY, int button) {
         if (button != 0) return;
@@ -137,22 +147,21 @@ public abstract class UIScreen {
         }
     }
 
-
-    public void mouseScroll(int amount) {
-    }
-
     public void mouseDrag(int mouseX, int mouseY, int button) {
         if (button != 0) return;
 
         for (UIElementSlider slider : sliders) {
+            float oldValue = slider.getValue();
             slider.mouseDrag(mouseX);
+            if (slider.getValue() != oldValue) {
+                onSliderChanged(slider);
+            }
         }
 
         for (UIElementTextField tf : textFields) {
             tf.mouseDragged(mouseX, mouseY, button);
         }
     }
-
 
     public void keyPressed(char character, int keyCode) {
         for (UIElementTextField tf : textFields) {
@@ -167,11 +176,15 @@ public abstract class UIScreen {
         }
     }
 
+    public void mouseScroll(int amount) {
+    }
+
     public void handleTab() {
 
     }
 
     public void onClose() {
     }
+
 }
 
