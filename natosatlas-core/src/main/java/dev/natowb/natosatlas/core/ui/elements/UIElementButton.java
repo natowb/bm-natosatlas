@@ -2,12 +2,14 @@ package dev.natowb.natosatlas.core.ui.elements;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.platform.PlatformPainter;
+import dev.natowb.natosatlas.core.settings.SettingsOption;
 import dev.natowb.natosatlas.core.ui.UITheme;
+import dev.natowb.natosatlas.core.ui.layout.UILayout;
+import dev.natowb.natosatlas.core.ui.layout.UIPoint;
 
-public class UIElementButton {
+public class UIElementButton extends UIElement {
 
     public int id;
-    public int x, y, w, h;
     public String label;
     public boolean active = true;
 
@@ -18,6 +20,29 @@ public class UIElementButton {
         this.w = w;
         this.h = h;
         this.label = label;
+    }
+
+    public UIElementButton(int id, UILayout layout, int w, int h, String label) {
+        this.id = id;
+        UIPoint p = layout.next(w, h);
+        this.x = p.x;
+        this.y = p.y;
+
+        this.w = w;
+        this.h = h;
+        this.label = label;
+    }
+
+    public UIElementButton(int id, UILayout layout, int w, int h, String label, boolean active) {
+        this.id = id;
+        UIPoint p = layout.next(w, h);
+        this.x = p.x;
+        this.y = p.y;
+
+        this.w = w;
+        this.h = h;
+        this.label = label;
+        this.active = active;
     }
 
     public boolean isInside(int mouseX, int mouseY) {

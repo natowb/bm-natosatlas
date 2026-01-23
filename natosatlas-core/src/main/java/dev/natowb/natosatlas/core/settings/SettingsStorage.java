@@ -1,9 +1,7 @@
 package dev.natowb.natosatlas.core.settings;
 
 import dev.natowb.natosatlas.core.persistence.TextStorage;
-import dev.natowb.natosatlas.core.utils.NAPaths;
 
-import java.io.File;
 
 public final class SettingsStorage extends TextStorage {
 

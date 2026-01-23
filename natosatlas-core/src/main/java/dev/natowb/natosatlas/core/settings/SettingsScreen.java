@@ -1,13 +1,7 @@
 package dev.natowb.natosatlas.core.settings;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
-import dev.natowb.natosatlas.core.data.NAChunk;
-import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.data.NARegionFile;
 import dev.natowb.natosatlas.core.map.*;
-import dev.natowb.natosatlas.core.tasks.MapSaveScheduler;
-import dev.natowb.natosatlas.core.tasks.MapSaveWorker;
-import dev.natowb.natosatlas.core.tasks.MapUpdateScheduler;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementOptionButton;
@@ -15,70 +9,41 @@ import dev.natowb.natosatlas.core.ui.elements.UIElementSlider;
 import dev.natowb.natosatlas.core.ui.UITheme;
 import dev.natowb.natosatlas.core.platform.PlatformPainter;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
-import dev.natowb.natosatlas.core.utils.LogUtil;
-
-import java.io.File;
-import java.util.List;
+import dev.natowb.natosatlas.core.ui.layout.UILayout;
+import dev.natowb.natosatlas.core.ui.layout.UIVerticalLayout;
 
 public class SettingsScreen extends UIScreen {
-
-
-    private UIElementSlider zoomSlider;
-    private UIElementButton doneButton;
-    private UIElementButton generateExistingButton;
-
     public SettingsScreen(UIScreen parent) {
         super(parent);
     }
 
+    private static final int BUTTON_ID_DONE = 3000;
+    private static final int SLIDER_ID_ZOOM = 3001;
+    private static final int BUTTON_ID_GENERATE_EXISTING = 3002;
+
     @Override
     public void init(int width, int height) {
-        super.init(width, height);
-        int centerX = width / 2 - 75;
-        int baseY = height / 6;
-        int rowH = 24;
+        UILayout layout = new UIVerticalLayout(width / 2, height / 6, 5);
 
-        addButton(new UIElementOptionButton(
-                SettingsOption.MAP_GRID.ordinal(),
-                centerX, baseY,
+        addButton(new UIElementOptionButton(SettingsOption.MAP_GRID, layout, 150, 20));
+        addButton(new UIElementOptionButton(SettingsOption.ENTITY_DISPLAY, layout, 150, 20));
+        addButton(new UIElementOptionButton(SettingsOption.DEBUG_INFO, layout, 150, 20));
+        addButton(new UIElementOptionButton(SettingsOption.USE_REIMINIMAP_WAYPOINTS, layout, 150, 20));
+
+        addButton(new UIElementButton(
+                BUTTON_ID_GENERATE_EXISTING,
+                layout,
                 150, 20,
-                SettingsOption.MAP_GRID
+                "Generate Existing",
+                !NatosAtlas.get().platform.worldProvider.getWorldInfo().isServer
         ));
-
-        addButton(new UIElementOptionButton(
-                SettingsOption.ENTITY_DISPLAY.ordinal(),
-                centerX, baseY + rowH,
-                150, 20,
-                SettingsOption.ENTITY_DISPLAY
-        ));
-
-        addButton(new UIElementOptionButton(
-                SettingsOption.DEBUG_INFO.ordinal(),
-                centerX, baseY + rowH * 2,
-                150, 20,
-                SettingsOption.DEBUG_INFO
-        ));
-
-
-        addButton(new UIElementOptionButton(
-                SettingsOption.USE_REIMINIMAP_WAYPOINTS.ordinal(),
-                centerX, baseY + rowH * 3,
-                150, 20,
-                SettingsOption.USE_REIMINIMAP_WAYPOINTS
-        ));
-
-        generateExistingButton = new UIElementButton(201, centerX, baseY + rowH * 4, 150, 20, "Generate Existing");
-        if (NatosAtlas.get().platform.worldProvider.getWorldInfo().isServer)
-            generateExistingButton.active = false;
-
-        addButton(generateExistingButton);
 
         float storedZoom = Settings.defaultZoom;
         float normalized = (storedZoom - MapConfig.MIN_ZOOM) / (MapConfig.MAX_ZOOM - MapConfig.MIN_ZOOM);
 
-        zoomSlider = new UIElementSlider(
-                3000,
-                centerX, baseY + rowH * 5,
+        addSlider(new UIElementSlider(
+                SLIDER_ID_ZOOM,
+                layout,
                 150, 20,
                 normalized,
                 "Default Zoom",
@@ -90,13 +55,9 @@ public class SettingsScreen extends UIScreen {
                     Settings.defaultZoom =
                             MapConfig.MIN_ZOOM + newValue * (MapConfig.MAX_ZOOM - MapConfig.MIN_ZOOM);
                 }
-        );
+        ));
 
-        addSlider(zoomSlider);
-
-        doneButton = new UIElementButton(200, width / 2 - 100, baseY + rowH * 6, 200, 20, "Done");
-
-        addButton(doneButton);
+        addButton(new UIElementButton(BUTTON_ID_DONE, layout, 200, 20, "Done"));
     }
 
     @Override
@@ -112,18 +73,18 @@ public class SettingsScreen extends UIScreen {
 
     @Override
     protected void onClick(UIElementButton button) {
-        if(button instanceof UIElementOptionButton) {
+        if (button instanceof UIElementOptionButton) {
             ((UIElementOptionButton) button).cycle();
             return;
         }
 
-        if(button.id == doneButton.id) {
+        if (button.id == BUTTON_ID_DONE) {
             Settings.save();
             NatosAtlas.get().platform.openNacScreen(parent);
             return;
         }
 
-        if(button.id == generateExistingButton.id) {
+        if (button.id == BUTTON_ID_GENERATE_EXISTING) {
             NatosAtlas.get().generateExistingChunks();
         }
     }

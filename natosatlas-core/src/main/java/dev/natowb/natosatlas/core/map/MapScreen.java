@@ -55,59 +55,19 @@ public class MapScreen extends UIScreen {
         int buttonH = 20;
         int hGap = 6;
 
-        closeButton = new UIElementButton(
-                9999,
-                width - buttonH - padding,
-                padding,
-                buttonH,
-                buttonH,
-                "X"
-        );
-
+        closeButton = new UIElementButton(9999, width - buttonH - padding, padding, buttonH, buttonH, "X");
         addButton(closeButton);
 
-        settingsButton = new UIElementButton(
-                1000,
-                closeButton.x - hGap - buttonW,
-                padding,
-                buttonW,
-                buttonH,
-                "Settings"
-        );
-
+        settingsButton = new UIElementButton(1000, closeButton.x - hGap - buttonW, padding, buttonW, buttonH, "Settings");
         addButton(settingsButton);
 
-        waypointsButton = new UIElementButton(
-                1002,
-                settingsButton.x - hGap - buttonW,
-                padding,
-                buttonW,
-                buttonH,
-                "Waypoints"
-        );
-
+        waypointsButton = new UIElementButton(1002, settingsButton.x - hGap - buttonW, padding, buttonW, buttonH, "Waypoints");
         addButton(waypointsButton);
 
-        dayNightButton = new UIElementOptionButton(
-                1003,
-                waypointsButton.x - hGap - buttonW,
-                padding,
-                buttonW,
-                buttonH,
-                SettingsOption.MAP_RENDER_MODE
-        );
-
+        dayNightButton = new UIElementOptionButton(SettingsOption.MAP_RENDER_MODE, waypointsButton.x - hGap - buttonW, padding, buttonW, buttonH);
         addButton(dayNightButton);
 
-        slimeChunksButton = new UIElementOptionButton(
-                1004,
-                dayNightButton.x - hGap - buttonW,
-                padding,
-                buttonW,
-                buttonH,
-                SettingsOption.SLIME_CHUNKS
-        );
-
+        slimeChunksButton = new UIElementOptionButton(SettingsOption.SLIME_CHUNKS, dayNightButton.x - hGap - buttonW, padding, buttonW, buttonH);
         addButton(slimeChunksButton);
     }
 

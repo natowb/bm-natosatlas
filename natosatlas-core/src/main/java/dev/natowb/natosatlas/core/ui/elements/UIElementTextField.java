@@ -8,9 +8,8 @@ import org.lwjgl.input.Keyboard;
 import java.awt.*;
 import java.awt.datatransfer.*;
 
-public class UIElementTextField {
+public class UIElementTextField extends UIElement {
 
-    private final int x, y, w, h;
 
     private String text = "";
     private int maxLength = 32;
@@ -117,7 +116,8 @@ public class UIElementTextField {
             cursor += clip.length();
             clearSelection();
 
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     public void keyPressed(char c, int keyCode) {

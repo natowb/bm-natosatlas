@@ -3,13 +3,13 @@ package dev.natowb.natosatlas.core.ui.elements;
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.platform.PlatformPainter;
 import dev.natowb.natosatlas.core.ui.UITheme;
+import dev.natowb.natosatlas.core.ui.layout.UILayout;
+import dev.natowb.natosatlas.core.ui.layout.UIPoint;
 import org.lwjgl.input.Mouse;
 
-public class UIElementSlider {
+public class UIElementSlider extends UIElement {
 
     public int id;
-    public int x, y, w, h;
-
     private float value;
     private boolean dragging = false;
     private boolean wasMouseDown = false;
@@ -30,6 +30,19 @@ public class UIElementSlider {
         this.id = id;
         this.x = x;
         this.y = y;
+        this.w = w;
+        this.h = h;
+        this.value = clamp(initialValue);
+        this.label = label;
+        this.formatter = formatter != null ? formatter : (v -> String.format("%.2f", v));
+        this.callback = callback;
+    }
+
+    public UIElementSlider(int id, UILayout layout, int w, int h, float initialValue, String label, ValueFormatter formatter, ValueChangedCallback callback) {
+        this.id = id;
+        UIPoint p = layout.next(w, h);
+        this.x = p.x;
+        this.y = p.y;
         this.w = w;
         this.h = h;
         this.value = clamp(initialValue);
@@ -66,7 +79,7 @@ public class UIElementSlider {
         p.drawRect(x + w - 1, y, x + w, y + h, border);
 
         int thumbW = 8;
-        int thumbX = x + 4 + (int)(value * (w - 8 - 8));
+        int thumbX = x + 4 + (int) (value * (w - 8 - 8));
 
         int thumbColor = dragging
                 ? UITheme.BUTTON_TEXT_DISABLED
@@ -81,7 +94,6 @@ public class UIElementSlider {
 
         p.drawString(text, tx, ty, UITheme.SLIDER_TEXT, false);
     }
-
 
 
     public boolean mouseDown(int mouseX, int mouseY) {
