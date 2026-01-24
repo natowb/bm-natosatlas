@@ -77,8 +77,10 @@ public class NatosAtlasST {
         }
 
         if (mc.world != null && !inWorld) {
+            String worldSaveName = getWorldSaveName();
+            if (worldSaveName == null) return;
             inWorld = true;
-            nac.onWorldJoin(getWorldSaveName());
+            nac.onWorldJoin(new WorldWrapperST(mc.world, worldSaveName));
         }
 
         if (inWorld && mc.player != null) {
@@ -89,7 +91,7 @@ public class NatosAtlasST {
     @EventListener
     public void handle(KeyStateChangedEvent event) {
 
-        if(!NatosAtlas.get().isEnabled()) return;
+        if (NatosAtlas.get().getCurrentWorld() == null) return;
 
         if (Keyboard.getEventKeyState()) {
             if (Keyboard.isKeyDown(NatosAtlasST.KEY_BINDING_MAP.code)) {

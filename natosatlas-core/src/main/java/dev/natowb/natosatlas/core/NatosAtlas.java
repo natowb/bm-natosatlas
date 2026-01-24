@@ -9,6 +9,7 @@ import dev.natowb.natosatlas.core.tasks.MapUpdateScheduler;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import dev.natowb.natosatlas.core.waypoint.Waypoints;
+import dev.natowb.natosatlas.core.wrapper.WorldWrapper;
 
 import java.io.File;
 import java.util.HashSet;
@@ -35,18 +36,16 @@ public class NatosAtlas {
     public final MapCache cache;
     public final MapLayerManager layers;
 
-    private NAWorldInfo worldInfo;
-    private String worldSaveName;
     private int updateTimer = 0;
 
     private int activeChunkX;
     private int activeChunkZ;
 
 
-    private boolean enabled = false;
+    private WorldWrapper currentWorld;
 
-    public boolean isEnabled() {
-        return enabled;
+    public WorldWrapper getCurrentWorld() {
+        return currentWorld;
     }
 
     public NatosAtlas(Platform platform) {
@@ -67,19 +66,17 @@ public class NatosAtlas {
         LogUtil.info("Initialization complete");
     }
 
-    public void onWorldJoin(String saveName) {
+    public void onWorldJoin(WorldWrapper world) {
 
-        if (saveName == null) {
-            LogUtil.error("Failed to get saveName for world, disabling map");
-            enabled = false;
+        if (world == null) {
+            LogUtil.error("joined invalid world");
+            currentWorld = null;
             return;
         }
 
-        enabled = true;
-        worldInfo = platform.worldProvider.getWorldInfo();
-        worldSaveName = saveName;
-        LogUtil.info("Joined world name={}, saveName={}", worldInfo.worldName, worldSaveName);
-        NAPaths.updateWorldPath(saveName);
+        currentWorld = world;
+        LogUtil.info("Joined world name={}, saveName={}", world.getName(), world.getSaveName());
+        NAPaths.updateWorldPath(world.getSaveName());
         Waypoints.load();
         MapSaveScheduler.start();
         MapUpdateScheduler.start();
@@ -87,21 +84,18 @@ public class NatosAtlas {
 
     public void onWorldLeft() {
 
-        if (!enabled) return;
+        if (currentWorld == null) return;
 
         MapUpdateScheduler.stop();
         MapSaveScheduler.stop();
         cache.clear();
 
-        LogUtil.info("Left world: {}", worldInfo.worldName);
-        worldInfo = null;
-        enabled = false;
+        LogUtil.info("Left world: {}", currentWorld.getName());
+        currentWorld = null;
     }
 
     public void onWorldUpdate() {
-        if (!enabled) return;
-
-        handleDimensionChange();
+        if (currentWorld == null) return;
         updatePlayerChunk();
         updateActiveLayer();
 
@@ -113,14 +107,6 @@ public class NatosAtlas {
 
         MapUpdateScheduler.tick();
         MapSaveScheduler.tick();
-    }
-
-    private void handleDimensionChange() {
-        NAWorldInfo latest = platform.worldProvider.getWorldInfo();
-        if (latest.worldDimension != worldInfo.worldDimension) {
-            LogUtil.info("changed from DIM {} to DIM {}", worldInfo.worldDimension, latest.worldDimension);
-            worldInfo = latest;
-        }
     }
 
     private void updatePlayerChunk() {
@@ -135,7 +121,7 @@ public class NatosAtlas {
         } else if (Settings.mapRenderMode == Settings.MapRenderMode.Night) {
             layers.setActiveLayer(1);
         } else {
-            long time = worldInfo.worldTime % 24000L;
+            long time = currentWorld.getTime() % 24000L;
             layers.setActiveLayer(time < 12000L ? 0 : 1);
         }
     }

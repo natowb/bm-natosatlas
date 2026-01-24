@@ -28,21 +28,6 @@ public class PlatformWorldProviderML implements PlatformWorldProvider {
     private static final Minecraft mc = ModLoader.getMinecraftInstance();
 
     @Override
-    public NAWorldInfo getWorldInfo() {
-        int dimension = mc.world.dimension.id;
-        boolean isServer = mc.isWorldRemote();
-        long time = mc.world.getTime();
-
-        String name;
-        if (isServer) {
-            name = mc.options.lastServer;
-        } else {
-            name = mc.world.getProperties().getName();
-        }
-        return new NAWorldInfo(name, isServer, time, dimension, mc.world.getProperties().getSeed());
-    }
-
-    @Override
     public List<NAEntity> getEntities() {
         List<NAEntity> entities = new ArrayList<>();
 

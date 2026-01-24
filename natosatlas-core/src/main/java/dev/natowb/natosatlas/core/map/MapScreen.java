@@ -74,7 +74,6 @@ public class MapScreen extends UIScreen {
 
     @Override
     public void tick() {
-        if (!NatosAtlas.get().isEnabled()) return;
         Set<Long> visible = viewport.computeVisibleRegions();
         NatosAtlas.get().updateCanvasVisibleRegions(visible);
     }

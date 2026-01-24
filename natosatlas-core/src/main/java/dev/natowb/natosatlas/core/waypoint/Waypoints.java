@@ -1,15 +1,12 @@
 package dev.natowb.natosatlas.core.waypoint;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
-import dev.natowb.natosatlas.core.data.NAWorldInfo;
 import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -23,8 +20,7 @@ public final class Waypoints {
     }
 
     private static File getFile() {
-        NAWorldInfo info = NatosAtlas.get().platform.worldProvider.getWorldInfo();
-        String fileName = String.format("%s.DIM%d.points", NAPaths.getWorldSaveName(), info.worldDimension);
+        String fileName = String.format("%s.DIM%d.points", NAPaths.getWorldSaveName(), NatosAtlas.get().getCurrentWorld().getDimensionId());
         if (!Settings.useReiMinimapWaypointStorage) {
             return new File(NAPaths.getWorldDataPath().toFile(), fileName);
         }

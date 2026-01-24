@@ -5,7 +5,6 @@ import dev.natowb.natosatlas.core.data.*;
 import java.util.List;
 
 public interface PlatformWorldProvider {
-    NAWorldInfo getWorldInfo();
 
     NAChunk getChunk(NACoord chunkCoord);
 

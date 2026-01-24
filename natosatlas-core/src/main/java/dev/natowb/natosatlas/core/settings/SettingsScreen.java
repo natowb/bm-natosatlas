@@ -31,7 +31,7 @@ public class SettingsScreen extends UIScreen {
         addButton(new UIElementOptionButton(SettingsOption.DEBUG_INFO, layout, 150, 20));
         addButton(new UIElementOptionButton(SettingsOption.USE_REIMINIMAP_WAYPOINTS, layout, 150, 20));
 
-        boolean isServer = NatosAtlas.get().platform.worldProvider.getWorldInfo().isServer;
+        boolean isServer = NatosAtlas.get().getCurrentWorld().isServer();
         addButton(new UIElementButton(BUTTON_ID_GENERATE_EXISTING, layout, 150, 20, "Generate Existing", !isServer));
 
         UIElementSlider zoomSlider = new UIElementSlider(SLIDER_ID_ZOOM, layout, 150, 20, Settings.defaultZoom, "Default Zoom");

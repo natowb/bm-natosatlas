@@ -1,7 +1,6 @@
 package dev.natowb.natosatlas.core.utils;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
-import dev.natowb.natosatlas.core.data.NAWorldInfo;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -63,8 +62,7 @@ public final class NAPaths {
     }
 
     public static Path getWorldMapStoragePath(int layerId) {
-        NAWorldInfo info = NatosAtlas.get().platform.worldProvider.getWorldInfo();
-        return ensurePathExists(worldDataPath.resolve(String.format("regions/DIM%d/layer_%d", info.worldDimension, layerId)));
+        return ensurePathExists(worldDataPath.resolve(String.format("regions/DIM%d/layer_%d", NatosAtlas.get().getCurrentWorld().getDimensionId(), layerId)));
     }
 
     public static Path getWorldSavePath() {

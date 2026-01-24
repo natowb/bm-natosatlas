@@ -31,21 +31,6 @@ public class PlatformWorldProviderBTA implements PlatformWorldProvider {
     Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
     @Override
-    public NAWorldInfo getWorldInfo() {
-        int dimension = mc.currentWorld.dimension.id;
-        boolean isServer = mc.isMultiplayerWorld();
-        long time = mc.currentWorld.getWorldTime();
-
-        String name;
-        if (isServer) {
-            name = mc.gameSettings.lastServer.name;
-        } else {
-            name = mc.currentWorld.getLevelData().getWorldName();
-        }
-        return new NAWorldInfo(name, isServer, time, dimension, mc.currentWorld.getLevelData().getRandomSeed());
-    }
-
-    @Override
     public List<NAEntity> getEntities() {
         List<NAEntity> entities = new ArrayList<>();
 

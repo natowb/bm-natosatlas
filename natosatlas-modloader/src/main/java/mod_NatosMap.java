@@ -1,5 +1,6 @@
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.map.MapScreen;
+import dev.natowb.natosatlas.core.wrapper.WorldWrapper;
 import dev.natowb.natosatlas.modloader.*;
 
 import net.minecraft.client.Minecraft;
@@ -46,6 +47,7 @@ public class mod_NatosMap extends BaseMod {
         return null;
     }
 
+
     @Override
     public void ModsLoaded() {
         ModLoader.RegisterKey(this, KEY_BINDING_MAP, false);
@@ -66,9 +68,15 @@ public class mod_NatosMap extends BaseMod {
 
     @Override
     public boolean OnTickInGame(Minecraft mc) {
+        String worldSave = getWorldSaveName();
+
+        if (worldSave == null) {
+            return true;
+        }
+
         if (!inWorld) {
             inWorld = true;
-            nac.onWorldJoin(getWorldSaveName());
+            nac.onWorldJoin(new WorldWrapperML(mc.world, worldSave));
         }
 
         nac.onWorldUpdate();
@@ -77,7 +85,7 @@ public class mod_NatosMap extends BaseMod {
 
     @Override
     public void KeyboardEvent(KeyBinding key) {
-        if (!NatosAtlas.get().isEnabled()) return;
+        if (!inWorld) return;
 
         Minecraft mc = ModLoader.getMinecraftInstance();
         if (key.code != KEY_BINDING_MAP.code) return;
