@@ -7,8 +7,6 @@ import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import dev.natowb.natosatlas.core.wrapper.BlockAccess;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.LightType;
 import net.minecraft.world.chunk.Chunk;
@@ -92,8 +90,7 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
 
                 int height = getTopSolidBlockY(chunk, x, z) - 1;
                 int aboveId = chunk.getBlockId(x, height + 1, z);
-                final int SNOW_LAYER_ID = Block.SNOW.id;
-                if (aboveId == SNOW_LAYER_ID) {
+                if (BlockAccess.getInstance().isBlock(aboveId, BlockAccess.BlockIdentifier.SNOW)) {
                     height = height + 1;
                 }
 
@@ -129,8 +126,7 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
 
                 int height = getTopSolidBlockY(chunk, x, z) - 1;
                 int aboveId = chunk.getBlockId(x, height + 1, z);
-                final int SNOW_LAYER_ID = Block.SNOW.id;
-                if (aboveId == SNOW_LAYER_ID) {
+                if (BlockAccess.getInstance().isBlock(aboveId, BlockAccess.BlockIdentifier.SNOW)) {
                     height = height + 1;
                 }
 
@@ -138,7 +134,7 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
                 int depth = computeFluidDepth(chunk, x, height, z);
                 int blockLight = safeBlockLight(chunk, x, height + 1, z);
                 int meta = chunk.getBlockMeta(x, height, z);
-                NABiome biome =  NatosAtlas.get().getCurrentWorld().getBiome(NACoord.from(worldBlockX, worldBlockZ));
+                NABiome biome = NatosAtlas.get().getCurrentWorld().getBiome(NACoord.from(worldBlockX, worldBlockZ));
 
                 nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
             }
@@ -149,21 +145,17 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
 
 
     private int getTopSolidBlockY(Chunk chunk, int x, int z) {
+
         int y = 127;
         x &= 15;
         int z0 = z & 15;
 
+        BlockAccess blocks = BlockAccess.getInstance();
+
         for (; y > 0; --y) {
             int blockId = chunk.getBlockId(x, y, z0);
-            Material mat = blockId == 0 ? Material.AIR : Block.BLOCKS[blockId].material;
-
-            if (mat == Material.GLASS) {
-                continue;
-            }
-
-            if (mat.blocksMovement() || mat.isFluid()) {
-                return y + 1;
-            }
+            if (blocks.isBlock(blockId, BlockAccess.BlockIdentifier.GLASS)) continue;
+            if (blocks.blocksMovement(blockId) || blocks.isFluid(blockId)) return y + 1;
         }
 
         return -1;

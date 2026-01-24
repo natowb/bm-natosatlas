@@ -6,6 +6,14 @@ import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.material.MaterialColor;
 
 public class BlockAccessBTA extends BlockAccess {
+
+
+    public BlockAccessBTA() {
+        registerBlockIdentifier(BlockIdentifier.GLASS, Blocks.GLASS.id());
+        registerBlockIdentifier(BlockIdentifier.GRASS, Blocks.GRASS.id());
+        registerBlockIdentifier(BlockIdentifier.SNOW, Blocks.LAYER_SNOW.id());
+    }
+
     @Override
     public int getColor(int blockId, int blockMeta) {
         Block<?> block = Blocks.getBlock(blockId);
@@ -19,15 +27,24 @@ public class BlockAccessBTA extends BlockAccess {
     }
 
     @Override
-    public boolean isGrass(int blockId) {
-        return false;
-    }
-
-    @Override
     public boolean isFluid(int blockId) {
         Block<?> block = Blocks.getBlock(blockId);
         if (block == null) return false;
         if (block.getMaterial() == null) return false;
         return block.getMaterial().isLiquid();
+    }
+
+    @Override
+    public boolean blocksMovement(int blockId) {
+        Block<?> block = Blocks.getBlock(blockId);
+        if (block == null) {
+            return false;
+        }
+
+        if (block.getMaterial() == null) {
+            return false;
+        }
+
+        return block.getMaterial().blocksMotion();
     }
 }
