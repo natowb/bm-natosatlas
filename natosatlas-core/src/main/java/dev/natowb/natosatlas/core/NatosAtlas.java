@@ -2,29 +2,21 @@ package dev.natowb.natosatlas.core;
 
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.map.*;
+import dev.natowb.natosatlas.core.map.MapUpdater;
 import dev.natowb.natosatlas.core.tasks.MapSaveScheduler;
 import dev.natowb.natosatlas.core.platform.Platform;
 import dev.natowb.natosatlas.core.settings.Settings;
-import dev.natowb.natosatlas.core.tasks.MapUpdateScheduler;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import dev.natowb.natosatlas.core.waypoint.Waypoints;
-import dev.natowb.natosatlas.core.wrapper.BlockAccess;
-import dev.natowb.natosatlas.core.wrapper.ChunkWrapper;
 import dev.natowb.natosatlas.core.wrapper.WorldWrapper;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CHUNK;
 
 public class NatosAtlas {
 
-    private static final int RADIUS = 8;
-    private static final int TPS = 20;
-    private static final int UPDATE_INTERVAL = TPS;
 
     private static NatosAtlas instance = null;
 
@@ -35,15 +27,11 @@ public class NatosAtlas {
     public final Platform platform;
 
 
+    private MapUpdater mapUpdater;
     public final MapStorage storage = new MapStorage();
     public final MapCache cache = new MapCache(storage);
     public final MapTextureProvider textures;
     public final MapLayerManager layers;
-
-    private int updateTimer = 0;
-
-    private int activeChunkX;
-    private int activeChunkZ;
 
 
     private WorldWrapper currentWorld;
@@ -78,43 +66,31 @@ public class NatosAtlas {
         }
 
         currentWorld = world;
+        mapUpdater = new MapUpdater(currentWorld, layers, cache);
         LogUtil.info("Joined world name={}, saveName={}", world.getName(), world.getSaveName());
         NAPaths.updateWorldPath(world.getSaveName());
         Waypoints.load();
         MapSaveScheduler.start();
-        MapUpdateScheduler.start();
     }
 
     public void onWorldLeft() {
 
         if (currentWorld == null) return;
 
-        MapUpdateScheduler.stop();
         MapSaveScheduler.stop();
         cache.clear();
-
+        mapUpdater = null;
         LogUtil.info("Left world: {}", currentWorld.getName());
         currentWorld = null;
     }
 
     public void onWorldUpdate() {
         if (currentWorld == null) return;
-        updatePlayerChunk();
         updateActiveLayer();
 
-        if (++updateTimer >= UPDATE_INTERVAL) {
-            updateTimer = 0;
-            updateNearbyChunks();
-        }
+        mapUpdater.tick();
 
-        MapUpdateScheduler.tick();
         MapSaveScheduler.tick();
-    }
-
-    private void updatePlayerChunk() {
-        NAEntity player = NatosAtlas.get().getCurrentWorld().getPlayer();
-        activeChunkX = (int) Math.floor(player.x / 16.0);
-        activeChunkZ = (int) Math.floor(player.z / 16.0);
     }
 
     private void updateActiveLayer() {
@@ -128,21 +104,6 @@ public class NatosAtlas {
         }
     }
 
-
-    private void updateNearbyChunks() {
-        for (int dx = -RADIUS; dx <= RADIUS; dx++) {
-            for (int dz = -RADIUS; dz <= RADIUS; dz++) {
-                if (dx * dx + dz * dz > RADIUS * RADIUS) continue;
-
-                int wx = activeChunkX + dx;
-                int wz = activeChunkZ + dz;
-
-                NAChunk chunk = getChunk(NACoord.from(wx, wz));
-                MapUpdateScheduler.enqueue(NACoord.from(wx, wz), chunk);
-            }
-        }
-    }
-
     public void generateExistingChunks() {
         List<NARegionFile> regions = currentWorld.getRegionFiles();
 
@@ -151,7 +112,6 @@ public class NatosAtlas {
             return;
         }
 
-        MapUpdateScheduler.stop();
         MapSaveScheduler.stop();
 
         LogUtil.info("Generating map data for all existing regions (this may take a while...)");
@@ -172,7 +132,7 @@ public class NatosAtlas {
                 }
 
                 for (NACoord chunkCoord : naRegion.iterateExistingChunks()) {
-                    NAChunk chunk = getChunkFromDisk(chunkCoord);
+                    NAChunk chunk = ChunkBuilder.buildChunkSurfaceFromDisk(currentWorld, chunkCoord);
                     if (chunk == null) continue;
 
                     int layerIndex = 0;
@@ -209,71 +169,6 @@ public class NatosAtlas {
         LogUtil.info("Full region generation complete.");
         cache.clear();
         MapSaveScheduler.start();
-        MapUpdateScheduler.start();
-    }
-
-    public NAChunk getChunk(NACoord chunkCoord) {
-        ChunkWrapper chunk = NatosAtlas.get().getCurrentWorld().getChunk(chunkCoord);
-
-        if (chunk == null) {
-            return null;
-        }
-
-        NAChunk nac = new NAChunk();
-        for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
-            for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
-                int worldBlockX = chunkCoord.x * BLOCKS_PER_MINECRAFT_CHUNK + x;
-                int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
-
-                int height = chunk.getTopSolidBlockY(x, z) - 1;
-                int aboveId = chunk.getBlockId(x, height + 1, z);
-                if (BlockAccess.getInstance().isBlock(aboveId, BlockAccess.BlockIdentifier.SNOW)) {
-                    height = height + 1;
-                }
-
-                int blockId = chunk.getBlockId(x, height, z);
-                int depth = chunk.computeFluidDepth(x, height, z);
-                int blockLight = chunk.getBlockLight(x, height + 1, z);
-                int meta = chunk.getBlockMeta(x, height, z);
-                NABiome biome = NatosAtlas.get().getCurrentWorld().getBiome(NACoord.from(worldBlockX, worldBlockZ));
-
-                nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
-            }
-        }
-
-        return nac;
-    }
-
-
-    public NAChunk getChunkFromDisk(NACoord chunkCoord) {
-        ChunkWrapper chunk = NatosAtlas.get().getCurrentWorld().getChunkFromDisk(chunkCoord);
-
-        if (chunk == null) {
-            return null;
-        }
-
-        NAChunk nac = new NAChunk();
-        for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
-            for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
-                int worldBlockX = chunkCoord.x * BLOCKS_PER_MINECRAFT_CHUNK + x;
-                int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
-
-                int height = chunk.getTopSolidBlockY(x, z) - 1;
-                int aboveId = chunk.getBlockId(x, height + 1, z);
-                if (BlockAccess.getInstance().isBlock(aboveId, BlockAccess.BlockIdentifier.SNOW)) {
-                    height = height + 1;
-                }
-
-                int blockId = chunk.getBlockId(x, height, z);
-                int depth = chunk.computeFluidDepth(x, height, z);
-                int blockLight = chunk.getBlockLight(x, height + 1, z);
-                int meta = chunk.getBlockMeta(x, height, z);
-                NABiome biome = NatosAtlas.get().getCurrentWorld().getBiome(NACoord.from(worldBlockX, worldBlockZ));
-
-                nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
-            }
-        }
-        return nac;
     }
 }
 
