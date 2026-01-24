@@ -7,11 +7,9 @@ import java.nio.file.Path;
 
 public abstract class Platform {
     public final PlatformPainter painter;
-    public final PlatformWorldProvider worldProvider;
 
-    public Platform(PlatformPainter painter, PlatformWorldProvider worldProvider, BlockAccess blockAccess) {
+    public Platform(PlatformPainter painter,  BlockAccess blockAccess) {
         this.painter = painter;
-        this.worldProvider = worldProvider;
         BlockAccess.setInstance(blockAccess);
     }
 

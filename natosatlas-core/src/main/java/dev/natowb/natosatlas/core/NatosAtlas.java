@@ -9,12 +9,16 @@ import dev.natowb.natosatlas.core.tasks.MapUpdateScheduler;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import dev.natowb.natosatlas.core.waypoint.Waypoints;
+import dev.natowb.natosatlas.core.wrapper.BlockAccess;
+import dev.natowb.natosatlas.core.wrapper.ChunkWrapper;
 import dev.natowb.natosatlas.core.wrapper.WorldWrapper;
 
 import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CHUNK;
 
 public class NatosAtlas {
 
@@ -162,14 +166,14 @@ public class NatosAtlas {
                 int wx = activeChunkX + dx;
                 int wz = activeChunkZ + dz;
 
-                NAChunk chunk = platform.worldProvider.getChunk(NACoord.from(wx, wz));
+                NAChunk chunk = getChunk(NACoord.from(wx, wz));
                 MapUpdateScheduler.enqueue(NACoord.from(wx, wz), chunk);
             }
         }
     }
 
     public void generateExistingChunks() {
-        List<NARegionFile> regions = NatosAtlas.get().platform.worldProvider.getRegionMetadata();
+        List<NARegionFile> regions = currentWorld.getRegionFiles();
 
         if (regions.isEmpty()) {
             LogUtil.info("No region metadata found.");
@@ -200,7 +204,7 @@ public class NatosAtlas {
                 }
 
                 for (NACoord chunkCoord : naRegion.iterateExistingChunks()) {
-                    NAChunk chunk = NatosAtlas.get().platform.worldProvider.getChunkFromDisk(chunkCoord);
+                    NAChunk chunk = getChunkFromDisk(chunkCoord);
                     if (chunk == null) continue;
 
                     int layerIndex = 0;
@@ -238,6 +242,70 @@ public class NatosAtlas {
         cache.clear();
         MapSaveScheduler.start();
         MapUpdateScheduler.start();
+    }
+
+    public NAChunk getChunk(NACoord chunkCoord) {
+        ChunkWrapper chunk = NatosAtlas.get().getCurrentWorld().getChunk(chunkCoord);
+
+        if (chunk == null) {
+            return null;
+        }
+
+        NAChunk nac = new NAChunk();
+        for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
+            for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
+                int worldBlockX = chunkCoord.x * BLOCKS_PER_MINECRAFT_CHUNK + x;
+                int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
+
+                int height = chunk.getTopSolidBlockY(x, z) - 1;
+                int aboveId = chunk.getBlockId(x, height + 1, z);
+                if (BlockAccess.getInstance().isBlock(aboveId, BlockAccess.BlockIdentifier.SNOW)) {
+                    height = height + 1;
+                }
+
+                int blockId = chunk.getBlockId(x, height, z);
+                int depth = chunk.computeFluidDepth(x, height, z);
+                int blockLight = chunk.getBlockLight(x, height + 1, z);
+                int meta = chunk.getBlockMeta(x, height, z);
+                NABiome biome = NatosAtlas.get().getCurrentWorld().getBiome(NACoord.from(worldBlockX, worldBlockZ));
+
+                nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
+            }
+        }
+
+        return nac;
+    }
+
+
+    public NAChunk getChunkFromDisk(NACoord chunkCoord) {
+        ChunkWrapper chunk = NatosAtlas.get().getCurrentWorld().getChunkFromDisk(chunkCoord);
+
+        if (chunk == null) {
+            return null;
+        }
+
+        NAChunk nac = new NAChunk();
+        for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
+            for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
+                int worldBlockX = chunkCoord.x * BLOCKS_PER_MINECRAFT_CHUNK + x;
+                int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
+
+                int height = chunk.getTopSolidBlockY(x, z) - 1;
+                int aboveId = chunk.getBlockId(x, height + 1, z);
+                if (BlockAccess.getInstance().isBlock(aboveId, BlockAccess.BlockIdentifier.SNOW)) {
+                    height = height + 1;
+                }
+
+                int blockId = chunk.getBlockId(x, height, z);
+                int depth = chunk.computeFluidDepth(x, height, z);
+                int blockLight = chunk.getBlockLight(x, height + 1, z);
+                int meta = chunk.getBlockMeta(x, height, z);
+                NABiome biome = NatosAtlas.get().getCurrentWorld().getBiome(NACoord.from(worldBlockX, worldBlockZ));
+
+                nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
+            }
+        }
+        return nac;
     }
 }
 

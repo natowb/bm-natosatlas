@@ -10,7 +10,7 @@ import java.nio.file.Path;
 
 public class PlatformML extends Platform {
     public PlatformML() {
-        super(new PlatformPainterML(), new PlatformWorldProviderML(), new BlockAccessML());
+        super(new PlatformPainterML(), new BlockAccessML());
     }
 
 

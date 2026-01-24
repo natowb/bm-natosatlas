@@ -3,6 +3,7 @@ package dev.natowb.natosatlas.core.wrapper;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
+import dev.natowb.natosatlas.core.data.NARegionFile;
 
 import java.util.List;
 
@@ -29,4 +30,6 @@ public interface WorldWrapper {
 
     ChunkWrapper getChunk(NACoord chunkCoord);
     ChunkWrapper getChunkFromDisk(NACoord chunkCoord);
+
+    List<NARegionFile> getRegionFiles();
 }

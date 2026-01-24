@@ -10,7 +10,7 @@ import java.nio.file.Path;
 
 public class PlatformBTA extends Platform {
 	public PlatformBTA() {
-		super(new PlatformPainterBTA(), new PlatformWorldProviderBTA(), new BlockAccessBTA());
+		super(new PlatformPainterBTA(),  new BlockAccessBTA());
 	}
 
 	@Override
