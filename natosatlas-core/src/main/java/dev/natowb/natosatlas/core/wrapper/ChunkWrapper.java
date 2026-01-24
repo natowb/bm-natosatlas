@@ -37,6 +37,10 @@ public abstract class ChunkWrapper {
         return depth;
     }
 
+    public abstract long getLastSaveTime();
+
+    public abstract boolean isDirty();
+
     public abstract int getBlockId(int x, int y, int z);
 
     public abstract int getBlockMeta(int x, int y, int z);

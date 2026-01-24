@@ -119,6 +119,16 @@ public class WorldWrapperBTA implements WorldWrapper {
 
         return new ChunkWrapper(chunk) {
             @Override
+            public long getLastSaveTime() {
+                return ((Chunk)chunk).lastSaveTime;
+            }
+
+            @Override
+            public boolean isDirty() {
+                return ((Chunk)chunk).isModified;
+            }
+
+            @Override
             public int getBlockId(int x, int y, int z) {
                 return ((Chunk) chunk).getBlockID(x, y, z);
             }

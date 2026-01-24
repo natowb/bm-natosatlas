@@ -121,6 +121,16 @@ public class WorldWrapperML implements WorldWrapper {
 
         return new ChunkWrapper(chunk) {
             @Override
+            public long getLastSaveTime() {
+                return ((Chunk) chunk).lastSaveTime;
+            }
+
+            @Override
+            public boolean isDirty() {
+                return ((Chunk) chunk).dirty;
+            }
+
+            @Override
             public int getBlockId(int x, int y, int z) {
                 return ((Chunk) chunk).getBlockId(x, y, z);
             }
@@ -150,6 +160,16 @@ public class WorldWrapperML implements WorldWrapper {
         if (chunk == null) return null;
 
         return new ChunkWrapper(chunk) {
+            @Override
+            public long getLastSaveTime() {
+                return ((Chunk) chunk).lastSaveTime;
+            }
+
+            @Override
+            public boolean isDirty() {
+                return ((Chunk) chunk).dirty;
+            }
+
             @Override
             public int getBlockId(int x, int y, int z) {
                 return ((Chunk) chunk).getBlockId(x, y, z);
