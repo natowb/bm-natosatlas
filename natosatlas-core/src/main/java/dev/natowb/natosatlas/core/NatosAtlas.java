@@ -32,12 +32,12 @@ public class NatosAtlas {
         return instance;
     }
 
-    private final Set<Long> activeRegions = new HashSet<>();
-    private final Set<Long> visibleRegions = new HashSet<>();
-
     public final Platform platform;
+
+
+    public final MapStorage storage = new MapStorage();
+    public final MapCache cache = new MapCache(storage);
     public final MapTextureProvider textures;
-    public final MapCache cache;
     public final MapLayerManager layers;
 
     private int updateTimer = 0;
@@ -63,7 +63,6 @@ public class NatosAtlas {
         this.platform = platform;
         this.layers = new MapLayerManager();
         this.textures = new MapTextureProvider();
-        this.cache = new MapCache(new MapStorage());
         NAPaths.updateBasePaths(platform.getMinecraftDirectory());
         Settings.load();
 
@@ -105,7 +104,6 @@ public class NatosAtlas {
 
         if (++updateTimer >= UPDATE_INTERVAL) {
             updateTimer = 0;
-            updateActiveRegions();
             updateNearbyChunks();
         }
 
@@ -130,33 +128,6 @@ public class NatosAtlas {
         }
     }
 
-
-    public void updateCanvasVisibleRegions(Set<Long> visible) {
-        visibleRegions.clear();
-        visibleRegions.addAll(visible);
-        syncLifetime();
-    }
-
-    private void updateActiveRegions() {
-        activeRegions.clear();
-
-        int regionX = activeChunkX >> 5;
-        int regionZ = activeChunkZ >> 5;
-
-        for (int rx = regionX - 1; rx <= regionX + 1; rx++) {
-            for (int rz = regionZ - 1; rz <= regionZ + 1; rz++) {
-                activeRegions.add(new NACoord(rx, rz).toKey());
-            }
-        }
-
-        syncLifetime();
-    }
-
-    private void syncLifetime() {
-        Set<Long> keep = new HashSet<>(activeRegions);
-        keep.addAll(visibleRegions);
-        cache.syncLoadedRegions(keep);
-    }
 
     private void updateNearbyChunks() {
         for (int dx = -RADIUS; dx <= RADIUS; dx++) {
@@ -184,9 +155,6 @@ public class NatosAtlas {
         MapSaveScheduler.stop();
 
         LogUtil.info("Generating map data for all existing regions (this may take a while...)");
-
-        MapCache cache = NatosAtlas.get().cache;
-        MapStorage storage = cache.getStorage();
 
         int index = 0;
         int total = regions.size();

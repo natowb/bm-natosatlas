@@ -75,12 +75,6 @@ public class MapScreen extends UIScreen {
     }
 
     @Override
-    public void tick() {
-        Set<Long> visible = viewport.computeVisibleRegions();
-        NatosAtlas.get().updateCanvasVisibleRegions(visible);
-    }
-
-    @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
         painter.drawRect(0, 0, width, height, UITheme.PANEL_BG);
 

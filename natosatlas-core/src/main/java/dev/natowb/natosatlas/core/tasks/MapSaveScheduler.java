@@ -4,6 +4,7 @@ package dev.natowb.natosatlas.core.tasks;
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.map.MapCache;
+import dev.natowb.natosatlas.core.map.MapLayer;
 import dev.natowb.natosatlas.core.map.MapRegion;
 import dev.natowb.natosatlas.core.map.MapStorage;
 import dev.natowb.natosatlas.core.utils.LogUtil;
@@ -24,7 +25,6 @@ public class MapSaveScheduler {
         running = false;
     }
 
-
     public static void tick() {
         if (!running) return;
         MapCache cache = NatosAtlas.get().cache;
@@ -32,16 +32,13 @@ public class MapSaveScheduler {
             Long key = cache.pollDirty();
             if (key == null) break;
 
-            MapRegion[] layers = cache.getRegionArray(key);
-            if (layers == null) continue;
-
             NACoord coord = NACoord.fromKey(key);
-            MapStorage storage = cache.getStorage();
+            MapStorage storage = NatosAtlas.get().storage;
 
-            for (int layerId = 0; layerId < cache.getLayerCount(); layerId++) {
-                MapRegion region = layers[layerId];
+            for (MapLayer layer : NatosAtlas.get().layers.getLayers()) {
+                MapRegion region = cache.getRegion(layer.id, coord);
                 if (region != null) {
-                    MapSaveWorker.enqueue(storage, coord, region, storage.getRegionPngFile(layerId, coord));
+                    MapSaveWorker.enqueue(storage, coord, region, storage.getRegionPngFile(layer.id, coord));
                 }
             }
         }

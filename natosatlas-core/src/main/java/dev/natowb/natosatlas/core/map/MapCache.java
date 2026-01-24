@@ -1,7 +1,6 @@
 package dev.natowb.natosatlas.core.map;
 
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.utils.LogUtil;
 
 import java.util.*;
 
@@ -13,17 +12,16 @@ public class MapCache {
     private static final int PNG_CACHE_SIZE = 256;
 
     private final MapStorage storage;
-    private final Map<Long, MapRegion[]> regions = new HashMap<>();
-    // TODO: make dynamic once MapLayerManager is set up
+    private final Map<Long, MapRegion[]> regions = new LinkedHashMap<>();
     private final int layerCount = 2;
 
-    private final Map<Long, int[][]> pngCache = new LinkedHashMap<Long, int[][]>(PNG_CACHE_SIZE, 0.75f, true) {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<Long, int[][]> eldest) {
-            return size() > PNG_CACHE_SIZE;
-        }
-    };
-
+    private final Map<Long, int[][]> pngCache =
+            new LinkedHashMap<Long, int[][]>(PNG_CACHE_SIZE, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<Long, int[][]> eldest) {
+                    return size() > PNG_CACHE_SIZE;
+                }
+            };
 
     public MapCache(MapStorage storage) {
         this.storage = storage;
@@ -68,7 +66,6 @@ public class MapCache {
         return null;
     }
 
-
     public void put(int layerId, NACoord coord, MapRegion region) {
         long key = coord.toKey();
         MapRegion[] arr = regions.computeIfAbsent(key, k -> new MapRegion[layerCount]);
@@ -88,43 +85,7 @@ public class MapCache {
         return key;
     }
 
-    public MapRegion[] getRegionArray(long key) {
-        return regions.get(key);
-    }
-
-    public MapStorage getStorage() {
-        return storage;
-    }
-
-    public int getLayerCount() {
-        return layerCount;
-    }
-
-
-    public void syncLoadedRegions(Set<Long> keep) {
-        Iterator<Map.Entry<Long, MapRegion[]>> it = regions.entrySet().iterator();
-
-        while (it.hasNext()) {
-            Map.Entry<Long, MapRegion[]> entry = it.next();
-            long key = entry.getKey();
-
-            if (!keep.contains(key)) {
-                MapRegion[] arr = entry.getValue();
-                if (arr != null) {
-                    for (int i = 0; i < arr.length; i++) {
-                        if (arr[i] != null) {
-                            arr[i].clearTexture();
-                            arr[i] = null;
-                        }
-                    }
-                }
-                it.remove();
-            }
-        }
-    }
-
     public void clear() {
-        LogUtil.warn("Clearing all cached regions and PNG cache");
         for (MapRegion[] arr : regions.values()) {
             if (arr == null) continue;
             for (int i = 0; i < arr.length; i++) {
