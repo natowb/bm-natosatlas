@@ -28,12 +28,17 @@ public class WorldWrapperST implements WorldWrapper {
 
     private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
-    private final World world;
+    private World world;
     private final String worldSaveName;
 
     public WorldWrapperST(World world, String worldSaveName) {
         this.world = world;
         this.worldSaveName = worldSaveName;
+    }
+
+    @Override
+    public void update() {
+        this.world = mc.world;
     }
 
     @Override

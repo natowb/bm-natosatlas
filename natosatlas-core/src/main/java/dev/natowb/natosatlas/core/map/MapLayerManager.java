@@ -1,5 +1,8 @@
 package dev.natowb.natosatlas.core.map;
 
+import dev.natowb.natosatlas.core.MapChunkRendererCave;
+import dev.natowb.natosatlas.core.MapChunkRendererSurface;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +13,9 @@ public class MapLayerManager {
 
     public MapLayerManager() {
         MapChunkRendererSurface surface = new MapChunkRendererSurface();
-        layers.add(new MapLayer(0, "Surface Day", surface, false));
-        layers.add(new MapLayer(1, "Surface Night", surface, true));
+        layers.add(new MapLayer(0, "Day", surface, false));
+        layers.add(new MapLayer(1, "Night", surface, true));
+        layers.add(new MapLayer(2, "Cave", new MapChunkRendererCave(), true));
     }
 
     public void setActiveLayer(int index) {
@@ -23,7 +27,6 @@ public class MapLayerManager {
     public MapLayer getActiveLayer() {
         return layers.get(activeLayer);
     }
-
     public List<MapLayer> getLayers() {
         return layers;
     }

@@ -1,5 +1,7 @@
 package dev.natowb.natosatlas.core.map;
 
+import dev.natowb.natosatlas.core.MapChunkRenderer;
+
 public final class MapLayer {
     public final int id;
     public final String name;

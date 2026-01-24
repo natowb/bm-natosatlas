@@ -27,12 +27,17 @@ import java.util.List;
 public class WorldWrapperBTA implements WorldWrapper {
     private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
-    private final World world;
+    private World world;
     private final String worldSaveName;
 
     public WorldWrapperBTA(World world, String worldSaveName) {
         this.world = world;
         this.worldSaveName = worldSaveName;
+    }
+
+    @Override
+    public void update() {
+        this.world = mc.currentWorld;
     }
 
     @Override

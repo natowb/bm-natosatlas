@@ -28,12 +28,17 @@ public class WorldWrapperML implements WorldWrapper {
 
     private static final Minecraft mc = ModLoader.getMinecraftInstance();
 
-    private final World world;
+    private World world;
     private final String worldSaveName;
 
     public WorldWrapperML(World world, String worldSaveName) {
         this.world = world;
         this.worldSaveName = worldSaveName;
+    }
+
+    @Override
+    public void update() {
+        this.world = mc.world;
     }
 
     @Override

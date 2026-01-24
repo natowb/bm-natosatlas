@@ -1,7 +1,5 @@
 package dev.natowb.natosatlas.core.map;
 
-import dev.natowb.natosatlas.core.ChunkBuilder;
-import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.utils.LogUtil;
@@ -77,34 +75,29 @@ public class MapUpdater {
         if (oldTime == null) {
             LogUtil.debug("MapUpdater: First-time scan of chunk {}, generating region", coord);
             chunkSaveTimes.put(coord, latestSaveTime);
-            generateChunk(coord, ChunkBuilder.buildChunkSurface(world, coord));
+            updateChunk(coord);
             return;
         }
 
         if (oldTime != latestSaveTime) {
             LogUtil.debug("MapUpdater: Chunk {} changed ({} -> {}), regenerating", coord, oldTime, latestSaveTime);
             chunkSaveTimes.put(coord, latestSaveTime);
-            generateChunk(coord, ChunkBuilder.buildChunkSurface(world, coord));
+            updateChunk(coord);
         }
 
     }
 
-    private void generateChunk(NACoord chunkCoord, NAChunk chunk) {
-        if (chunk == null) {
-            LogUtil.warn("MapUpdater: Tried to generate null chunk at {}", chunkCoord);
-            return;
-        }
-
+    private void updateChunk(NACoord chunkCoord) {
         NACoord regionCoord = new NACoord(chunkCoord.x >> 5, chunkCoord.z >> 5);
 
         for (MapLayer layer : layerManager.getLayers()) {
-            generateChunkForLayer(regionCoord, chunkCoord, layer, chunk);
+            updateChunkForLayer(regionCoord, chunkCoord, layer);
         }
 
         cache.markDirty(regionCoord);
     }
 
-    private void generateChunkForLayer(NACoord regionCoord, NACoord chunkCoord, MapLayer layer, NAChunk chunk) {
+    private void updateChunkForLayer(NACoord regionCoord, NACoord chunkCoord, MapLayer layer) {
         MapRegion region = cache.getRegion(layer.id, regionCoord);
 
         if (region == null) {
@@ -118,6 +111,6 @@ public class MapUpdater {
             }
         }
 
-        layer.renderer.applyChunkToRegion(region, chunkCoord, chunk, layer.usesBlockLight);
+        layer.renderer.applyChunkToRegion(region, chunkCoord, layer.usesBlockLight);
     }
 }

@@ -27,9 +27,9 @@ public final class ColorEngine {
 
         if (BlockAccess.getInstance().isFluid(blockId)) {
             baseColor = applyWaterTint(localX, localZ, chunk, baseColor);
-        } else {
-            baseColor = applyHeightShading(localX, localZ, chunk, baseColor);
         }
+
+        baseColor = applyHeightShading(localX, localZ, chunk, baseColor);
 
         if (useBlockLight) {
             int blockLight = chunk.blockLight[index];

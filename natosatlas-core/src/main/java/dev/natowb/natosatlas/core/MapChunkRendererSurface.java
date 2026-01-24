@@ -1,8 +1,8 @@
-package dev.natowb.natosatlas.core.map;
+package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.core.ColorEngine;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
+import dev.natowb.natosatlas.core.map.MapRegion;
 
 import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_CANVAS_REGION;
 import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CHUNK;
@@ -12,7 +12,10 @@ public class MapChunkRendererSurface implements MapChunkRenderer {
     private final ColorEngine colorEngine = new ColorEngine();
 
     @Override
-    public void applyChunkToRegion(MapRegion region, NACoord chunkCoord, NAChunk chunk, boolean useBlockLight) {
+    public void applyChunkToRegion(MapRegion region, NACoord chunkCoord, boolean useBlockLight) {
+        NAChunk chunk = ChunkBuilder.buildChunkSurface(NatosAtlas.get().getCurrentWorld(), chunkCoord);
+        if (chunk == null) return;
+
         int[] pixels = region.getPixels();
 
         int regionBlockOffsetX = (chunkCoord.x & 31) * BLOCKS_PER_MINECRAFT_CHUNK;

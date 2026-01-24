@@ -1,5 +1,8 @@
 package dev.natowb.natosatlas.core.settings;
 
+import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.map.MapLayerManager;
+
 public enum SettingsOption {
 
     ENTITY_DISPLAY("Entities") {
@@ -28,23 +31,21 @@ public enum SettingsOption {
     MAP_RENDER_MODE("Mode") {
         @Override
         public void cycle() {
-            Settings.MapRenderMode m = Settings.mapRenderMode;
-            switch (m) {
-                case Day:
-                    Settings.mapRenderMode = Settings.MapRenderMode.Night;
-                    break;
-                case Night:
-                    Settings.mapRenderMode = Settings.MapRenderMode.Auto;
-                    break;
-                case Auto:
-                    Settings.mapRenderMode = Settings.MapRenderMode.Day;
-                    break;
+            MapLayerManager layers = NatosAtlas.get().layers;
+            int layer = layers.getActiveLayer().id;
+            layer++;
+
+            if (layer >= layers.getLayers().size()) {
+                layer = 0;
             }
+
+            layers.setActiveLayer(layer);
         }
 
         @Override
         public String getValueLabel() {
-            return Settings.mapRenderMode.name();
+            MapLayerManager layers = NatosAtlas.get().layers;
+            return layers.getActiveLayer().name;
         }
     },
 

@@ -10,6 +10,7 @@ public class ColorMapperUtil {
     static {
         COLOR_OVERRIDES.put("tile.gravel", 0xFF9A9A9A);
         COLOR_OVERRIDES.put("tile.hellrock", 0xFF7A2A2A);
+        COLOR_OVERRIDES.put("tile.lightgem", 0xFFFFA500);
     }
 
     private static final int[] WOOL_COLORS = new int[16];

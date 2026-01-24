@@ -80,28 +80,16 @@ public class NatosAtlas {
         MapSaveScheduler.stop();
         cache.clear();
         mapUpdater = null;
-        LogUtil.info("Left world: {}", currentWorld.getName());
+        LogUtil.info("Left world: {}", currentWorld.getSaveName());
         currentWorld = null;
     }
 
     public void onWorldUpdate() {
         if (currentWorld == null) return;
-        updateActiveLayer();
 
         mapUpdater.tick();
-
+        currentWorld.update();
         MapSaveScheduler.tick();
-    }
-
-    private void updateActiveLayer() {
-        if (Settings.mapRenderMode == Settings.MapRenderMode.Day) {
-            layers.setActiveLayer(0);
-        } else if (Settings.mapRenderMode == Settings.MapRenderMode.Night) {
-            layers.setActiveLayer(1);
-        } else {
-            long time = currentWorld.getTime() % 24000L;
-            layers.setActiveLayer(time < 12000L ? 0 : 1);
-        }
     }
 
     public void generateExistingChunks() {
@@ -132,17 +120,9 @@ public class NatosAtlas {
                 }
 
                 for (NACoord chunkCoord : naRegion.iterateExistingChunks()) {
-                    NAChunk chunk = ChunkBuilder.buildChunkSurfaceFromDisk(currentWorld, chunkCoord);
-                    if (chunk == null) continue;
-
                     int layerIndex = 0;
                     for (MapLayer layer : NatosAtlas.get().layers.getLayers()) {
-                        layer.renderer.applyChunkToRegion(
-                                layers[layerIndex],
-                                chunkCoord,
-                                chunk,
-                                layer.usesBlockLight
-                        );
+                        layer.renderer.applyChunkToRegion(layers[layerIndex], chunkCoord, layer.usesBlockLight);
                         layerIndex++;
                     }
                 }

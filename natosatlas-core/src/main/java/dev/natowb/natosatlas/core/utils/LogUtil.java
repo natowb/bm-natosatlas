@@ -16,7 +16,7 @@ public final class LogUtil {
         LogLevel(int p) { this.priority = p; }
     }
 
-    private static LogLevel currentLevel = LogLevel.INFO;
+    private static LogLevel currentLevel = LogLevel.DEBUG;
 
     public static void setLoggingLevel(LogLevel level) {
         currentLevel = level;

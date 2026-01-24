@@ -8,6 +8,9 @@ import dev.natowb.natosatlas.core.data.NARegionFile;
 import java.util.List;
 
 public interface WorldWrapper {
+
+    void update();
+
     String getName();
 
     String getSaveName();
@@ -29,6 +32,7 @@ public interface WorldWrapper {
     NAEntity getPlayer();
 
     ChunkWrapper getChunk(NACoord chunkCoord);
+
     ChunkWrapper getChunkFromDisk(NACoord chunkCoord);
 
     List<NARegionFile> getRegionFiles();

@@ -14,22 +14,18 @@ public class ChunkBuilder {
 
     public static NAChunk buildChunkSurface(WorldWrapper world, NACoord chunkCoord) {
         ChunkWrapper chunk = world.getChunk(chunkCoord);
-
         if (chunk == null) {
             return null;
         }
-
         return buildSurface(world, chunkCoord, chunk);
     }
 
 
     public static NAChunk buildChunkSurfaceFromDisk(WorldWrapper world, NACoord chunkCoord) {
         ChunkWrapper chunk = world.getChunkFromDisk(chunkCoord);
-
         if (chunk == null) {
             return null;
         }
-
         return buildSurface(world, chunkCoord, chunk);
     }
 
@@ -57,4 +53,64 @@ public class ChunkBuilder {
         }
         return nac;
     }
+
+    public static NAChunk buildCaveChunk(WorldWrapper world, NACoord chunkCoord, int playerY) {
+
+        ChunkWrapper chunk = world.getChunk(chunkCoord);
+        if (chunk == null) return null;
+
+        NAChunk caveChunk = new NAChunk();
+
+        for (int z = 0; z < 16; z++) {
+            for (int x = 0; x < 16; x++) {
+
+                int floorY = findTopmostCaveFloor(chunk, x, z, playerY);
+
+                if (floorY < 0) {
+                    caveChunk.set(x, z, -1, 0, 0, 0, 0, null);
+                    continue;
+                }
+
+                int blockId = chunk.getBlockId(x, floorY, z);
+                int blockLight = chunk.getBlockLight(x, floorY, z);
+                int meta = chunk.getBlockMeta(x, floorY, z);
+
+                int worldX = chunkCoord.x * 16 + x;
+                int worldZ = chunkCoord.z * 16 + z;
+                NABiome biome = world.getBiome(NACoord.from(worldX, worldZ));
+
+                caveChunk.set(x, z, floorY, blockId, 0, blockLight, meta, biome);
+            }
+        }
+
+        return caveChunk;
+    }
+
+
+    private static int findTopmostCaveFloor(ChunkWrapper chunk, int x, int z, int playerY) {
+
+        int startY = Math.min(playerY, 127);
+
+        for (int y = startY; y > 1; y--) {
+
+            int block = chunk.getBlockId(x, y, z);
+
+            if (block != 0) continue;
+
+            if (chunk.getSkyLight(x, y, z) > 0) continue;
+
+            for (int fy = y - 1; fy > 0; fy--) {
+                int floorBlock = chunk.getBlockId(x, fy, z);
+                if (floorBlock != 0) {
+                    return fy;
+                }
+            }
+
+            return -1;
+        }
+
+        return -1;
+    }
+
+
 }
