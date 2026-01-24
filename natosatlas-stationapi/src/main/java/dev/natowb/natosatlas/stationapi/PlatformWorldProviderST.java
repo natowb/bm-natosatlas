@@ -5,6 +5,7 @@ import dev.natowb.natosatlas.core.platform.PlatformWorldProvider;
 import dev.natowb.natosatlas.core.utils.ColorMapperUtil;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
+import dev.natowb.natosatlas.core.wrapper.BlockAccess;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -33,33 +34,6 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
         return new NABiome(biome.grassColor, biome.foliageColor);
     }
 
-    @Override
-    public int getBlockColor(int blockId, int blockMeta) {
-
-        int overrideColor = ColorMapperUtil.getOverrideColor(Block.BLOCKS[blockId].getTranslationKey());
-
-        if (overrideColor != -1) {
-            return overrideColor;
-        }
-
-        if (blockId == Block.WOOL.id) {
-            return ColorMapperUtil.getWoolColor(blockMeta);
-        }
-
-        if (blockId == Block.LEAVES.id) {
-            return Block.LEAVES.getColor(blockMeta);
-        }
-
-        if (Block.BLOCKS[blockId].material == null) {
-            return 0xFF800080;
-        }
-        return Block.BLOCKS[blockId].material.mapColor.color;
-    }
-
-    @Override
-    public boolean isBlockGrass(int blockId) {
-        return blockId == Block.GRASS_BLOCK.id;
-    }
 
     @Override
     public List<NARegionFile> getRegionMetadata() {
@@ -206,21 +180,6 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
         return -1;
     }
 
-
-    @Override
-    public boolean isBlockFluid(int blockId) {
-        Block block = Block.BLOCKS[blockId];
-        if (block == null) {
-            return false;
-        }
-
-        if (block.material == null) {
-            return false;
-        }
-
-        return block.material.isFluid();
-    }
-
     private int computeFluidDepth(Chunk chunk, int x, int y, int z) {
         if (y < 0) return 0;
 
@@ -228,7 +187,7 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
 
         while (y > 0) {
             int id = chunk.getBlockId(x, y, z);
-            if (!isBlockFluid(id)) break;
+            if (!BlockAccess.getInstance().isFluid(id)) break;
             depth++;
             y--;
         }

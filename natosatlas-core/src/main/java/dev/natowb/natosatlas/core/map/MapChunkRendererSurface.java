@@ -1,9 +1,9 @@
 package dev.natowb.natosatlas.core.map;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
+import dev.natowb.natosatlas.core.wrapper.BlockAccess;
 
 import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_CANVAS_REGION;
 import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CHUNK;
@@ -37,14 +37,14 @@ public class MapChunkRendererSurface implements MapChunkRenderer {
 
         int blockId = chunk.blockIds[localIndex];
         int blockMeta = chunk.meta[localIndex];
-        int baseColor = NatosAtlas.get().platform.worldProvider.getBlockColor(blockId, blockMeta);
+        int baseColor = BlockAccess.getInstance().getColor(blockId, blockMeta);
         NABiome biome = chunk.biome[localIndex];
 
-        if (NatosAtlas.get().platform.worldProvider.isBlockGrass(blockId)) {
+        if (BlockAccess.getInstance().isGrass(blockId)) {
             baseColor = mixColors(baseColor, biome.grassColor, 0.1f);
         }
 
-        if (NatosAtlas.get().platform.worldProvider.isBlockFluid(blockId))
+        if (BlockAccess.getInstance().isFluid(blockId))
             return waterColor(localBlockX, localBlockZ, chunk, baseColor);
 
         int prevLocalZ = Math.max(0, localBlockZ - 1);
