@@ -3,14 +3,19 @@ package dev.natowb.natosatlas.stationapi;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
+import dev.natowb.natosatlas.core.utils.NAPaths;
+import dev.natowb.natosatlas.core.wrapper.ChunkWrapper;
 import dev.natowb.natosatlas.core.wrapper.WorldWrapper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.RegionChunkStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,5 +102,65 @@ public class WorldWrapperST implements WorldWrapper {
     public NAEntity getPlayer() {
         PlayerEntity p = mc.player;
         return new NAEntity(p.x, p.y, p.z, p.yaw, NAEntity.NAEntityType.Player);
+    }
+
+
+    @Override
+    public ChunkWrapper getChunk(NACoord chunkCoord) {
+        Chunk chunk = world.getChunk(chunkCoord.x, chunkCoord.z);
+        if (chunk == null) return null;
+
+
+        return new ChunkWrapper(chunk) {
+            @Override
+            public int getBlockId(int x, int y, int z) {
+                return ((Chunk) chunk).getBlockId(x, y, z);
+            }
+
+            @Override
+            public int getBlockMeta(int x, int y, int z) {
+                return ((Chunk) chunk).getBlockMeta(x, y, z);
+            }
+
+            @Override
+            public int getBlockLight(int x, int y, int z) {
+                return ((Chunk) chunk).getLight(LightType.BLOCK, x, y, z);
+            }
+
+            @Override
+            public int getSkyLight(int x, int y, int z) {
+                return ((Chunk) chunk).getLight(LightType.SKY, x, y, z);
+            }
+        };
+    }
+
+    @Override
+    public ChunkWrapper getChunkFromDisk(NACoord chunkCoord) {
+        RegionChunkStorage chunkLoader = new RegionChunkStorage(NAPaths.getWorldSavePath().toFile());
+        Chunk chunk = chunkLoader.loadChunk(mc.world, chunkCoord.x, chunkCoord.z);
+
+        if (chunk == null) return null;
+
+        return new ChunkWrapper(chunk) {
+            @Override
+            public int getBlockId(int x, int y, int z) {
+                return ((Chunk) chunk).getBlockId(x, y, z);
+            }
+
+            @Override
+            public int getBlockMeta(int x, int y, int z) {
+                return ((Chunk) chunk).getBlockMeta(x, y, z);
+            }
+
+            @Override
+            public int getBlockLight(int x, int y, int z) {
+                return ((Chunk) chunk).getLight(LightType.BLOCK, x, y, z);
+            }
+
+            @Override
+            public int getSkyLight(int x, int y, int z) {
+                return ((Chunk) chunk).getLight(LightType.SKY, x, y, z);
+            }
+        };
     }
 }

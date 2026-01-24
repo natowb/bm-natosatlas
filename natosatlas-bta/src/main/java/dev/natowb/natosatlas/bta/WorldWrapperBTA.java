@@ -3,14 +3,19 @@ package dev.natowb.natosatlas.bta;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
+import dev.natowb.natosatlas.core.utils.NAPaths;
+import dev.natowb.natosatlas.core.wrapper.ChunkWrapper;
 import dev.natowb.natosatlas.core.wrapper.WorldWrapper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.entity.Mob;
 import net.minecraft.core.entity.animal.MobAnimal;
 import net.minecraft.core.entity.player.Player;
+import net.minecraft.core.enums.LightLayer;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
+import net.minecraft.core.world.chunk.Chunk;
+import net.minecraft.core.world.chunk.ChunkLoaderRegion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,5 +104,40 @@ public class WorldWrapperBTA implements WorldWrapper {
     public NAEntity getPlayer() {
         Player p = mc.thePlayer;
         return new NAEntity(p.x, p.y, p.z, p.yRot, NAEntity.NAEntityType.Player);
+    }
+
+
+    @Override
+    public ChunkWrapper getChunk(NACoord chunkCoord) {
+        Chunk chunk = world.getChunkFromChunkCoords(chunkCoord.x, chunkCoord.z);
+        if (chunk == null) return null;
+
+
+        return new ChunkWrapper(chunk) {
+            @Override
+            public int getBlockId(int x, int y, int z) {
+                return ((Chunk) chunk).getBlockID(x, y, z);
+            }
+
+            @Override
+            public int getBlockMeta(int x, int y, int z) {
+                return ((Chunk) chunk).getBlockMetadata(x, y, z);
+            }
+
+            @Override
+            public int getBlockLight(int x, int y, int z) {
+                return ((Chunk) chunk).getBrightness(LightLayer.Block, x, y, z);
+            }
+
+            @Override
+            public int getSkyLight(int x, int y, int z) {
+                return ((Chunk) chunk).getBrightness(LightLayer.Sky, x, y, z);
+            }
+        };
+    }
+
+    @Override
+    public ChunkWrapper getChunkFromDisk(NACoord chunkCoord) {
+        return null;
     }
 }

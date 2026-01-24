@@ -26,4 +26,7 @@ public interface WorldWrapper {
     List<NAEntity> getPlayers();
 
     NAEntity getPlayer();
+
+    ChunkWrapper getChunk(NACoord chunkCoord);
+    ChunkWrapper getChunkFromDisk(NACoord chunkCoord);
 }

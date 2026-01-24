@@ -6,6 +6,7 @@ import dev.natowb.natosatlas.core.platform.PlatformWorldProvider;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import dev.natowb.natosatlas.core.wrapper.BlockAccess;
+import dev.natowb.natosatlas.core.wrapper.ChunkWrapper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.LightType;
@@ -81,22 +82,27 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
 
     @Override
     public NAChunk getChunk(NACoord chunkCoord) {
-        Chunk chunk = mc.world.getChunk(chunkCoord.x, chunkCoord.z);
+        ChunkWrapper chunk = NatosAtlas.get().getCurrentWorld().getChunk(chunkCoord);
+
+        if (chunk == null) {
+            return null;
+        }
+
         NAChunk nac = new NAChunk();
         for (int z = 0; z < BLOCKS_PER_MINECRAFT_CHUNK; z++) {
             for (int x = 0; x < BLOCKS_PER_MINECRAFT_CHUNK; x++) {
                 int worldBlockX = chunkCoord.x * BLOCKS_PER_MINECRAFT_CHUNK + x;
                 int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
 
-                int height = getTopSolidBlockY(chunk, x, z) - 1;
+                int height = chunk.getTopSolidBlockY(x, z) - 1;
                 int aboveId = chunk.getBlockId(x, height + 1, z);
                 if (BlockAccess.getInstance().isBlock(aboveId, BlockAccess.BlockIdentifier.SNOW)) {
                     height = height + 1;
                 }
 
                 int blockId = chunk.getBlockId(x, height, z);
-                int depth = computeFluidDepth(chunk, x, height, z);
-                int blockLight = safeBlockLight(chunk, x, height + 1, z);
+                int depth = chunk.computeFluidDepth(x, height, z);
+                int blockLight = chunk.getBlockLight(x, height + 1, z);
                 int meta = chunk.getBlockMeta(x, height, z);
                 NABiome biome = NatosAtlas.get().getCurrentWorld().getBiome(NACoord.from(worldBlockX, worldBlockZ));
 
@@ -110,8 +116,7 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
 
     @Override
     public NAChunk getChunkFromDisk(NACoord chunkCoord) {
-        RegionChunkStorage chunkLoader = new RegionChunkStorage(NAPaths.getWorldSavePath().toFile());
-        Chunk chunk = chunkLoader.loadChunk(mc.world, chunkCoord.x, chunkCoord.z);
+        ChunkWrapper chunk = NatosAtlas.get().getCurrentWorld().getChunkFromDisk(chunkCoord);
 
         if (chunk == null) {
             return null;
@@ -123,62 +128,21 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
                 int worldBlockX = chunkCoord.x * BLOCKS_PER_MINECRAFT_CHUNK + x;
                 int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
 
-
-                int height = getTopSolidBlockY(chunk, x, z) - 1;
+                int height = chunk.getTopSolidBlockY(x, z) - 1;
                 int aboveId = chunk.getBlockId(x, height + 1, z);
                 if (BlockAccess.getInstance().isBlock(aboveId, BlockAccess.BlockIdentifier.SNOW)) {
                     height = height + 1;
                 }
 
                 int blockId = chunk.getBlockId(x, height, z);
-                int depth = computeFluidDepth(chunk, x, height, z);
-                int blockLight = safeBlockLight(chunk, x, height + 1, z);
+                int depth = chunk.computeFluidDepth(x, height, z);
+                int blockLight = chunk.getBlockLight(x, height + 1, z);
                 int meta = chunk.getBlockMeta(x, height, z);
                 NABiome biome = NatosAtlas.get().getCurrentWorld().getBiome(NACoord.from(worldBlockX, worldBlockZ));
 
                 nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
             }
         }
-
         return nac;
-    }
-
-
-    private int getTopSolidBlockY(Chunk chunk, int x, int z) {
-
-        int y = 127;
-        x &= 15;
-        int z0 = z & 15;
-
-        BlockAccess blocks = BlockAccess.getInstance();
-
-        for (; y > 0; --y) {
-            int blockId = chunk.getBlockId(x, y, z0);
-            if (blocks.isBlock(blockId, BlockAccess.BlockIdentifier.GLASS)) continue;
-            if (blocks.blocksMovement(blockId) || blocks.isFluid(blockId)) return y + 1;
-        }
-
-        return -1;
-    }
-
-    private int computeFluidDepth(Chunk chunk, int x, int y, int z) {
-        if (y < 0) return 0;
-
-        int depth = 0;
-
-        while (y > 0) {
-            int id = chunk.getBlockId(x, y, z);
-            if (!BlockAccess.getInstance().isFluid(id)) break;
-            depth++;
-            y--;
-        }
-        return depth;
-    }
-
-    private int safeBlockLight(Chunk chunk, int x, int y, int z) {
-        if (y < 0) return 0;
-        if (y > 127) y = 127;
-
-        return chunk.getLight(LightType.BLOCK, x, y, z);
     }
 }
