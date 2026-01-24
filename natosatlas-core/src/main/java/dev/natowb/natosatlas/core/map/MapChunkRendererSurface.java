@@ -40,7 +40,7 @@ public class MapChunkRendererSurface implements MapChunkRenderer {
         int baseColor = BlockAccess.getInstance().getColor(blockId, blockMeta);
         NABiome biome = chunk.biome[localIndex];
 
-        if (BlockAccess.getInstance().isGrass(blockId)) {
+        if (BlockAccess.getInstance().isBlock(blockId, BlockAccess.BlockIdentifier.GRASS)) {
             baseColor = mixColors(baseColor, biome.grassColor, 0.1f);
         }
 

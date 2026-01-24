@@ -5,6 +5,12 @@ import dev.natowb.natosatlas.core.wrapper.BlockAccess;
 import net.minecraft.block.Block;
 
 public class BlockAccessML extends BlockAccess {
+
+    public BlockAccessML() {
+        registerBlockIdentifier(BlockIdentifier.GLASS, Block.GLASS.id);
+        registerBlockIdentifier(BlockIdentifier.GRASS, Block.GRASS_BLOCK.id);
+        registerBlockIdentifier(BlockIdentifier.SNOW, Block.SNOW.id);
+    }
     @Override
     public int getColor(int blockId, int blockMeta) {
 
@@ -29,12 +35,6 @@ public class BlockAccessML extends BlockAccess {
     }
 
     @Override
-    public boolean isGrass(int blockId) {
-        return blockId == Block.GRASS_BLOCK.id;
-    }
-
-
-    @Override
     public boolean isFluid(int blockId) {
         Block block = Block.BLOCKS[blockId];
         if (block == null) {
@@ -46,6 +46,20 @@ public class BlockAccessML extends BlockAccess {
         }
 
         return block.material.isFluid();
+    }
+
+    @Override
+    public boolean blocksMovement(int blockId) {
+        Block block = Block.BLOCKS[blockId];
+        if (block == null) {
+            return false;
+        }
+
+        if (block.material == null) {
+            return false;
+        }
+
+        return block.material.blocksMovement();
     }
 
 }
