@@ -1,5 +1,6 @@
-package dev.natowb.natosatlas.core;
+package dev.natowb.natosatlas.core.chunk;
 
+import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.map.MapRegion;
@@ -7,9 +8,9 @@ import dev.natowb.natosatlas.core.map.MapRegion;
 import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_CANVAS_REGION;
 import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CHUNK;
 
-public class MapChunkRendererCave implements MapChunkRenderer {
+public class ChunkCaveRenderer implements ChunkRenderer {
 
-    private final ColorEngine colorEngine = new ColorEngine();
+    private final ChunkColorEngine colorEngine = new ChunkColorEngine();
 
     @Override
     public void applyChunkToRegion(MapRegion region, NACoord chunkCoord, boolean useBlockLight) {

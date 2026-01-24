@@ -1,11 +1,11 @@
-package dev.natowb.natosatlas.core;
+package dev.natowb.natosatlas.core.chunk;
 
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.wrapper.BlockAccess;
 
 
-public final class ColorEngine {
+public final class ChunkColorEngine {
 
     private static final int[] BRIGHTNESS = {180, 220, 255, 135};
 

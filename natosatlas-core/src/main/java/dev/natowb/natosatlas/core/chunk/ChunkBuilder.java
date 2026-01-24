@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core;
+package dev.natowb.natosatlas.core.chunk;
 
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;

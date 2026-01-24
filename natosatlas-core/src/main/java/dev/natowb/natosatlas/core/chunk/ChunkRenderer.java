@@ -1,10 +1,9 @@
-package dev.natowb.natosatlas.core;
+package dev.natowb.natosatlas.core.chunk;
 
-import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.map.MapRegion;
 
-public interface MapChunkRenderer {
+public interface ChunkRenderer {
     void applyChunkToRegion(MapRegion tile, NACoord chunkCoord, boolean useBlockLight);
 }
 

@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.core.map;
 
-import dev.natowb.natosatlas.core.MapChunkRendererCave;
-import dev.natowb.natosatlas.core.MapChunkRendererSurface;
+import dev.natowb.natosatlas.core.chunk.ChunkCaveRenderer;
+import dev.natowb.natosatlas.core.chunk.ChunkSurfaceRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +12,10 @@ public class MapLayerManager {
     private int activeLayer = 0;
 
     public MapLayerManager() {
-        MapChunkRendererSurface surface = new MapChunkRendererSurface();
+        ChunkSurfaceRenderer surface = new ChunkSurfaceRenderer();
         layers.add(new MapLayer(0, "Day", surface, false));
         layers.add(new MapLayer(1, "Night", surface, true));
-        layers.add(new MapLayer(2, "Cave", new MapChunkRendererCave(), true));
+        layers.add(new MapLayer(2, "Cave", new ChunkCaveRenderer(), true));
     }
 
     public void setActiveLayer(int index) {
