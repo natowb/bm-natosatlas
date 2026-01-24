@@ -6,74 +6,88 @@ import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.data.NARegionFile;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
-import dev.natowb.natosatlas.core.wrapper.ChunkWrapper;
-import dev.natowb.natosatlas.core.wrapper.WorldWrapper;
+import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
+import dev.natowb.natosatlas.core.access.WorldAccess;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.LightType;
-import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.RegionChunkStorage;
 import net.minecraft.world.chunk.storage.RegionFile;
+import net.minecraft.world.storage.WorldSaveInfo;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldWrapperST implements WorldWrapper {
-
+public class WorldAccessST extends WorldAccess {
     private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
-
-    private World world;
-    private final String worldSaveName;
-
-    public WorldWrapperST(World world, String worldSaveName) {
-        this.world = world;
-        this.worldSaveName = worldSaveName;
-    }
-
-    @Override
-    public void update() {
-        this.world = mc.world;
-    }
 
     @Override
     public String getName() {
-        return world.getProperties().getName();
+        return mc.world.getProperties().getName();
+    }
+
+    @Override
+    public boolean exists() {
+        return mc.world != null;
     }
 
     @Override
     public String getSaveName() {
-        return worldSaveName;
+        if (mc.isWorldRemote()) {
+            return mc.options.lastServer;
+        }
+
+        mc.world.attemptSaving(0);
+        List<WorldSaveInfo> saves = mc.getWorldStorageSource().getAll();
+        if (saves == null || saves.isEmpty()) return null;
+        String currentName = mc.world.getProperties().getName();
+        WorldSaveInfo best = null;
+        long bestTime = Long.MIN_VALUE;
+        for (WorldSaveInfo info : saves) {
+            if (info.getName().equals(currentName)) {
+                long t = info.getLastPlayed();
+                if (t > bestTime) {
+                    bestTime = t;
+                    best = info;
+                }
+            }
+        }
+
+        if (best != null) {
+            return best.getSaveName();
+        }
+        return null;
     }
 
     @Override
     public long getTime() {
-        return world.getTime();
+        return mc.world.getTime();
     }
 
     @Override
     public long getSeed() {
-        return world.getSeed();
+        return mc.world.getSeed();
     }
 
     @Override
     public int getDimensionId() {
-        return world.dimension.id;
+        return mc.world.dimension.id;
     }
 
     @Override
     public boolean isServer() {
-        return world.isRemote;
+        return mc.world.isRemote;
     }
 
     @Override
     public NABiome getBiome(NACoord blockCoord) {
-        Biome biome = world.method_1781().getBiome(blockCoord.x, blockCoord.z);
+        Biome biome = mc.world.method_1781().getBiome(blockCoord.x, blockCoord.z);
         return new NABiome(biome.grassColor, biome.foliageColor);
     }
 
@@ -81,9 +95,11 @@ public class WorldWrapperST implements WorldWrapper {
     public List<NAEntity> getEntities() {
         List<NAEntity> entities = new ArrayList<>();
 
-        for (Object o : world.entities) {
-            if (!(o instanceof LivingEntity e)) continue;
+        for (Object o : mc.world.entities) {
+            if (!(o instanceof LivingEntity)) continue;
             if (o instanceof PlayerEntity) continue;
+
+            LivingEntity e = (LivingEntity) o;
 
             NAEntity.NAEntityType type = NAEntity.NAEntityType.Mob;
 
@@ -100,10 +116,13 @@ public class WorldWrapperST implements WorldWrapper {
     @Override
     public List<NAEntity> getPlayers() {
         List<NAEntity> players = new ArrayList<>();
-        for (Object o : world.players) {
-            if (!(o instanceof PlayerEntity p)) continue;
+
+        for (Object o : mc.world.players) {
+            if (!(o instanceof PlayerEntity)) continue;
+            PlayerEntity p = (PlayerEntity) o;
             players.add(new NAEntity(p.x, p.y, p.z, p.yaw, NAEntity.NAEntityType.Player));
         }
+
         return players;
     }
 
@@ -113,10 +132,9 @@ public class WorldWrapperST implements WorldWrapper {
         return new NAEntity(p.x, p.y, p.z, p.yaw, NAEntity.NAEntityType.Player);
     }
 
-
     @Override
     public ChunkWrapper getChunk(NACoord chunkCoord) {
-        Chunk chunk = world.getChunk(chunkCoord.x, chunkCoord.z);
+        Chunk chunk = mc.world.getChunk(chunkCoord.x, chunkCoord.z);
         if (chunk == null) return null;
 
 
@@ -207,6 +225,7 @@ public class WorldWrapperST implements WorldWrapper {
 
         for (File regionFile : regionFiles) {
             index++;
+
             boolean success = false;
 
             try {
@@ -245,6 +264,7 @@ public class WorldWrapperST implements WorldWrapper {
                 LogUtil.info("[{}/{}] Failed to processed region file: {}", index, regionFiles.length, regionFile.getName());
             }
         }
+
         return result;
     }
 }

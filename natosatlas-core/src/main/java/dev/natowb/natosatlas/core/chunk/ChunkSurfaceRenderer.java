@@ -14,7 +14,7 @@ public class ChunkSurfaceRenderer implements ChunkRenderer {
 
     @Override
     public void applyChunkToRegion(MapRegion region, NACoord chunkCoord, boolean useBlockLight) {
-        NAChunk chunk = ChunkBuilder.buildChunkSurface(NatosAtlas.get().getCurrentWorld(), chunkCoord);
+        NAChunk chunk = ChunkBuilder.buildChunkSurface(chunkCoord);
         if (chunk == null) return;
 
         int[] pixels = region.getPixels();

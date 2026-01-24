@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.modloader;
 
 import dev.natowb.natosatlas.core.utils.ColorMapperUtil;
-import dev.natowb.natosatlas.core.wrapper.BlockAccess;
+import dev.natowb.natosatlas.core.access.BlockAccess;
 import net.minecraft.block.Block;
 
 public class BlockAccessML extends BlockAccess {

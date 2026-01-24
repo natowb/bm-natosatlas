@@ -1,6 +1,5 @@
 package dev.natowb.natosatlas.core.chunk;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.map.MapRegion;
@@ -14,8 +13,7 @@ public class ChunkCaveRenderer implements ChunkRenderer {
 
     @Override
     public void applyChunkToRegion(MapRegion region, NACoord chunkCoord, boolean useBlockLight) {
-        int playerY = (int) NatosAtlas.get().getCurrentWorld().getPlayer().y;
-        NAChunk chunk = ChunkBuilder.buildCaveChunk(NatosAtlas.get().getCurrentWorld(), chunkCoord, playerY);
+        NAChunk chunk = ChunkBuilder.buildCaveChunk(chunkCoord);
 
         if (chunk == null) return;
 

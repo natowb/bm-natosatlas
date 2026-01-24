@@ -3,8 +3,8 @@ package dev.natowb.natosatlas.core.map;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.utils.LogUtil;
-import dev.natowb.natosatlas.core.wrapper.ChunkWrapper;
-import dev.natowb.natosatlas.core.wrapper.WorldWrapper;
+import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
+import dev.natowb.natosatlas.core.access.WorldAccess;
 
 import java.util.HashMap;
 
@@ -19,14 +19,12 @@ public class MapUpdater {
 
     private final MapLayerManager layerManager;
     private final MapCache cache;
-    private final WorldWrapper world;
 
     private final HashMap<NACoord, Long> chunkSaveTimes = new HashMap<>();
     private final java.util.List<NACoord> scanOrder = new java.util.ArrayList<>();
     private int scanIndex = 0;
 
-    public MapUpdater(WorldWrapper world, MapLayerManager layerManager, MapCache cache) {
-        this.world = world;
+    public MapUpdater(MapLayerManager layerManager, MapCache cache) {
         this.layerManager = layerManager;
         this.cache = cache;
         buildScanOrder();
@@ -43,7 +41,7 @@ public class MapUpdater {
     }
 
     public void tick() {
-        NAEntity player = world.getPlayer();
+        NAEntity player = WorldAccess.getInstance().getPlayer();
         this.activeChunkX = player.chunkX;
         this.activeChunkZ = player.chunkZ;
 
@@ -63,7 +61,7 @@ public class MapUpdater {
         NACoord offset = scanOrder.get(scanIndex++);
         NACoord coord = NACoord.from(activeChunkX + offset.x, activeChunkZ + offset.z);
 
-        ChunkWrapper chunk = world.getChunk(coord);
+        ChunkWrapper chunk = WorldAccess.getInstance().getChunk(coord);
         if (chunk == null) {
             LogUtil.warn("MapUpdater: Chunk {} not loaded, skipping", coord);
             return;
@@ -110,7 +108,6 @@ public class MapUpdater {
                 region = diskLoaded;
             }
         }
-
         layer.renderer.applyChunkToRegion(region, chunkCoord, layer.usesBlockLight);
     }
 }

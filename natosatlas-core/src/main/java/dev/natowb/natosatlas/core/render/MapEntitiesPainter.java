@@ -7,6 +7,7 @@ import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.utils.Constants;
 import dev.natowb.natosatlas.core.waypoint.Waypoint;
 import dev.natowb.natosatlas.core.waypoint.Waypoints;
+import dev.natowb.natosatlas.core.access.WorldAccess;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Set;
@@ -26,12 +27,12 @@ public class MapEntitiesPainter implements MapStagePainter {
                 NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
 
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.All) {
-            for (NAEntity e : NatosAtlas.get().getCurrentWorld().getEntities()) {
+            for (NAEntity e : WorldAccess.getInstance().getEntities()) {
                 renderEntity(ctx, e);
             }
         }
 
-        for (NAEntity p : NatosAtlas.get().getCurrentWorld().getPlayers()) {
+        for (NAEntity p : WorldAccess.getInstance().getPlayers()) {
             renderMapMarker(ctx, p);
         }
     }
@@ -83,11 +84,21 @@ public class MapEntitiesPainter implements MapStagePainter {
 
         int idx;
         switch (e.type) {
-            case Player:  idx = 0; break;
-            case Animal:  idx = 1; break;
-            case Mob:     idx = 2; break;
-            case Waypoint:idx = 4; break;
-            default:      idx = 3; break;
+            case Player:
+                idx = 0;
+                break;
+            case Animal:
+                idx = 1;
+                break;
+            case Mob:
+                idx = 2;
+                break;
+            case Waypoint:
+                idx = 4;
+                break;
+            default:
+                idx = 3;
+                break;
         }
 
         float u1 = (idx % 4) / 4f;
@@ -105,7 +116,6 @@ public class MapEntitiesPainter implements MapStagePainter {
             );
         }
     }
-
 
 
     private void drawPlayerMarker(MapContext ctx, double worldX, double worldZ, double scale, double yaw, Runnable draw) {

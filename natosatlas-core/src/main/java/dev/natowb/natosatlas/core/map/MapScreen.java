@@ -15,6 +15,7 @@ import dev.natowb.natosatlas.core.ui.elements.UIElementOptionButton;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import dev.natowb.natosatlas.core.waypoint.WaypointListScreen;
 import dev.natowb.natosatlas.core.waypoint.Waypoints;
+import dev.natowb.natosatlas.core.access.WorldAccess;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -47,7 +48,7 @@ public class MapScreen extends UIScreen {
         viewport.initViewport(0, 0, width, height);
         viewport.setZoom(Settings.defaultZoom);
 
-        NAEntity player = NatosAtlas.get().getCurrentWorld().getPlayer();
+        NAEntity player = WorldAccess.getInstance().getPlayer();
         if (player != null) {
             viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
         }
@@ -128,7 +129,7 @@ public class MapScreen extends UIScreen {
 
         if (keyCode == Keyboard.KEY_SPACE) {
             viewport.setRotation(0);
-            NAEntity player = NatosAtlas.get().getCurrentWorld().getPlayer();
+            NAEntity player = WorldAccess.getInstance().getPlayer();
             if (player != null) {
                 viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
             }

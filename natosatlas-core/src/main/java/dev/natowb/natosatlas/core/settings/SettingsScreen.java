@@ -1,6 +1,7 @@
 package dev.natowb.natosatlas.core.settings;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.chunk.ChunkBuilder;
 import dev.natowb.natosatlas.core.map.*;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
@@ -11,6 +12,7 @@ import dev.natowb.natosatlas.core.platform.PlatformPainter;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import dev.natowb.natosatlas.core.ui.layout.UILayout;
 import dev.natowb.natosatlas.core.ui.layout.UIVerticalLayout;
+import dev.natowb.natosatlas.core.access.WorldAccess;
 
 public class SettingsScreen extends UIScreen {
     public SettingsScreen(UIScreen parent) {
@@ -31,7 +33,7 @@ public class SettingsScreen extends UIScreen {
         addButton(new UIElementOptionButton(SettingsOption.DEBUG_INFO, layout, 150, 20));
         addButton(new UIElementOptionButton(SettingsOption.USE_REIMINIMAP_WAYPOINTS, layout, 150, 20));
 
-        boolean isServer = NatosAtlas.get().getCurrentWorld().isServer();
+        boolean isServer = WorldAccess.getInstance().isServer();
         addButton(new UIElementButton(BUTTON_ID_GENERATE_EXISTING, layout, 150, 20, "Generate Existing", !isServer));
 
         UIElementSlider zoomSlider = new UIElementSlider(SLIDER_ID_ZOOM, layout, 150, 20, Settings.defaultZoom, "Default Zoom");
@@ -57,7 +59,7 @@ public class SettingsScreen extends UIScreen {
         }
 
         if (button.id == BUTTON_ID_GENERATE_EXISTING) {
-            NatosAtlas.get().generateExistingChunks();
+            ChunkBuilder.rebuildExistingChunks(NatosAtlas.get().storage, NatosAtlas.get().cache);
         }
     }
 

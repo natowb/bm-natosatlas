@@ -2,6 +2,7 @@ package dev.natowb.natosatlas.core.map;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NACoord;
+import dev.natowb.natosatlas.core.access.WorldAccess;
 
 import java.util.*;
 
@@ -32,7 +33,7 @@ public class MapCache {
     }
 
     public MapRegion getRegion(int layerId, NACoord coord) {
-        int dim = NatosAtlas.get().getCurrentWorld().getDimensionId();
+        int dim = WorldAccess.getInstance().getDimensionId();
         long key = makeDimKey(dim, coord);
 
         MapRegion[] arr = regions.get(key);
@@ -72,7 +73,7 @@ public class MapCache {
     }
 
     public void put(int layerId, NACoord coord, MapRegion region) {
-        int dim = NatosAtlas.get().getCurrentWorld().getDimensionId();
+        int dim = WorldAccess.getInstance().getDimensionId();
         long key = makeDimKey(dim, coord);
 
         MapRegion[] arr = regions.computeIfAbsent(key, k -> new MapRegion[NatosAtlas.get().layers.getLayers().size()]);
@@ -80,7 +81,7 @@ public class MapCache {
     }
 
     public void markDirty(NACoord coord) {
-        int dim = NatosAtlas.get().getCurrentWorld().getDimensionId();
+        int dim = WorldAccess.getInstance().getDimensionId();
         long key = makeDimKey(dim, coord);
 
         if (dirtySet.add(key)) {

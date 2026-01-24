@@ -2,7 +2,6 @@ package dev.natowb.natosatlas.modloader;
 
 import dev.natowb.natosatlas.core.platform.Platform;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
-import dev.natowb.natosatlas.core.wrapper.WorldWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.ModLoader;
 
@@ -10,9 +9,8 @@ import java.nio.file.Path;
 
 public class PlatformML extends Platform {
     public PlatformML() {
-        super(new PlatformPainterML(), new BlockAccessML());
+        super(new PlatformPainterML(), new BlockAccessML(), new WorldAccessML());
     }
-
 
 
     @Override

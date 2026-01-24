@@ -8,6 +8,7 @@ import dev.natowb.natosatlas.core.ui.UITheme;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.platform.PlatformPainter;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
+import dev.natowb.natosatlas.core.access.WorldAccess;
 import org.lwjgl.input.Keyboard;
 
 public class WaypointCreateScreen extends UIScreen {
@@ -63,7 +64,7 @@ public class WaypointCreateScreen extends UIScreen {
         zField.setMaxLength(8);
 
         if (!editMode) {
-            NAEntity player = NatosAtlas.get().getCurrentWorld().getPlayer();
+            NAEntity player = WorldAccess.getInstance().getPlayer();
             xField.setText("" + (int) player.x);
             yField.setText("" + (int) player.y);
             zField.setText("" + (int) player.z);

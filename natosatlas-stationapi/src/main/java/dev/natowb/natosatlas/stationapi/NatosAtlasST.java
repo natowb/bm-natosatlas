@@ -2,11 +2,8 @@ package dev.natowb.natosatlas.stationapi;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.map.MapScreen;
-import net.fabricmc.loader.api.FabricLoader;
 import net.mine_diver.unsafeevents.listener.EventListener;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.world.storage.WorldSaveInfo;
 import net.modificationstation.stationapi.api.client.event.keyboard.KeyStateChangedEvent;
 import net.modificationstation.stationapi.api.client.event.option.KeyBindingRegisterEvent;
 import net.modificationstation.stationapi.api.event.init.InitFinishedEvent;
@@ -15,7 +12,6 @@ import net.modificationstation.stationapi.api.mod.entrypoint.EntrypointManager;
 import org.lwjgl.input.Keyboard;
 
 import java.lang.invoke.MethodHandles;
-import java.util.List;
 
 public class NatosAtlasST {
     static {
@@ -23,9 +19,7 @@ public class NatosAtlasST {
     }
 
     public static KeyBinding KEY_BINDING_MAP;
-    private boolean inWorld;
     private NatosAtlas nac;
-
 
     @EventListener
     public void init(InitFinishedEvent event) {
@@ -39,59 +33,15 @@ public class NatosAtlasST {
         event.keyBindings.add(NatosAtlasST.KEY_BINDING_MAP);
     }
 
-    private String getWorldSaveName() {
-        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
-        if (mc.isWorldRemote()) {
-            return mc.options.lastServer;
-        }
-
-        mc.world.attemptSaving(0);
-        List<WorldSaveInfo> saves = mc.getWorldStorageSource().getAll();
-        if (saves == null || saves.isEmpty()) return null;
-        String currentName = mc.world.getProperties().getName();
-        WorldSaveInfo best = null;
-        long bestTime = Long.MIN_VALUE;
-        for (WorldSaveInfo info : saves) {
-            if (info.getName().equals(currentName)) {
-                long t = info.getLastPlayed();
-                if (t > bestTime) {
-                    bestTime = t;
-                    best = info;
-                }
-            }
-        }
-
-        if (best != null) {
-            return best.getSaveName();
-        }
-        return null;
-    }
 
     @EventListener
     void onGameTick(GameTickEvent.End event) {
-        Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
-
-        if (mc.world == null && inWorld) {
-            inWorld = false;
-            nac.onWorldLeft();
-        }
-
-        if (mc.world != null && !inWorld) {
-            String worldSaveName = getWorldSaveName();
-            if (worldSaveName == null) return;
-            inWorld = true;
-            nac.onWorldJoin(new WorldWrapperST(mc.world, worldSaveName));
-        }
-
-        if (inWorld && mc.player != null) {
-            nac.onWorldUpdate();
-        }
+        nac.onTick();
     }
 
     @EventListener
     public void handle(KeyStateChangedEvent event) {
-
-        if (NatosAtlas.get().getCurrentWorld() == null) return;
+        if (NatosAtlas.get().isStopped()) return;
 
         if (Keyboard.getEventKeyState()) {
             if (Keyboard.isKeyDown(NatosAtlasST.KEY_BINDING_MAP.code)) {

@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core.wrapper;
+package dev.natowb.natosatlas.core.access;
 
 import dev.natowb.natosatlas.core.utils.LogUtil;
 

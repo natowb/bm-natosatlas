@@ -1,4 +1,6 @@
-package dev.natowb.natosatlas.core.wrapper;
+package dev.natowb.natosatlas.core.chunk;
+
+import dev.natowb.natosatlas.core.access.BlockAccess;
 
 public abstract class ChunkWrapper {
 

@@ -5,6 +5,7 @@ import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.map.MapContext;
 import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.utils.Constants;
+import dev.natowb.natosatlas.core.access.WorldAccess;
 
 import java.util.Random;
 import java.util.Set;
@@ -34,7 +35,7 @@ public class MapSlimeChunkPainter implements MapStagePainter {
 
     // FIXME: move this to a global acessor at some point
     private boolean isSlimeChunk(int worldChunkX, int worldChunkZ) {
-        long seed = NatosAtlas.get().getCurrentWorld().getSeed();
+        long seed = WorldAccess.getInstance().getSeed();
         return new Random(seed + (long) (worldChunkX * worldChunkX) * 4987142L + (long) worldChunkX * 5947611L + (long) (worldChunkZ * worldChunkZ) * 4392871L + (long) worldChunkZ * 389711L ^ 987234911L).nextInt(10) == 0;
     }
 

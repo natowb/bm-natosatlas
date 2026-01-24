@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.modloader;
+package dev.natowb.natosatlas.bta;
 
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NACoord;
@@ -6,94 +6,107 @@ import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.data.NARegionFile;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
-import dev.natowb.natosatlas.core.wrapper.ChunkWrapper;
-import dev.natowb.natosatlas.core.wrapper.WorldWrapper;
+import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
+import dev.natowb.natosatlas.core.access.WorldAccess;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.src.ModLoader;
-import net.minecraft.world.LightType;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.RegionChunkStorage;
-import net.minecraft.world.chunk.storage.RegionFile;
+import net.minecraft.core.entity.Mob;
+import net.minecraft.core.entity.animal.MobAnimal;
+import net.minecraft.core.entity.player.Player;
+import net.minecraft.core.enums.LightLayer;
+import net.minecraft.core.world.biome.Biome;
+import net.minecraft.core.world.chunk.Chunk;
+import net.minecraft.core.world.save.SaveFile;
+import net.minecraft.core.world.save.mcregion.RegionFile;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldWrapperML implements WorldWrapper {
-
-    private static final Minecraft mc = ModLoader.getMinecraftInstance();
-
-    private World world;
-    private final String worldSaveName;
-
-    public WorldWrapperML(World world, String worldSaveName) {
-        this.world = world;
-        this.worldSaveName = worldSaveName;
-    }
+public class WorldAccessBTA extends WorldAccess {
+    private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
     @Override
-    public void update() {
-        this.world = mc.world;
-    }
-
-    @Override
-    public String getName() {
-        return world.getProperties().getName();
+    public boolean exists() {
+        return mc.currentWorld != null;
     }
 
     @Override
     public String getSaveName() {
-        return worldSaveName;
+        if (mc.isMultiplayerWorld()) {
+            return mc.gameSettings.lastServer.name;
+        }
+
+        mc.currentWorld.pauseScreenSave(0);
+        List<SaveFile> saves = mc.getSaveFormat().getSaveFileList();
+        if (saves == null || saves.isEmpty()) return null;
+        String currentName = mc.currentWorld.getLevelData().getWorldName();
+        SaveFile best = null;
+        long bestTime = Long.MIN_VALUE;
+        for (SaveFile info : saves) {
+            if (info.getDisplayName().equals(currentName)) {
+                long t = info.getLastTimePlayed();
+                if (t > bestTime) {
+                    bestTime = t;
+                    best = info;
+                }
+            }
+        }
+
+        if (best != null) {
+            return best.getFileName();
+        }
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return mc.currentWorld.getLevelData().getWorldName();
     }
 
     @Override
     public long getTime() {
-        return world.getTime();
+        return mc.currentWorld.getWorldTime();
     }
 
     @Override
     public long getSeed() {
-        return world.getSeed();
+        return mc.currentWorld.getRandomSeed();
     }
 
     @Override
     public int getDimensionId() {
-        return world.dimension.id;
+        return mc.currentWorld.dimension.id;
     }
 
     @Override
     public boolean isServer() {
-        return world.isRemote;
+        return mc.currentWorld.isClientSide;
     }
 
     @Override
     public NABiome getBiome(NACoord blockCoord) {
-        Biome biome = world.method_1781().getBiome(blockCoord.x, blockCoord.z);
-        return new NABiome(biome.grassColor, biome.foliageColor);
+        Biome biome = mc.currentWorld.getBiomeProvider().getBiome(blockCoord.x, 50, blockCoord.z);
+        return new NABiome(biome.topBlock, biome.color);
     }
 
     @Override
     public List<NAEntity> getEntities() {
         List<NAEntity> entities = new ArrayList<>();
 
-        for (Object o : world.entities) {
-            if (!(o instanceof LivingEntity)) continue;
-            if (o instanceof PlayerEntity) continue;
+        for (Object o : mc.currentWorld.loadedEntityList) {
+            if (!(o instanceof Mob)) continue;
+            if (o instanceof Player) continue;
 
-            LivingEntity e = (LivingEntity) o;
+            Mob e = (Mob) o;
 
             NAEntity.NAEntityType type = NAEntity.NAEntityType.Mob;
 
-            if (e instanceof AnimalEntity) {
+            if (e instanceof MobAnimal) {
                 type = NAEntity.NAEntityType.Animal;
             }
 
-            entities.add(new NAEntity(e.x, e.y, e.z, e.yaw, type).setTexturePath(e.getTexture()));
+            entities.add(new NAEntity(e.x, e.y, e.z, e.yRot, type).setTexturePath(e.getEntityTexture()));
         }
 
         return entities;
@@ -103,10 +116,8 @@ public class WorldWrapperML implements WorldWrapper {
     public List<NAEntity> getPlayers() {
         List<NAEntity> players = new ArrayList<>();
 
-        for (Object o : world.players) {
-            if (!(o instanceof PlayerEntity)) continue;
-            PlayerEntity p = (PlayerEntity) o;
-            players.add(new NAEntity(p.x, p.y, p.z, p.yaw, NAEntity.NAEntityType.Player));
+        for (Player p : mc.currentWorld.players) {
+            players.add(new NAEntity(p.x, p.y, p.z, p.yRot, NAEntity.NAEntityType.Player));
         }
 
         return players;
@@ -114,13 +125,14 @@ public class WorldWrapperML implements WorldWrapper {
 
     @Override
     public NAEntity getPlayer() {
-        PlayerEntity p = mc.player;
-        return new NAEntity(p.x, p.y, p.z, p.yaw, NAEntity.NAEntityType.Player);
+        Player p = mc.thePlayer;
+        return new NAEntity(p.x, p.y, p.z, p.yRot, NAEntity.NAEntityType.Player);
     }
+
 
     @Override
     public ChunkWrapper getChunk(NACoord chunkCoord) {
-        Chunk chunk = world.getChunk(chunkCoord.x, chunkCoord.z);
+        Chunk chunk = mc.currentWorld.getChunkFromChunkCoords(chunkCoord.x, chunkCoord.z);
         if (chunk == null) return null;
 
 
@@ -132,76 +144,41 @@ public class WorldWrapperML implements WorldWrapper {
 
             @Override
             public boolean isDirty() {
-                return ((Chunk) chunk).dirty;
+                return ((Chunk) chunk).isModified;
             }
 
             @Override
             public int getBlockId(int x, int y, int z) {
-                return ((Chunk) chunk).getBlockId(x, y, z);
+                return ((Chunk) chunk).getBlockID(x, y, z);
             }
 
             @Override
             public int getBlockMeta(int x, int y, int z) {
-                return ((Chunk) chunk).getBlockMeta(x, y, z);
+                return ((Chunk) chunk).getBlockMetadata(x, y, z);
             }
 
             @Override
             public int getBlockLight(int x, int y, int z) {
-                return ((Chunk) chunk).getLight(LightType.BLOCK, x, y, z);
+                return ((Chunk) chunk).getBrightness(LightLayer.Block, x, y, z);
             }
 
             @Override
             public int getSkyLight(int x, int y, int z) {
-                return ((Chunk) chunk).getLight(LightType.SKY, x, y, z);
+                return ((Chunk) chunk).getBrightness(LightLayer.Sky, x, y, z);
             }
         };
     }
 
     @Override
     public ChunkWrapper getChunkFromDisk(NACoord chunkCoord) {
-        RegionChunkStorage chunkLoader = new RegionChunkStorage(NAPaths.getWorldSavePath().toFile());
-        Chunk chunk = chunkLoader.loadChunk(mc.world, chunkCoord.x, chunkCoord.z);
-
-        if (chunk == null) return null;
-
-        return new ChunkWrapper(chunk) {
-            @Override
-            public long getLastSaveTime() {
-                return ((Chunk) chunk).lastSaveTime;
-            }
-
-            @Override
-            public boolean isDirty() {
-                return ((Chunk) chunk).dirty;
-            }
-
-            @Override
-            public int getBlockId(int x, int y, int z) {
-                return ((Chunk) chunk).getBlockId(x, y, z);
-            }
-
-            @Override
-            public int getBlockMeta(int x, int y, int z) {
-                return ((Chunk) chunk).getBlockMeta(x, y, z);
-            }
-
-            @Override
-            public int getBlockLight(int x, int y, int z) {
-                return ((Chunk) chunk).getLight(LightType.BLOCK, x, y, z);
-            }
-
-            @Override
-            public int getSkyLight(int x, int y, int z) {
-                return ((Chunk) chunk).getLight(LightType.SKY, x, y, z);
-            }
-        };
+        return null;
     }
 
     @Override
     public List<NARegionFile> getRegionFiles() {
         List<NARegionFile> result = new ArrayList<>();
 
-        File regionDir = new File(NAPaths.getWorldSavePath().toFile(), "region");
+        File regionDir = new File(NAPaths.getWorldSavePath().toFile(), String.format("dimensions/%d/region", mc.currentWorld.dimension.id));
         File[] regionFiles = regionDir.listFiles((dir, name) -> name.endsWith(".mcr") || name.endsWith(".mca"));
         if (regionFiles == null || regionFiles.length == 0) {
             return result;
@@ -230,7 +207,7 @@ public class WorldWrapperML implements WorldWrapper {
                 RegionFile rf = new RegionFile(regionFile);
                 for (int x = 0; x < NARegionFile.CHUNKS_PER_REGION; x++) {
                     for (int z = 0; z < NARegionFile.CHUNKS_PER_REGION; z++) {
-                        if (rf.hasChunkData(x, z)) {
+                        if (rf.chunkExists(x, z)) {
                             naRegion.chunkExists[x][z] = true;
                         }
                     }
