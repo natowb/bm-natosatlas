@@ -44,7 +44,7 @@ public class MapScreen extends UIScreen {
         viewport.initViewport(0, 0, width, height);
         viewport.setZoom(Settings.defaultZoom);
 
-        NAEntity player = NatosAtlas.get().platform.worldProvider.getPlayer();
+        NAEntity player = NatosAtlas.get().getCurrentWorld().getPlayer();
         if (player != null) {
             viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
         }
@@ -138,7 +138,7 @@ public class MapScreen extends UIScreen {
 
         if (keyCode == Keyboard.KEY_SPACE) {
             viewport.setRotation(0);
-            NAEntity player = NatosAtlas.get().platform.worldProvider.getPlayer();
+            NAEntity player = NatosAtlas.get().getCurrentWorld().getPlayer();
             if (player != null) {
                 viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
             }

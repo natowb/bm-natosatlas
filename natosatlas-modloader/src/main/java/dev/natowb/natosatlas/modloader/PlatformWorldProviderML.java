@@ -28,48 +28,6 @@ public class PlatformWorldProviderML implements PlatformWorldProvider {
     private static final Minecraft mc = ModLoader.getMinecraftInstance();
 
     @Override
-    public List<NAEntity> getEntities() {
-        List<NAEntity> entities = new ArrayList<>();
-
-        for (Object o : mc.world.entities) {
-            if (!(o instanceof LivingEntity)) continue;
-            if (o instanceof PlayerEntity) continue;
-
-            LivingEntity e = (LivingEntity) o;
-
-            NAEntity.NAEntityType type = NAEntity.NAEntityType.Mob;
-
-            if (e instanceof AnimalEntity) {
-                type = NAEntity.NAEntityType.Animal;
-            }
-
-            entities.add(new NAEntity(e.x, e.y, e.z, e.yaw, type).setTexturePath(e.getTexture()));
-        }
-
-        return entities;
-    }
-
-    @Override
-    public List<NAEntity> getPlayers() {
-        List<NAEntity> players = new ArrayList<>();
-
-        for (Object o : mc.world.players) {
-            if (!(o instanceof PlayerEntity)) continue;
-            PlayerEntity p = (PlayerEntity) o;
-            players.add(new NAEntity(p.x, p.y, p.z, p.yaw, NAEntity.NAEntityType.Player));
-        }
-
-        return players;
-    }
-
-    @Override
-    public NAEntity getPlayer() {
-        PlayerEntity p = mc.player;
-        return new NAEntity(p.x, p.y, p.z, p.yaw, NAEntity.NAEntityType.Player);
-    }
-
-
-    @Override
     public NABiome getBiome(NACoord blockCoord) {
         Biome biome = mc.world.method_1781().getBiome(blockCoord.x, blockCoord.z);
         return new NABiome(biome.grassColor, biome.foliageColor);

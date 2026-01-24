@@ -18,11 +18,5 @@ public interface PlatformWorldProvider {
 
     int getBlockColor(int blockId, int blockMeta);
 
-    List<NAEntity> getEntities();
-
-    List<NAEntity> getPlayers();
-
-    NAEntity getPlayer();
-
     List<NARegionFile> getRegionMetadata();
 }

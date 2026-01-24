@@ -110,7 +110,7 @@ public class NatosAtlas {
     }
 
     private void updatePlayerChunk() {
-        NAEntity player = platform.worldProvider.getPlayer();
+        NAEntity player = NatosAtlas.get().getCurrentWorld().getPlayer();
         activeChunkX = (int) Math.floor(player.x / 16.0);
         activeChunkZ = (int) Math.floor(player.z / 16.0);
     }

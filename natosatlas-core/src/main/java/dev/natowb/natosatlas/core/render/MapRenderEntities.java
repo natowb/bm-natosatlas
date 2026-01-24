@@ -26,12 +26,12 @@ public class MapRenderEntities implements MapRenderStage {
                 NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
 
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.All) {
-            for (NAEntity e : NatosAtlas.get().platform.worldProvider.getEntities()) {
+            for (NAEntity e : NatosAtlas.get().getCurrentWorld().getEntities()) {
                 renderEntity(ctx, e);
             }
         }
 
-        for (NAEntity p : NatosAtlas.get().platform.worldProvider.getPlayers()) {
+        for (NAEntity p : NatosAtlas.get().getCurrentWorld().getPlayers()) {
             renderMapMarker(ctx, p);
         }
     }

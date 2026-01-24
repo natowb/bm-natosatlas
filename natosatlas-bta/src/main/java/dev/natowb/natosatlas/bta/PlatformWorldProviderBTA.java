@@ -30,45 +30,6 @@ import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CH
 public class PlatformWorldProviderBTA implements PlatformWorldProvider {
     Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
-    @Override
-    public List<NAEntity> getEntities() {
-        List<NAEntity> entities = new ArrayList<>();
-
-        for (Object o : mc.currentWorld.loadedEntityList) {
-            if (!(o instanceof Mob)) continue;
-            if (o instanceof Player) continue;
-
-            Mob e = (Mob) o;
-
-            NAEntity.NAEntityType type = NAEntity.NAEntityType.Mob;
-
-            if (e instanceof MobAnimal) {
-                type = NAEntity.NAEntityType.Animal;
-            }
-
-            entities.add(new NAEntity(e.x, e.y, e.z, e.yRot, type).setTexturePath(e.getEntityTexture()));
-        }
-
-        return entities;
-    }
-
-    @Override
-    public List<NAEntity> getPlayers() {
-        List<NAEntity> players = new ArrayList<>();
-
-        for (Player p : mc.currentWorld.players) {
-            players.add(new NAEntity(p.x, p.y, p.z, p.yRot, NAEntity.NAEntityType.Player));
-        }
-
-        return players;
-    }
-
-    @Override
-    public NAEntity getPlayer() {
-        Player p = mc.thePlayer;
-        return new NAEntity(p.x, p.y, p.z, p.yRot, NAEntity.NAEntityType.Player);
-    }
-
 
     @Override
     public NABiome getBiome(NACoord blockCoord) {
