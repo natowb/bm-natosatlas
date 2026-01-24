@@ -1,5 +1,7 @@
 package dev.natowb.natosatlas.stationapi;
 
+import dev.natowb.natosatlas.core.data.NABiome;
+import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.wrapper.WorldWrapper;
 import net.fabricmc.loader.api.FabricLoader;
@@ -8,6 +10,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +55,12 @@ public class WorldWrapperST implements WorldWrapper {
     @Override
     public boolean isServer() {
         return world.isRemote;
+    }
+
+    @Override
+    public NABiome getBiome(NACoord blockCoord) {
+        Biome biome = world.method_1781().getBiome(blockCoord.x, blockCoord.z);
+        return new NABiome(biome.grassColor, biome.foliageColor);
     }
 
     @Override

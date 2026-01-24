@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.modloader;
 
+import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.platform.PlatformWorldProvider;
 import dev.natowb.natosatlas.core.utils.ColorMapperUtil;
@@ -19,6 +20,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.RegionChunkStorage;
 import net.minecraft.world.chunk.storage.RegionFile;
 
+import javax.xml.crypto.dsig.spec.SignatureMethodParameterSpec;
 import java.io.File;
 import java.util.*;
 import java.util.List;
@@ -27,13 +29,6 @@ import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CH
 
 public class PlatformWorldProviderML implements PlatformWorldProvider {
     private static final Minecraft mc = ModLoader.getMinecraftInstance();
-
-    @Override
-    public NABiome getBiome(NACoord blockCoord) {
-        Biome biome = mc.world.method_1781().getBiome(blockCoord.x, blockCoord.z);
-        return new NABiome(biome.grassColor, biome.foliageColor);
-    }
-
 
     @Override
     public List<NARegionFile> getRegionMetadata() {
@@ -113,7 +108,7 @@ public class PlatformWorldProviderML implements PlatformWorldProvider {
                 int depth = computeFluidDepth(chunk, x, height, z);
                 int blockLight = safeBlockLight(chunk, x, height + 1, z);
                 int meta = chunk.getBlockMeta(x, height, z);
-                NABiome biome = getBiome(NACoord.from(worldBlockX, worldBlockZ));
+                NABiome biome = NatosAtlas.get().getCurrentWorld().getBiome(NACoord.from(worldBlockX, worldBlockZ));
 
                 nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
             }
@@ -150,7 +145,7 @@ public class PlatformWorldProviderML implements PlatformWorldProvider {
                 int depth = computeFluidDepth(chunk, x, height, z);
                 int blockLight = safeBlockLight(chunk, x, height + 1, z);
                 int meta = chunk.getBlockMeta(x, height, z);
-                NABiome biome = getBiome(NACoord.from(worldBlockX, worldBlockZ));
+                NABiome biome = NatosAtlas.get().getCurrentWorld().getBiome(NACoord.from(worldBlockX, worldBlockZ));
 
                 nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
             }

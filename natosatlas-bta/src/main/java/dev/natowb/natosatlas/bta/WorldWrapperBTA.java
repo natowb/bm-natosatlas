@@ -1,5 +1,7 @@
 package dev.natowb.natosatlas.bta;
 
+import dev.natowb.natosatlas.core.data.NABiome;
+import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.wrapper.WorldWrapper;
 import net.fabricmc.loader.api.FabricLoader;
@@ -8,6 +10,7 @@ import net.minecraft.core.entity.Mob;
 import net.minecraft.core.entity.animal.MobAnimal;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.world.World;
+import net.minecraft.core.world.biome.Biome;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +56,11 @@ public class WorldWrapperBTA implements WorldWrapper {
         return world.isClientSide;
     }
 
+    @Override
+    public NABiome getBiome(NACoord blockCoord) {
+        Biome biome = world.getBiomeProvider().getBiome(blockCoord.x, 50, blockCoord.z);
+        return new NABiome(biome.topBlock, biome.color);
+    }
 
     @Override
     public List<NAEntity> getEntities() {

@@ -11,8 +11,6 @@ public class PlatformST extends Platform {
 
     public PlatformST() {
         super(new PlatformPainterST(), new PlatformWorldProviderST(), new BlockAccessST());
-
-
     }
 
 

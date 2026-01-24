@@ -10,7 +10,5 @@ public interface PlatformWorldProvider {
 
     NAChunk getChunkFromDisk(NACoord chunkCoord);
 
-    NABiome getBiome(NACoord blockCoord);
-
     List<NARegionFile> getRegionMetadata();
 }

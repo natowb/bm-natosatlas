@@ -1,8 +1,8 @@
 package dev.natowb.natosatlas.stationapi;
 
+import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.platform.PlatformWorldProvider;
-import dev.natowb.natosatlas.core.utils.ColorMapperUtil;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
 import dev.natowb.natosatlas.core.wrapper.BlockAccess;
@@ -10,11 +10,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.LightType;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.RegionChunkStorage;
 import net.minecraft.world.chunk.storage.RegionFile;
@@ -27,13 +23,6 @@ import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CH
 
 public class PlatformWorldProviderST implements PlatformWorldProvider {
     Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
-
-    @Override
-    public NABiome getBiome(NACoord blockCoord) {
-        Biome biome = mc.world.method_1781().getBiome(blockCoord.x, blockCoord.z);
-        return new NABiome(biome.grassColor, biome.foliageColor);
-    }
-
 
     @Override
     public List<NARegionFile> getRegionMetadata() {
@@ -112,7 +101,7 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
                 int depth = computeFluidDepth(chunk, x, height, z);
                 int blockLight = safeBlockLight(chunk, x, height + 1, z);
                 int meta = chunk.getBlockMeta(x, height, z);
-                NABiome biome = getBiome(NACoord.from(worldBlockX, worldBlockZ));
+                NABiome biome = NatosAtlas.get().getCurrentWorld().getBiome(NACoord.from(worldBlockX, worldBlockZ));
 
                 nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
             }
@@ -149,7 +138,7 @@ public class PlatformWorldProviderST implements PlatformWorldProvider {
                 int depth = computeFluidDepth(chunk, x, height, z);
                 int blockLight = safeBlockLight(chunk, x, height + 1, z);
                 int meta = chunk.getBlockMeta(x, height, z);
-                NABiome biome = getBiome(NACoord.from(worldBlockX, worldBlockZ));
+                NABiome biome =  NatosAtlas.get().getCurrentWorld().getBiome(NACoord.from(worldBlockX, worldBlockZ));
 
                 nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
             }

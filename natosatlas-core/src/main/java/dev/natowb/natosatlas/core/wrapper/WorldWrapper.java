@@ -1,5 +1,7 @@
 package dev.natowb.natosatlas.core.wrapper;
 
+import dev.natowb.natosatlas.core.data.NABiome;
+import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 
 import java.util.List;
@@ -16,6 +18,8 @@ public interface WorldWrapper {
     int getDimensionId();
 
     boolean isServer();
+
+    NABiome getBiome(NACoord blockCoord);
 
     List<NAEntity> getEntities();
 
