@@ -12,7 +12,7 @@ public final class Settings {
 
     public enum EntityDisplayMode {All, Player, Nothing}
 
-    public enum MapRenderMode {Day, Night, Auto}
+    public enum MapRenderMode {Day, Night, Cave, Auto}
 
     public static boolean mapGrid = true;
     public static boolean debugInfo = false;

@@ -4,10 +4,9 @@ package dev.natowb.natosatlas.core.tasks;
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.map.MapCache;
-import dev.natowb.natosatlas.core.map.MapLayer;
+import dev.natowb.natosatlas.core.layers.MapLayer;
 import dev.natowb.natosatlas.core.map.MapRegion;
 import dev.natowb.natosatlas.core.map.MapStorage;
-import dev.natowb.natosatlas.core.utils.LogUtil;
 
 
 public class MapSaveScheduler {

@@ -39,6 +39,11 @@ public class MapScreen extends UIScreen {
 
     public MapScreen(UIScreen parent) {
         super(parent);
+        viewport.setZoom(Settings.defaultZoom);
+        NAEntity player = WorldAccess.getInstance().getPlayer();
+        if (player != null) {
+            viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
+        }
         Waypoints.load();
     }
 
@@ -46,12 +51,7 @@ public class MapScreen extends UIScreen {
     public void init(int width, int height) {
         super.init(width, height);
         viewport.initViewport(0, 0, width, height);
-        viewport.setZoom(Settings.defaultZoom);
 
-        NAEntity player = WorldAccess.getInstance().getPlayer();
-        if (player != null) {
-            viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
-        }
 
         int padding = 6;
         int buttonW = 80;

@@ -6,7 +6,7 @@ import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionFile;
 import dev.natowb.natosatlas.core.map.MapCache;
-import dev.natowb.natosatlas.core.map.MapLayer;
+import dev.natowb.natosatlas.core.layers.MapLayer;
 import dev.natowb.natosatlas.core.map.MapRegion;
 import dev.natowb.natosatlas.core.map.MapStorage;
 import dev.natowb.natosatlas.core.tasks.MapSaveScheduler;

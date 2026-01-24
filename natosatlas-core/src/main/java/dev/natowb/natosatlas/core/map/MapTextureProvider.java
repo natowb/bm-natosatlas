@@ -2,6 +2,7 @@ package dev.natowb.natosatlas.core.map;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NACoord;
+import dev.natowb.natosatlas.core.layers.MapLayer;
 
 public final class MapTextureProvider {
 

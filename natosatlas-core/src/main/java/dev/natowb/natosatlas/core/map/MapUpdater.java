@@ -2,6 +2,8 @@ package dev.natowb.natosatlas.core.map;
 
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
+import dev.natowb.natosatlas.core.layers.MapLayer;
+import dev.natowb.natosatlas.core.layers.MapLayerManager;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.core.access.WorldAccess;

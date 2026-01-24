@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core;
 
+import dev.natowb.natosatlas.core.layers.MapLayerManager;
 import dev.natowb.natosatlas.core.map.*;
 import dev.natowb.natosatlas.core.map.MapUpdater;
 import dev.natowb.natosatlas.core.tasks.MapSaveScheduler;
@@ -55,19 +56,21 @@ public class NatosAtlas {
 
         if (!WorldAccess.getInstance().exists() && running) {
             running = false;
-            onWorldLeft();
+            onLeave();
         }
 
         if (WorldAccess.getInstance().exists() && !running) {
-            onWorldJoin();
+            onJoin();
         }
 
-        if (running) {
-            onWorldUpdate();
-        }
+        if (!running) return;
+
+        mapUpdater.tick();
+        MapSaveScheduler.tick();
+        layers.tick();
     }
 
-    private void onWorldJoin() {
+    private void onJoin() {
         worldSaveName = WorldAccess.getInstance().getSaveName();
 
         if (worldSaveName == null) {
@@ -83,18 +86,12 @@ public class NatosAtlas {
         MapSaveScheduler.start();
     }
 
-    private void onWorldLeft() {
+    private void onLeave() {
         LogUtil.info("Left world: {}", worldSaveName);
         MapSaveScheduler.stop();
         cache.clear();
         worldSaveName = null;
         mapUpdater = null;
         running = false;
-    }
-
-    private void onWorldUpdate() {
-        if (!running) return;
-        mapUpdater.tick();
-        MapSaveScheduler.tick();
     }
 }

@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core.map;
+package dev.natowb.natosatlas.core.layers;
 
 import dev.natowb.natosatlas.core.chunk.ChunkRenderer;
 

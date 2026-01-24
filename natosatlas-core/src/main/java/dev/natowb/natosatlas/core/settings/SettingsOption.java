@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.core.settings;
 
 import dev.natowb.natosatlas.core.NatosAtlas;
-import dev.natowb.natosatlas.core.map.MapLayerManager;
+import dev.natowb.natosatlas.core.layers.MapLayerManager;
 
 public enum SettingsOption {
 
@@ -31,21 +31,26 @@ public enum SettingsOption {
     MAP_RENDER_MODE("Mode") {
         @Override
         public void cycle() {
-            MapLayerManager layers = NatosAtlas.get().layers;
-            int layer = layers.getActiveLayer().id;
-            layer++;
-
-            if (layer >= layers.getLayers().size()) {
-                layer = 0;
+            Settings.MapRenderMode m = Settings.mapRenderMode;
+            switch (m) {
+                case Day:
+                    Settings.mapRenderMode = Settings.MapRenderMode.Night;
+                    break;
+                case Night:
+                    Settings.mapRenderMode = Settings.MapRenderMode.Cave;
+                    break;
+                case Cave:
+                    Settings.mapRenderMode = Settings.MapRenderMode.Auto;
+                    break;
+                case Auto:
+                    Settings.mapRenderMode = Settings.MapRenderMode.Day;
+                    break;
             }
-
-            layers.setActiveLayer(layer);
         }
 
         @Override
         public String getValueLabel() {
-            MapLayerManager layers = NatosAtlas.get().layers;
-            return layers.getActiveLayer().name;
+            return  Settings.mapRenderMode.name();
         }
     },
 
