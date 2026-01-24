@@ -28,13 +28,8 @@ public class MapCache {
         this.storage = storage;
     }
 
-    private long makeDimKey(int dimension, NACoord coord) {
-        return (((long) dimension) << 48) ^ coord.toKey();
-    }
-
     public MapRegion getRegion(int layerId, NACoord coord) {
-        int dim = WorldAccess.get().getDimensionId();
-        long key = makeDimKey(dim, coord);
+        long key = coord.toKey();
 
         MapRegion[] arr = regions.get(key);
         if (arr != null && arr[layerId] != null)
@@ -73,16 +68,14 @@ public class MapCache {
     }
 
     public void put(int layerId, NACoord coord, MapRegion region) {
-        int dim = WorldAccess.get().getDimensionId();
-        long key = makeDimKey(dim, coord);
+        long key = coord.toKey();
 
         MapRegion[] arr = regions.computeIfAbsent(key, k -> new MapRegion[NatosAtlasCore.get().layers.getLayers().size()]);
         arr[layerId] = region;
     }
 
     public void markDirty(NACoord coord) {
-        int dim = WorldAccess.get().getDimensionId();
-        long key = makeDimKey(dim, coord);
+        long key = coord.toKey();
 
         if (dirtySet.add(key)) {
             dirtyQueue.add(key);

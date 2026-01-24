@@ -32,7 +32,7 @@ public class NatosAtlasCore {
 
 
     private String worldSaveName;
-
+    private int dim;
     private boolean running;
 
     public boolean isStopped() {
@@ -64,6 +64,13 @@ public class NatosAtlasCore {
         }
 
         if (!running) return;
+
+        int currentDim = WorldAccess.get().getDimensionId();
+        if (dim != currentDim) {
+            dim = currentDim;
+            cache.clear();
+            return;
+        }
 
         mapUpdater.tick();
         SaveScheduler.tick();

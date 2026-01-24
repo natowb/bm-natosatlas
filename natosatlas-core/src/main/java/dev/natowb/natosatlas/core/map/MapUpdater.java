@@ -57,7 +57,7 @@ public class MapUpdater {
 
         if (scanIndex >= scanOrder.size()) {
             scanIndex = 0;
-            LogUtil.debug("MapUpdater: Completed full scan cycle, restarting");
+            LogUtil.trace("MapUpdater: Completed full scan cycle, restarting");
         }
 
         NACoord offset = scanOrder.get(scanIndex++);
@@ -73,7 +73,7 @@ public class MapUpdater {
         Long oldTime = chunkSaveTimes.get(coord);
 
         if (oldTime == null) {
-            LogUtil.debug("MapUpdater: First-time scan of chunk {}, generating region", coord);
+            LogUtil.trace("MapUpdater: First-time scan of chunk {}, generating region", coord);
             chunkSaveTimes.put(coord, latestSaveTime);
             updateChunk(coord);
             return;

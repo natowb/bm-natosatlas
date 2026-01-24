@@ -31,7 +31,7 @@ public class MapScreen extends UIScreen {
     private final MapStageEntities entitiesPainter = new MapStageEntities();
 
     private UIElementButton settingsButton;
-    private UIElementOptionButton dayNightButton;
+    private UIElementOptionButton modeButton;
     private UIElementOptionButton slimeChunksButton;
     private UIElementButton waypointsButton;
     private UIElementButton closeButton;
@@ -66,10 +66,16 @@ public class MapScreen extends UIScreen {
         waypointsButton = new UIElementButton(1002, settingsButton.x - hGap - buttonW, padding, buttonW, buttonH, "Waypoints");
         addButton(waypointsButton);
 
-        dayNightButton = new UIElementOptionButton(SettingsOption.MAP_RENDER_MODE, waypointsButton.x - hGap - buttonW, padding, buttonW, buttonH);
-        addButton(dayNightButton);
+        modeButton = new UIElementOptionButton(SettingsOption.MAP_RENDER_MODE, waypointsButton.x - hGap - buttonW, padding, buttonW, buttonH);
 
-        slimeChunksButton = new UIElementOptionButton(SettingsOption.SLIME_CHUNKS, dayNightButton.x - hGap - buttonW, padding, buttonW, buttonH);
+        if (WorldAccess.get().hasCeiling()) {
+            modeButton.active = false;
+            modeButton.label = "Mode: Cave";
+        }
+
+        addButton(modeButton);
+
+        slimeChunksButton = new UIElementOptionButton(SettingsOption.SLIME_CHUNKS, modeButton.x - hGap - buttonW, padding, buttonW, buttonH);
         addButton(slimeChunksButton);
     }
 
@@ -156,8 +162,8 @@ public class MapScreen extends UIScreen {
             return;
         }
 
-        if (btn.id == dayNightButton.id) {
-            dayNightButton.cycle();
+        if (btn.id == modeButton.id) {
+            modeButton.cycle();
             Settings.save();
             return;
         }
