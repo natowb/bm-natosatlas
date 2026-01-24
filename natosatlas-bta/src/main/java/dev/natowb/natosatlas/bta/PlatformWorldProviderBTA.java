@@ -4,6 +4,7 @@ import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.platform.PlatformWorldProvider;
 import dev.natowb.natosatlas.core.utils.LogUtil;
 import dev.natowb.natosatlas.core.utils.NAPaths;
+import dev.natowb.natosatlas.core.wrapper.BlockAccess;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.block.Block;
@@ -35,23 +36,6 @@ public class PlatformWorldProviderBTA implements PlatformWorldProvider {
     public NABiome getBiome(NACoord blockCoord) {
         Biome biome = mc.currentWorld.getBiomeProvider().getBiome(blockCoord.x, 50, blockCoord.z);
         return new NABiome(biome.topBlock, biome.color);
-    }
-
-    @Override
-    public int getBlockColor(int blockId, int blockMeta) {
-        Block<?> block = Blocks.getBlock(blockId);
-        if (block == null) {
-            return MaterialColor.getColorFromIndex(MaterialColor.none.id);
-        }
-        if (block.getMaterialColor() == null) return 0xFF00FF00;
-
-        assert Blocks.getBlock(blockId) != null;
-        return MaterialColor.getColorFromIndex(Blocks.getBlock(blockId).getMaterialColor().id);
-    }
-
-    @Override
-    public boolean isBlockGrass(int blockId) {
-        return false;
     }
 
 
@@ -207,14 +191,6 @@ public class PlatformWorldProviderBTA implements PlatformWorldProvider {
     }
 
 
-    @Override
-    public boolean isBlockFluid(int blockId) {
-        Block<?> block = Blocks.getBlock(blockId);
-        if (block == null) return false;
-        if (block.getMaterial() == null) return false;
-        return block.getMaterial().isLiquid();
-    }
-
     private int computeFluidDepth(Chunk chunk, int x, int y, int z) {
         if (y < 0) return 0;
 
@@ -222,7 +198,7 @@ public class PlatformWorldProviderBTA implements PlatformWorldProvider {
 
         while (y > 0) {
             int id = chunk.getBlockID(x, y, z);
-            if (!isBlockFluid(id)) break;
+            if (!BlockAccess.getInstance().isFluid(id)) break;
             depth++;
             y--;
         }

@@ -1,6 +1,7 @@
 package dev.natowb.natosatlas.core.platform;
 
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
+import dev.natowb.natosatlas.core.wrapper.BlockAccess;
 
 import java.nio.file.Path;
 
@@ -8,9 +9,10 @@ public abstract class Platform {
     public final PlatformPainter painter;
     public final PlatformWorldProvider worldProvider;
 
-    public Platform(PlatformPainter painter, PlatformWorldProvider worldProvider) {
+    public Platform(PlatformPainter painter, PlatformWorldProvider worldProvider, BlockAccess blockAccess) {
         this.painter = painter;
         this.worldProvider = worldProvider;
+        BlockAccess.setInstance(blockAccess);
     }
 
     public abstract Path getMinecraftDirectory();

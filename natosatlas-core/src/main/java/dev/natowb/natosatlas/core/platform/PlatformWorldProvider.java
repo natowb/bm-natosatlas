@@ -12,11 +12,5 @@ public interface PlatformWorldProvider {
 
     NABiome getBiome(NACoord blockCoord);
 
-    boolean isBlockFluid(int blockId);
-
-    boolean isBlockGrass(int blockId);
-
-    int getBlockColor(int blockId, int blockMeta);
-
     List<NARegionFile> getRegionMetadata();
 }
