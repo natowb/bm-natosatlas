@@ -13,6 +13,8 @@ import java.util.Set;
 
 public class MapStageEntities implements MapStage {
 
+    private static final double ENTITY_RENDER_RADIUS = 128.0;
+
     @Override
     public void draw(MapContext ctx, Set<Long> visibleRegions) {
         drawEntities(ctx);
@@ -22,16 +24,36 @@ public class MapStageEntities implements MapStage {
     private void drawEntities(MapContext ctx) {
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.Nothing) return;
 
+        NAEntity player = WorldAccess.get().getPlayer();
+        double px = player.x;
+        double pz = player.z;
+
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,
                 PainterAccess.get().getMinecraftTextureId("/misc/mapicons.png"));
 
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.All) {
             for (NAEntity e : WorldAccess.get().getEntities()) {
+
+                double dx = e.x - px;
+                double dz = e.z - pz;
+
+                if ((dx * dx + dz * dz) > (ENTITY_RENDER_RADIUS * ENTITY_RENDER_RADIUS)) {
+                    continue;
+                }
+
                 renderEntity(ctx, e);
             }
         }
 
         for (NAEntity p : WorldAccess.get().getPlayers()) {
+
+            double dx = p.x - px;
+            double dz = p.z - pz;
+
+            if ((dx * dx + dz * dz) > (ENTITY_RENDER_RADIUS * ENTITY_RENDER_RADIUS)) {
+                continue;
+            }
+
             renderMapMarker(ctx, p);
         }
     }
