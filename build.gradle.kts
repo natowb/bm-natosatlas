@@ -1,6 +1,7 @@
 plugins {
     id("net.fabricmc.fabric-loom-remap") version "1.14-SNAPSHOT" apply false
     id("babric-loom-extension") version "1.14-SNAPSHOT" apply false
+    id("it.nicolasfarabegoli.conventional-commits") version "3.1.3"
 }
 
 subprojects {
