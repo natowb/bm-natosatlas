@@ -1,10 +1,9 @@
-package dev.natowb.natosatlas.core.render;
+package dev.natowb.natosatlas.core.map;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NAEntity;
-import dev.natowb.natosatlas.core.map.MapContext;
+import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.settings.Settings;
-import dev.natowb.natosatlas.core.utils.Constants;
+import dev.natowb.natosatlas.core.NatoAtlasConstants;
 import dev.natowb.natosatlas.core.waypoint.Waypoint;
 import dev.natowb.natosatlas.core.waypoint.Waypoints;
 import dev.natowb.natosatlas.core.access.WorldAccess;
@@ -12,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.Set;
 
-public class MapEntitiesPainter implements MapStagePainter {
+public class MapStageEntities implements MapStage {
 
     @Override
     public void draw(MapContext ctx, Set<Long> visibleRegions) {
@@ -24,15 +23,15 @@ public class MapEntitiesPainter implements MapStagePainter {
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.Nothing) return;
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,
-                NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
+                PainterAccess.get().getMinecraftTextureId("/misc/mapicons.png"));
 
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.All) {
-            for (NAEntity e : WorldAccess.getInstance().getEntities()) {
+            for (NAEntity e : WorldAccess.get().getEntities()) {
                 renderEntity(ctx, e);
             }
         }
 
-        for (NAEntity p : WorldAccess.getInstance().getPlayers()) {
+        for (NAEntity p : WorldAccess.get().getPlayers()) {
             renderMapMarker(ctx, p);
         }
     }
@@ -47,39 +46,39 @@ public class MapEntitiesPainter implements MapStagePainter {
 
             if (!wp.visible) continue;
 
-            double x = wp.x * Constants.PIXELS_PER_CANVAS_UNIT;
-            double z = wp.z * Constants.PIXELS_PER_CANVAS_UNIT;
+            double x = wp.x * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
+            double z = wp.z * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
             double s = 1 / ctx.zoom;
 
             drawUpright(ctx, x, z, s, 0, () -> {
-                int w = NatosAtlas.get().platform.painter.getStringWidth(wp.name);
-                NatosAtlas.get().platform.painter.drawString(wp.name, -(w / 2) + 1, 11, 0xFF000000);
-                NatosAtlas.get().platform.painter.drawString(wp.name, -(w / 2), 10, 0xFFFFFFFF);
+                int w = PainterAccess.get().getStringWidth(wp.name);
+                PainterAccess.get().drawString(wp.name, -(w / 2) + 1, 11, 0xFF000000);
+                PainterAccess.get().drawString(wp.name, -(w / 2), 10, 0xFFFFFFFF);
             });
         }
     }
 
     private void renderEntity(MapContext ctx, NAEntity e) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,
-                NatosAtlas.get().platform.painter.getMinecraftTextureId(e.texturePath));
+                PainterAccess.get().getMinecraftTextureId(e.texturePath));
 
-        double x = e.x * Constants.PIXELS_PER_CANVAS_UNIT;
-        double z = e.z * Constants.PIXELS_PER_CANVAS_UNIT;
+        double x = e.x * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
+        double z = e.z * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
         double s = 4 / ctx.zoom;
 
         NAEntity.UV uv = NAEntity.getUV(e.texturePath);
 
         drawUpright(ctx, x, z, s, 180, () ->
-                NatosAtlas.get().platform.painter.drawTexturedQuad(uv.u1, uv.v1, uv.u2, uv.v2)
+                PainterAccess.get().drawTexturedQuad(uv.u1, uv.v1, uv.u2, uv.v2)
         );
     }
 
     private void renderMapMarker(MapContext ctx, NAEntity e) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,
-                NatosAtlas.get().platform.painter.getMinecraftTextureId("/misc/mapicons.png"));
+                PainterAccess.get().getMinecraftTextureId("/misc/mapicons.png"));
 
-        double x = e.x * Constants.PIXELS_PER_CANVAS_UNIT;
-        double z = e.z * Constants.PIXELS_PER_CANVAS_UNIT;
+        double x = e.x * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
+        double z = e.z * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
         double s = 6 / ctx.zoom;
 
         int idx;
@@ -108,11 +107,11 @@ public class MapEntitiesPainter implements MapStagePainter {
 
         if (e.type == NAEntity.NAEntityType.Player) {
             drawPlayerMarker(ctx, x, z, s, e.yaw, () ->
-                    NatosAtlas.get().platform.painter.drawTexturedQuad(u1, v1, u2, v2)
+                    PainterAccess.get().drawTexturedQuad(u1, v1, u2, v2)
             );
         } else {
             drawUpright(ctx, x, z, s, e.yaw, () ->
-                    NatosAtlas.get().platform.painter.drawTexturedQuad(u1, v1, u2, v2)
+                    PainterAccess.get().drawTexturedQuad(u1, v1, u2, v2)
             );
         }
     }

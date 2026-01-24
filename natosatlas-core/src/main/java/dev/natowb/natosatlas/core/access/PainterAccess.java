@@ -1,10 +1,19 @@
-package dev.natowb.natosatlas.core.platform;
+package dev.natowb.natosatlas.core.access;
 
 import org.lwjgl.opengl.GL11;
 
-public class PlatformPainterDefault implements PlatformPainter {
+public abstract class PainterAccess {
 
-    @Override
+    private static PainterAccess instance;
+
+    public static void setInstance(PainterAccess instance) {
+        PainterAccess.instance = instance;
+    }
+
+    public static PainterAccess get() {
+        return instance;
+    }
+
     public void drawRect(int x1, int y1, int x2, int y2, int argbColor) {
         if (x1 < x2) {
             int t = x1;
@@ -39,8 +48,6 @@ public class PlatformPainterDefault implements PlatformPainter {
     }
 
 
-
-    @Override
     public void drawLine(float x1, float y1, float x2, float y2) {
         GL11.glBegin(GL11.GL_LINES);
         GL11.glVertex2f(x1, y1);
@@ -48,7 +55,6 @@ public class PlatformPainterDefault implements PlatformPainter {
         GL11.glEnd();
     }
 
-    @Override
     public void drawTexture(int textureId, int x, int y, int width, int height) {
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_FOG);
@@ -85,29 +91,13 @@ public class PlatformPainterDefault implements PlatformPainter {
         GL11.glEnd();
     }
 
+    public abstract int getStringWidth(String text);
 
-    // TODO: these things are implemented by the backend ie station api or ModLoader.
-    @Override
-    public int getStringWidth(String text) {
-        return 0;
-    }
+    public abstract void drawString(String text, int x, int y, int color);
 
-    @Override
-    public void drawString(String text, int x, int y, int color) {
-        drawString(text, x, y, color, false);
-    }
+    public abstract void drawString(String text, int x, int y, int color, boolean shadow);
 
-    @Override
-    public void drawString(String text, int x, int y, int color, boolean shadow) {
+    public abstract void drawCenteredString(String text, int centerX, int y, int color);
 
-    }
-
-    @Override
-    public void drawCenteredString(String text, int centerX, int y, int color) {
-    }
-
-    @Override
-    public int getMinecraftTextureId(String string) {
-        return -1;
-    }
+    public abstract int getMinecraftTextureId(String string);
 }

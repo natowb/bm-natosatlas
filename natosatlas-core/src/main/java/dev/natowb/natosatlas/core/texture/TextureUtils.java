@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core.platform;
+package dev.natowb.natosatlas.core.texture;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
-public final class PlatformPainterUtils {
+public final class TextureUtils {
 
     public static BufferedImage pixelsToBufferedImage(int[] pixels, int width, int height) {
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -92,8 +92,7 @@ public final class PlatformPainterUtils {
             }
         }
 
-        // Don't use the flip method provided on ByteBuffer because, that prevents this mod from running on older
-        // Java versions if built from a Java 9+ version.
+
         ((Buffer) buffer).flip();
 
         return buffer;

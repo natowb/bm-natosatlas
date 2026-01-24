@@ -1,14 +1,14 @@
 package dev.natowb.natosatlas.core.settings;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.chunk.ChunkBuilder;
 import dev.natowb.natosatlas.core.map.*;
+import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementOptionButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementSlider;
 import dev.natowb.natosatlas.core.ui.UITheme;
-import dev.natowb.natosatlas.core.platform.PlatformPainter;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import dev.natowb.natosatlas.core.ui.layout.UILayout;
 import dev.natowb.natosatlas.core.ui.layout.UIVerticalLayout;
@@ -33,7 +33,7 @@ public class SettingsScreen extends UIScreen {
         addButton(new UIElementOptionButton(SettingsOption.DEBUG_INFO, layout, 150, 20));
         addButton(new UIElementOptionButton(SettingsOption.USE_REIMINIMAP_WAYPOINTS, layout, 150, 20));
 
-        boolean isServer = WorldAccess.getInstance().isServer();
+        boolean isServer = WorldAccess.get().isServer();
         addButton(new UIElementButton(BUTTON_ID_GENERATE_EXISTING, layout, 150, 20, "Generate Existing", !isServer));
 
         UIElementSlider zoomSlider = new UIElementSlider(SLIDER_ID_ZOOM, layout, 150, 20, Settings.defaultZoom, "Default Zoom");
@@ -54,12 +54,12 @@ public class SettingsScreen extends UIScreen {
 
         if (button.id == BUTTON_ID_DONE) {
             Settings.save();
-            NatosAtlas.get().platform.openNacScreen(parent);
+            NatosAtlasCore.get().platform.openNacScreen(parent);
             return;
         }
 
         if (button.id == BUTTON_ID_GENERATE_EXISTING) {
-            ChunkBuilder.rebuildExistingChunks(NatosAtlas.get().storage, NatosAtlas.get().cache);
+            ChunkBuilder.rebuildExistingChunks(NatosAtlasCore.get().storage, NatosAtlasCore.get().cache);
         }
     }
 
@@ -74,7 +74,7 @@ public class SettingsScreen extends UIScreen {
 
     @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
-        PlatformPainter p = NatosAtlas.get().platform.painter;
+        PainterAccess p = PainterAccess.get();
 
         p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
         p.drawCenteredString("Settings", width / 2, 20, UITheme.TITLE_TEXT);

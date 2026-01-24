@@ -1,8 +1,5 @@
 package dev.natowb.natosatlas.core.settings;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
-import dev.natowb.natosatlas.core.layers.MapLayerManager;
-
 public enum SettingsOption {
 
     ENTITY_DISPLAY("Entities") {

@@ -1,12 +1,12 @@
 package dev.natowb.natosatlas.core.waypoint;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.NatosAtlasCore;
+import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementTextField;
 import dev.natowb.natosatlas.core.ui.UITheme;
 import dev.natowb.natosatlas.core.data.NAEntity;
-import dev.natowb.natosatlas.core.platform.PlatformPainter;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import dev.natowb.natosatlas.core.access.WorldAccess;
 import org.lwjgl.input.Keyboard;
@@ -64,7 +64,7 @@ public class WaypointCreateScreen extends UIScreen {
         zField.setMaxLength(8);
 
         if (!editMode) {
-            NAEntity player = WorldAccess.getInstance().getPlayer();
+            NAEntity player = WorldAccess.get().getPlayer();
             xField.setText("" + (int) player.x);
             yField.setText("" + (int) player.y);
             zField.setText("" + (int) player.z);
@@ -131,7 +131,7 @@ public class WaypointCreateScreen extends UIScreen {
 
     @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
-        PlatformPainter p = NatosAtlas.get().platform.painter;
+        PainterAccess p = PainterAccess.get();
 
         p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
 
@@ -156,7 +156,7 @@ public class WaypointCreateScreen extends UIScreen {
     @Override
     protected void onClick(UIElementButton button) {
         if (button.id == cancelButton.id) {
-            NatosAtlas.get().platform.openNacScreen(parent);
+            NatosAtlasCore.get().platform.openNacScreen(parent);
             return;
         }
         if (button.id == actionButton.id) {
@@ -209,6 +209,6 @@ public class WaypointCreateScreen extends UIScreen {
             Waypoints.add(new Waypoint(name, x, y, z));
         }
 
-        NatosAtlas.get().platform.openNacScreen(parent);
+        NatosAtlasCore.get().platform.openNacScreen(parent);
     }
 }

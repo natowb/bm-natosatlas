@@ -1,9 +1,9 @@
 package dev.natowb.natosatlas.core.map;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
-import dev.natowb.natosatlas.core.tasks.MapSaveWorker;
-import dev.natowb.natosatlas.core.utils.LogUtil;
-import dev.natowb.natosatlas.core.utils.NAPaths;
+import dev.natowb.natosatlas.core.NatosAtlasCore;
+import dev.natowb.natosatlas.core.io.SaveWorker;
+import dev.natowb.natosatlas.core.io.LogUtil;
+import dev.natowb.natosatlas.core.io.NAPaths;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -12,13 +12,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_CANVAS_REGION;
+import static dev.natowb.natosatlas.core.NatoAtlasConstants.BLOCKS_PER_CANVAS_REGION;
 
 public class MapExporter {
 
 
     public static void exportAllLayers() {
-        for (int i = 0; i < NatosAtlas.get().layers.getLayers().size(); i++) {
+        for (int i = 0; i < NatosAtlasCore.get().layers.getLayers().size(); i++) {
             MapExporter.exportMapLayer(i);
         }
     }
@@ -27,7 +27,7 @@ public class MapExporter {
 
         File outputFile = new File(NAPaths.getWorldDataPath().toFile(), String.format("exported_map_layer_%d.png", layerId));
 
-        MapSaveWorker.stop();
+        SaveWorker.stop();
 
         Path dir = NAPaths.getWorldMapStoragePath(layerId);
 
@@ -104,6 +104,6 @@ public class MapExporter {
         }
 
 
-        MapSaveWorker.start();
+        SaveWorker.start();
     }
 }

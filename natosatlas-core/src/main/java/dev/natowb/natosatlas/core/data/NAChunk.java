@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core.data;
 
-import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CHUNK;
+import static dev.natowb.natosatlas.core.NatoAtlasConstants.BLOCKS_PER_MINECRAFT_CHUNK;
 
 public class NAChunk {
     public final int[] blockIds;

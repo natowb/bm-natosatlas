@@ -1,7 +1,5 @@
-package dev.natowb.natosatlas.core.persistence;
+package dev.natowb.natosatlas.core.io;
 
-
-import dev.natowb.natosatlas.core.utils.FileUtil;
 
 import java.io.File;
 import java.util.ArrayList;

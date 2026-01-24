@@ -15,11 +15,9 @@ public abstract class WorldAccess {
         WorldAccess.instance = instance;
     }
 
-    public static WorldAccess getInstance() {
+    public static WorldAccess get() {
         return instance;
     }
-
-
 
     public abstract boolean exists();
 

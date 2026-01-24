@@ -1,8 +1,8 @@
 package dev.natowb.natosatlas.core.map;
 
-import dev.natowb.natosatlas.core.platform.PlatformPainterUtils;
+import dev.natowb.natosatlas.core.texture.TextureUtils;
 
-import static dev.natowb.natosatlas.core.utils.Constants.*;
+import static dev.natowb.natosatlas.core.NatoAtlasConstants.*;
 
 public class MapRegion {
 
@@ -24,18 +24,18 @@ public class MapRegion {
 
     public void ensureTexture() {
         if (textureId != -1) return;
-        textureId = PlatformPainterUtils.createBlankTexture(BLOCKS_PER_CANVAS_REGION, BLOCKS_PER_CANVAS_REGION);
+        textureId = TextureUtils.createBlankTexture(BLOCKS_PER_CANVAS_REGION, BLOCKS_PER_CANVAS_REGION);
     }
 
     public void clearTexture() {
         if (textureId == -1) return;
-        PlatformPainterUtils.deleteTexture(textureId);
+        TextureUtils.deleteTexture(textureId);
         textureId = -1;
     }
 
     public void updateTexture() {
         ensureTexture();
-        PlatformPainterUtils.updateTexture(textureId, BLOCKS_PER_CANVAS_REGION, BLOCKS_PER_CANVAS_REGION, pixels);
+        TextureUtils.updateTexture(textureId, BLOCKS_PER_CANVAS_REGION, BLOCKS_PER_CANVAS_REGION, pixels);
     }
 
 }

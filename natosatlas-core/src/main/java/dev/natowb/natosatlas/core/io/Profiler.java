@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core.utils;
+package dev.natowb.natosatlas.core.io;
 
 public final class Profiler {
     private static final boolean ENABLED = true;

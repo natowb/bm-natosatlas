@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core.access;
 
-import dev.natowb.natosatlas.core.utils.LogUtil;
+import dev.natowb.natosatlas.core.io.LogUtil;
 
 import java.util.HashMap;
 
@@ -18,7 +18,7 @@ public abstract class BlockAccess {
         BlockAccess.instance = instance;
     }
 
-    public static BlockAccess getInstance() {
+    public static BlockAccess get() {
         return instance;
     }
 

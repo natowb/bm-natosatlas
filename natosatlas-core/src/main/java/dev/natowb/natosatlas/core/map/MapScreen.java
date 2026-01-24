@@ -1,13 +1,12 @@
 package dev.natowb.natosatlas.core.map;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.data.NAEntity;
-import dev.natowb.natosatlas.core.platform.PlatformPainter;
-import dev.natowb.natosatlas.core.render.*;
+import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.settings.SettingsOption;
 import dev.natowb.natosatlas.core.settings.SettingsScreen;
-import dev.natowb.natosatlas.core.tasks.MapSaveWorker;
+import dev.natowb.natosatlas.core.io.SaveWorker;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.UITheme;
 import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
@@ -24,12 +23,12 @@ import java.util.Set;
 public class MapScreen extends UIScreen {
 
     private final MapViewport viewport = new MapViewport();
-    private final PlatformPainter painter = NatosAtlas.get().platform.painter;
+    private final PainterAccess painter = PainterAccess.get();
 
-    private final MapRegionPainter regionPainter = new MapRegionPainter();
-    private final MapSlimeChunkPainter slimePainter = new MapSlimeChunkPainter();
-    private final MapGridPainter gridPainter = new MapGridPainter();
-    private final MapEntitiesPainter entitiesPainter = new MapEntitiesPainter();
+    private final MapStageRegions regionPainter = new MapStageRegions();
+    private final MapStageSlime slimePainter = new MapStageSlime();
+    private final MapStageGrid gridPainter = new MapStageGrid();
+    private final MapStageEntities entitiesPainter = new MapStageEntities();
 
     private UIElementButton settingsButton;
     private UIElementOptionButton dayNightButton;
@@ -40,7 +39,7 @@ public class MapScreen extends UIScreen {
     public MapScreen(UIScreen parent) {
         super(parent);
         viewport.setZoom(Settings.defaultZoom);
-        NAEntity player = WorldAccess.getInstance().getPlayer();
+        NAEntity player = WorldAccess.get().getPlayer();
         if (player != null) {
             viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
         }
@@ -129,7 +128,7 @@ public class MapScreen extends UIScreen {
 
         if (keyCode == Keyboard.KEY_SPACE) {
             viewport.setRotation(0);
-            NAEntity player = WorldAccess.getInstance().getPlayer();
+            NAEntity player = WorldAccess.get().getPlayer();
             if (player != null) {
                 viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
             }
@@ -143,17 +142,17 @@ public class MapScreen extends UIScreen {
     @Override
     protected void onClick(UIElementButton btn) {
         if (btn.id == closeButton.id) {
-            NatosAtlas.get().platform.openNacScreen(parent);
+            NatosAtlasCore.get().platform.openNacScreen(parent);
             return;
         }
 
         if (btn.id == settingsButton.id) {
-            NatosAtlas.get().platform.openNacScreen(new SettingsScreen(this));
+            NatosAtlasCore.get().platform.openNacScreen(new SettingsScreen(this));
             return;
         }
 
         if (btn.id == waypointsButton.id) {
-            NatosAtlas.get().platform.openNacScreen(new WaypointListScreen(this));
+            NatosAtlasCore.get().platform.openNacScreen(new WaypointListScreen(this));
             return;
         }
 
@@ -186,13 +185,13 @@ public class MapScreen extends UIScreen {
         y += 15;
         painter.drawString("Cache", 5, y, 0xFFFFFF);
         y += 10;
-        painter.drawString(String.format("Pending Saves: %d", MapSaveWorker.getPendingCount()), 5, y, 0xFFFFFF);
+        painter.drawString(String.format("Pending Saves: %d", SaveWorker.getPendingCount()), 5, y, 0xFFFFFF);
         y += 10;
-        painter.drawString(String.format("Total Cache Size: %d", NatosAtlas.get().cache.getCacheSize()), 5, y, 0xFFFFFF);
+        painter.drawString(String.format("Total Cache Size: %d", NatosAtlasCore.get().cache.getCacheSize()), 5, y, 0xFFFFFF);
         y += 10;
-        painter.drawString(String.format("Dirty Queue Size: %d", NatosAtlas.get().cache.getDirtyQueueSize()), 5, y, 0xFFFFFF);
+        painter.drawString(String.format("Dirty Queue Size: %d", NatosAtlasCore.get().cache.getDirtyQueueSize()), 5, y, 0xFFFFFF);
         y += 10;
-        painter.drawString(String.format("PNG Cache Size: %d", NatosAtlas.get().cache.getPngCacheSize()), 5, y, 0xFFFFFF);
+        painter.drawString(String.format("PNG Cache Size: %d", NatosAtlasCore.get().cache.getPngCacheSize()), 5, y, 0xFFFFFF);
     }
 
     private void renderFooter(MapContext ctx) {

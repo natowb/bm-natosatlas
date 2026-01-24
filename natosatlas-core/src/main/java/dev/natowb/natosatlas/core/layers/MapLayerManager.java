@@ -1,6 +1,5 @@
 package dev.natowb.natosatlas.core.layers;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.access.WorldAccess;
 import dev.natowb.natosatlas.core.chunk.ChunkCaveRenderer;
 import dev.natowb.natosatlas.core.chunk.ChunkSurfaceRenderer;
@@ -8,9 +7,7 @@ import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.settings.Settings;
-import dev.natowb.natosatlas.core.utils.LogUtil;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,11 +55,11 @@ public class MapLayerManager {
     }
 
     private void autoSelectLayer() {
-        long time = WorldAccess.getInstance().getTime() % 24000L;
+        long time = WorldAccess.get().getTime() % 24000L;
         boolean day = time < 12000L;
 
-        NAEntity player = WorldAccess.getInstance().getPlayer();
-        ChunkWrapper playerChunk = WorldAccess.getInstance().getChunk(NACoord.from(player.chunkX, player.chunkZ));
+        NAEntity player = WorldAccess.get().getPlayer();
+        ChunkWrapper playerChunk = WorldAccess.get().getChunk(NACoord.from(player.chunkX, player.chunkZ));
         int skyLight = playerChunk.getSkyLight(player.localX, ((int) Math.floor(player.y)), player.localZ);
 
         if (skyLight == 0) {

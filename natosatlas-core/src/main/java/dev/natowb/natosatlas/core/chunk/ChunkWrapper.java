@@ -16,7 +16,7 @@ public abstract class ChunkWrapper {
         x &= 15;
         int z0 = z & 15;
 
-        BlockAccess blocks = BlockAccess.getInstance();
+        BlockAccess blocks = BlockAccess.get();
 
         for (; y > 0; --y) {
             int blockId = getBlockId(x, y, z0);
@@ -32,7 +32,7 @@ public abstract class ChunkWrapper {
         int depth = 0;
         while (y > 0) {
             int id = getBlockId(x, y, z);
-            if (!BlockAccess.getInstance().isFluid(id)) break;
+            if (!BlockAccess.get().isFluid(id)) break;
             depth++;
             y--;
         }

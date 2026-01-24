@@ -1,11 +1,11 @@
 package dev.natowb.natosatlas.stationapi;
 
-import dev.natowb.natosatlas.core.platform.PlatformPainterDefault;
+import dev.natowb.natosatlas.core.access.PainterAccess;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 
-public class PlatformPainterST extends PlatformPainterDefault {
+public class PlatformPainterST extends PainterAccess {
 
     @Override
     public void drawString(String text, int x, int y, int color, boolean shadow) {
@@ -18,6 +18,11 @@ public class PlatformPainterST extends PlatformPainterDefault {
     public int getStringWidth(String str) {
         Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
         return mc.textRenderer.getWidth(str);
+    }
+
+    @Override
+    public void drawString(String text, int x, int y, int color) {
+        drawString(text, x, y, color, false);
     }
 
     @Override

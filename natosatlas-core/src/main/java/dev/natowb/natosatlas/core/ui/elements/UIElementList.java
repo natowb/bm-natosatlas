@@ -1,7 +1,6 @@
 package dev.natowb.natosatlas.core.ui.elements;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
-import dev.natowb.natosatlas.core.platform.PlatformPainter;
+import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.ui.UITheme;
 import org.lwjgl.input.Mouse;
 
@@ -70,7 +69,7 @@ public class UIElementList<T> {
     public void render(int mouseX, int mouseY) {
         if (items == null || renderer == null) return;
 
-        PlatformPainter p = NatosAtlas.get().platform.painter;
+        PainterAccess p = PainterAccess.get();
 
         int visibleStart = scrollOffset / entryHeight;
         int visibleEnd = Math.min(items.size(),
@@ -95,7 +94,7 @@ public class UIElementList<T> {
     }
 
     private void renderScrollbar() {
-        PlatformPainter p = NatosAtlas.get().platform.painter;
+        PainterAccess p = PainterAccess.get();
 
         int contentHeight = items.size() * entryHeight;
         if (contentHeight <= h) return;

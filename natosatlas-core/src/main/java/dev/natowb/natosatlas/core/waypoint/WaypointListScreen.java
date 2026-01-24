@@ -1,12 +1,12 @@
 package dev.natowb.natosatlas.core.waypoint;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.NatosAtlasCore;
+import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementList;
 import dev.natowb.natosatlas.core.ui.UITheme;
-import dev.natowb.natosatlas.core.platform.PlatformPainter;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 
 public class WaypointListScreen extends UIScreen {
@@ -71,12 +71,12 @@ public class WaypointListScreen extends UIScreen {
 
     private void openEditScreen(int index) {
         Waypoint wp = Waypoints.getAll().get(index);
-        NatosAtlas.get().platform.openNacScreen(new WaypointCreateScreen(this, wp));
+        NatosAtlasCore.get().platform.openNacScreen(new WaypointCreateScreen(this, wp));
     }
 
     @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
-        PlatformPainter p = NatosAtlas.get().platform.painter;
+        PainterAccess p = PainterAccess.get();
 
         if (Settings.useReiMinimapWaypointStorage) {
             p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
@@ -142,12 +142,12 @@ public class WaypointListScreen extends UIScreen {
         }
 
         if (btn.id == createButton.id) {
-            NatosAtlas.get().platform.openNacScreen(new WaypointCreateScreen(this));
+            NatosAtlasCore.get().platform.openNacScreen(new WaypointCreateScreen(this));
             return;
         }
 
         if (btn.id == backButton.id) {
-            NatosAtlas.get().platform.openNacScreen(parent);
+            NatosAtlasCore.get().platform.openNacScreen(parent);
         }
     }
 

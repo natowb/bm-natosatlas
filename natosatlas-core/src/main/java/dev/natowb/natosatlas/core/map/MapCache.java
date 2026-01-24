@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core.map;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.access.WorldAccess;
 
@@ -33,7 +33,7 @@ public class MapCache {
     }
 
     public MapRegion getRegion(int layerId, NACoord coord) {
-        int dim = WorldAccess.getInstance().getDimensionId();
+        int dim = WorldAccess.get().getDimensionId();
         long key = makeDimKey(dim, coord);
 
         MapRegion[] arr = regions.get(key);
@@ -46,7 +46,7 @@ public class MapCache {
             System.arraycopy(cachedLayers[layerId], 0, region.getPixels(), 0, cachedLayers[layerId].length);
 
             if (arr == null) {
-                arr = new MapRegion[NatosAtlas.get().layers.getLayers().size()];
+                arr = new MapRegion[NatosAtlasCore.get().layers.getLayers().size()];
                 regions.put(key, arr);
             }
 
@@ -57,13 +57,13 @@ public class MapCache {
         Optional<MapRegion> loaded = storage.loadRegion(layerId, coord);
         if (loaded.isPresent()) {
             if (arr == null) {
-                arr = new MapRegion[NatosAtlas.get().layers.getLayers().size()];
+                arr = new MapRegion[NatosAtlasCore.get().layers.getLayers().size()];
                 regions.put(key, arr);
             }
 
             arr[layerId] = loaded.get();
 
-            int[][] layersPixels = pngCache.computeIfAbsent(key, k -> new int[NatosAtlas.get().layers.getLayers().size()][]);
+            int[][] layersPixels = pngCache.computeIfAbsent(key, k -> new int[NatosAtlasCore.get().layers.getLayers().size()][]);
             layersPixels[layerId] = arr[layerId].getPixels().clone();
 
             return arr[layerId];
@@ -73,15 +73,15 @@ public class MapCache {
     }
 
     public void put(int layerId, NACoord coord, MapRegion region) {
-        int dim = WorldAccess.getInstance().getDimensionId();
+        int dim = WorldAccess.get().getDimensionId();
         long key = makeDimKey(dim, coord);
 
-        MapRegion[] arr = regions.computeIfAbsent(key, k -> new MapRegion[NatosAtlas.get().layers.getLayers().size()]);
+        MapRegion[] arr = regions.computeIfAbsent(key, k -> new MapRegion[NatosAtlasCore.get().layers.getLayers().size()]);
         arr[layerId] = region;
     }
 
     public void markDirty(NACoord coord) {
-        int dim = WorldAccess.getInstance().getDimensionId();
+        int dim = WorldAccess.get().getDimensionId();
         long key = makeDimKey(dim, coord);
 
         if (dirtySet.add(key)) {

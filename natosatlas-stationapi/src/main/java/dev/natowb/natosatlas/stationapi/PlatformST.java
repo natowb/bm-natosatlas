@@ -1,13 +1,13 @@
 package dev.natowb.natosatlas.stationapi;
 
-import dev.natowb.natosatlas.core.platform.Platform;
+import dev.natowb.natosatlas.core.NatosAtlasPlatform;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 
 import java.nio.file.Path;
 
-public class PlatformST extends Platform {
+public class PlatformST extends NatosAtlasPlatform {
 
     public PlatformST() {
         super(new PlatformPainterST(), new BlockAccessST(), new WorldAccessST());

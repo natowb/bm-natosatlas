@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.stationapi;
 
-import dev.natowb.natosatlas.core.utils.ColorMapperUtil;
+import dev.natowb.natosatlas.core.mapper.ColorMapper;
 import dev.natowb.natosatlas.core.access.BlockAccess;
 import net.minecraft.block.Block;
 
@@ -15,14 +15,14 @@ public class BlockAccessST extends BlockAccess {
     @Override
     public int getColor(int blockId, int blockMeta) {
 
-        int overrideColor = ColorMapperUtil.getOverrideColor(Block.BLOCKS[blockId].getTranslationKey());
+        int overrideColor = ColorMapper.getOverrideColor(Block.BLOCKS[blockId].getTranslationKey());
 
         if (overrideColor != -1) {
             return overrideColor;
         }
 
         if (blockId == Block.WOOL.id) {
-            return ColorMapperUtil.getWoolColor(blockMeta);
+            return ColorMapper.getWoolColor(blockMeta);
         }
 
         if (blockId == Block.LEAVES.id) {

@@ -1,16 +1,15 @@
-package dev.natowb.natosatlas.core.platform;
+package dev.natowb.natosatlas.core;
 
+import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import dev.natowb.natosatlas.core.access.BlockAccess;
 import dev.natowb.natosatlas.core.access.WorldAccess;
 
 import java.nio.file.Path;
 
-public abstract class Platform {
-    public final PlatformPainter painter;
-
-    public Platform(PlatformPainter painter, BlockAccess blockAccess, WorldAccess worldAccess) {
-        this.painter = painter;
+public abstract class NatosAtlasPlatform {
+    public NatosAtlasPlatform(PainterAccess painter, BlockAccess blockAccess, WorldAccess worldAccess) {
+        PainterAccess.setInstance(painter);
         BlockAccess.setInstance(blockAccess);
         WorldAccess.setInstance(worldAccess);
     }

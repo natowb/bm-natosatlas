@@ -2,7 +2,6 @@ package dev.natowb.natosatlas.bta;
 
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
-import dev.natowb.natosatlas.core.utils.LogUtil;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.ScaledResolution;

@@ -1,12 +1,11 @@
 package dev.natowb.natosatlas.core.chunk;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.map.MapRegion;
 
-import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_CANVAS_REGION;
-import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CHUNK;
+import static dev.natowb.natosatlas.core.NatoAtlasConstants.BLOCKS_PER_CANVAS_REGION;
+import static dev.natowb.natosatlas.core.NatoAtlasConstants.BLOCKS_PER_MINECRAFT_CHUNK;
 
 public class ChunkSurfaceRenderer implements ChunkRenderer {
 

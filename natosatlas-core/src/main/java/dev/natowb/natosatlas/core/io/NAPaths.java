@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core.utils;
+package dev.natowb.natosatlas.core.io;
 
 import dev.natowb.natosatlas.core.access.WorldAccess;
 
@@ -62,7 +62,7 @@ public final class NAPaths {
     }
 
     public static Path getWorldMapStoragePath(int layerId) {
-        return ensurePathExists(worldDataPath.resolve(String.format("regions/DIM%d/layer_%d", WorldAccess.getInstance().getDimensionId(), layerId)));
+        return ensurePathExists(worldDataPath.resolve(String.format("regions/DIM%d/layer_%d", WorldAccess.get().getDimensionId(), layerId)));
     }
 
     public static Path getWorldSavePath() {

@@ -1,7 +1,6 @@
 package dev.natowb.natosatlas.core.ui.elements;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
-import dev.natowb.natosatlas.core.platform.PlatformPainter;
+import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.ui.UITheme;
 import dev.natowb.natosatlas.core.ui.layout.UILayout;
 import dev.natowb.natosatlas.core.ui.layout.UIPoint;
@@ -70,7 +69,7 @@ public class UIElementSlider extends UIElement {
     }
 
     public void render(int mouseX, int mouseY) {
-        PlatformPainter p = NatosAtlas.get().platform.painter;
+        PainterAccess p = PainterAccess.get();
 
         boolean hovered = mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
 

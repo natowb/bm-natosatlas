@@ -1,11 +1,11 @@
 package dev.natowb.natosatlas.modloader;
 
-import dev.natowb.natosatlas.core.platform.PlatformPainterDefault;
+import dev.natowb.natosatlas.core.access.PainterAccess;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.ModLoader;
 import org.lwjgl.opengl.GL11;
 
-public class PlatformPainterML extends PlatformPainterDefault {
+public class PlatformPainterML extends PainterAccess {
 
     @Override
     public void drawString(String text, int x, int y, int color, boolean shadow) {
@@ -18,6 +18,10 @@ public class PlatformPainterML extends PlatformPainterDefault {
         return ModLoader.getMinecraftInstance().textRenderer.getWidth(str);
     }
 
+    @Override
+    public void drawString(String text, int x, int y, int color) {
+        drawString(text, x, y, color, false);
+    }
 
     @Override
     public int getMinecraftTextureId(String string) {

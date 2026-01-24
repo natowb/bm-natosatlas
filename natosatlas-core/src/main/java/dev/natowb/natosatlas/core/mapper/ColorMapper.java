@@ -1,8 +1,8 @@
-package dev.natowb.natosatlas.core.utils;
+package dev.natowb.natosatlas.core.mapper;
 
 import java.util.HashMap;
 
-public class ColorMapperUtil {
+public class ColorMapper {
 
     private static final HashMap<String, Integer> COLOR_OVERRIDES = new HashMap<String, Integer>();
 

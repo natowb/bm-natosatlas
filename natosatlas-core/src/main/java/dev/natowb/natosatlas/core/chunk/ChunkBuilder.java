@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core.chunk;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
@@ -9,21 +9,21 @@ import dev.natowb.natosatlas.core.map.MapCache;
 import dev.natowb.natosatlas.core.layers.MapLayer;
 import dev.natowb.natosatlas.core.map.MapRegion;
 import dev.natowb.natosatlas.core.map.MapStorage;
-import dev.natowb.natosatlas.core.tasks.MapSaveScheduler;
-import dev.natowb.natosatlas.core.utils.LogUtil;
+import dev.natowb.natosatlas.core.io.SaveScheduler;
+import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.access.BlockAccess;
 import dev.natowb.natosatlas.core.access.WorldAccess;
 
 import java.io.File;
 import java.util.List;
 
-import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_MINECRAFT_CHUNK;
+import static dev.natowb.natosatlas.core.NatoAtlasConstants.BLOCKS_PER_MINECRAFT_CHUNK;
 
 public class ChunkBuilder {
 
 
     public static NAChunk buildChunkSurface(NACoord chunkCoord) {
-        ChunkWrapper chunk = WorldAccess.getInstance().getChunk(chunkCoord);
+        ChunkWrapper chunk = WorldAccess.get().getChunk(chunkCoord);
         if (chunk == null) {
             return null;
         }
@@ -32,7 +32,7 @@ public class ChunkBuilder {
 
 
     public static NAChunk buildChunkSurfaceFromDisk(NACoord chunkCoord) {
-        ChunkWrapper chunk = WorldAccess.getInstance().getChunkFromDisk(chunkCoord);
+        ChunkWrapper chunk = WorldAccess.get().getChunkFromDisk(chunkCoord);
         if (chunk == null) {
             return null;
         }
@@ -41,14 +41,14 @@ public class ChunkBuilder {
 
 
     public static void rebuildExistingChunks(MapStorage storage, MapCache cache) {
-        List<NARegionFile> regions = WorldAccess.getInstance().getRegionFiles();
+        List<NARegionFile> regions = WorldAccess.get().getRegionFiles();
 
         if (regions.isEmpty()) {
             LogUtil.info("No region metadata found.");
             return;
         }
 
-        MapSaveScheduler.stop();
+        SaveScheduler.stop();
 
         LogUtil.info("Generating map data for all existing regions (this may take a while...)");
 
@@ -62,14 +62,14 @@ public class ChunkBuilder {
             boolean success = false;
 
             try {
-                MapRegion[] layers = new MapRegion[NatosAtlas.get().layers.getLayers().size()];
+                MapRegion[] layers = new MapRegion[NatosAtlasCore.get().layers.getLayers().size()];
                 for (int i = 0; i < layers.length; i++) {
                     layers[i] = new MapRegion();
                 }
 
                 for (NACoord chunkCoord : naRegion.iterateExistingChunks()) {
                     int layerIndex = 0;
-                    for (MapLayer layer : NatosAtlas.get().layers.getLayers()) {
+                    for (MapLayer layer : NatosAtlasCore.get().layers.getLayers()) {
                         layer.renderer.applyChunkToRegion(layers[layerIndex], chunkCoord, layer.usesBlockLight);
                         layerIndex++;
                     }
@@ -96,7 +96,7 @@ public class ChunkBuilder {
 
         LogUtil.info("Full region generation complete.");
         cache.clear();
-        MapSaveScheduler.start();
+        SaveScheduler.start();
     }
 
 
@@ -109,7 +109,7 @@ public class ChunkBuilder {
 
                 int height = chunk.getTopSolidBlockY(x, z) - 1;
                 int aboveId = chunk.getBlockId(x, height + 1, z);
-                if (BlockAccess.getInstance().isBlock(aboveId, BlockAccess.BlockIdentifier.SNOW)) {
+                if (BlockAccess.get().isBlock(aboveId, BlockAccess.BlockIdentifier.SNOW)) {
                     height = height + 1;
                 }
 
@@ -117,7 +117,7 @@ public class ChunkBuilder {
                 int depth = chunk.computeFluidDepth(x, height, z);
                 int blockLight = chunk.getBlockLight(x, height + 1, z);
                 int meta = chunk.getBlockMeta(x, height, z);
-                NABiome biome = WorldAccess.getInstance().getBiome(NACoord.from(worldBlockX, worldBlockZ));
+                NABiome biome = WorldAccess.get().getBiome(NACoord.from(worldBlockX, worldBlockZ));
                 nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
             }
         }
@@ -125,8 +125,8 @@ public class ChunkBuilder {
     }
 
     public static NAChunk buildCaveChunk(NACoord chunkCoord) {
-        int playerY = (int) WorldAccess.getInstance().getPlayer().y;
-        ChunkWrapper chunk = WorldAccess.getInstance().getChunk(chunkCoord);
+        int playerY = (int) WorldAccess.get().getPlayer().y;
+        ChunkWrapper chunk = WorldAccess.get().getChunk(chunkCoord);
         if (chunk == null) return null;
 
         NAChunk caveChunk = new NAChunk();
@@ -147,7 +147,7 @@ public class ChunkBuilder {
 
                 int worldX = chunkCoord.x * 16 + x;
                 int worldZ = chunkCoord.z * 16 + z;
-                NABiome biome = WorldAccess.getInstance().getBiome(NACoord.from(worldX, worldZ));
+                NABiome biome = WorldAccess.get().getBiome(NACoord.from(worldX, worldZ));
 
                 caveChunk.set(x, z, floorY, blockId, 0, blockLight, meta, biome);
             }

@@ -1,7 +1,6 @@
 package dev.natowb.natosatlas.core.ui.elements;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
-import dev.natowb.natosatlas.core.platform.PlatformPainter;
+import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.ui.UITheme;
 import org.lwjgl.input.Keyboard;
 
@@ -225,7 +224,7 @@ public class UIElementTextField extends UIElement {
     }
 
     private int getCharIndexAtPixel(int px) {
-        PlatformPainter p = NatosAtlas.get().platform.painter;
+        PainterAccess p = PainterAccess.get();
 
         int pos = 0;
         int currentX = 0;
@@ -241,7 +240,7 @@ public class UIElementTextField extends UIElement {
     }
 
     public void render() {
-        PlatformPainter p = NatosAtlas.get().platform.painter;
+        PainterAccess p = PainterAccess.get();
 
         p.drawRect(x - 1, y - 1, x + w + 1, y + h + 1, UITheme.TEXTFIELD_BORDER);
         p.drawRect(x, y, x + w, y + h, UITheme.TEXTFIELD_BG);

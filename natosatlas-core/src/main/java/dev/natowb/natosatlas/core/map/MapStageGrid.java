@@ -1,15 +1,14 @@
-package dev.natowb.natosatlas.core.render;
+package dev.natowb.natosatlas.core.map;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
-import dev.natowb.natosatlas.core.map.MapContext;
+import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.settings.Settings;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Set;
 
-import static dev.natowb.natosatlas.core.utils.Constants.PIXELS_PER_CANVAS_CHUNK;
+import static dev.natowb.natosatlas.core.NatoAtlasConstants.PIXELS_PER_CANVAS_CHUNK;
 
-public class MapGridPainter implements MapStagePainter {
+public class MapStageGrid implements MapStage {
     @Override
     public void draw(MapContext ctx, Set<Long> visibleRegions) {
         if (!Settings.mapGrid) return;
@@ -57,14 +56,14 @@ public class MapGridPainter implements MapStagePainter {
 
 
         for (float x = startX; x <= maxX; x += fCell) {
-            NatosAtlas.get().platform.painter.drawLine(
+            PainterAccess.get().drawLine(
                     x, top - fCell,
                     x, bottom + fCell
             );
         }
 
         for (float y = startY; y <= maxY; y += fCell) {
-            NatosAtlas.get().platform.painter.drawLine(
+            PainterAccess.get().drawLine(
                     left - fCell, y,
                     right + fCell, y
             );

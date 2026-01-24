@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core.tasks;
+package dev.natowb.natosatlas.core.io;
 
 
 import dev.natowb.natosatlas.core.data.NACoord;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class MapSaveWorker {
+public class SaveWorker {
     private static final BlockingQueue<SaveTask> QUEUE = new LinkedBlockingQueue<>();
     private static volatile boolean running = false;
     private static volatile boolean shutdownRequested = false;

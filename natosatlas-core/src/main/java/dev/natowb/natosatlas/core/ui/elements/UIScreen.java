@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core.ui.elements;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import org.lwjgl.input.Keyboard;
 
@@ -104,7 +104,7 @@ public abstract class UIScreen {
     private void handleClickDispatch(int mouseX, int mouseY) {
         for (UIElementButton btn : buttons) {
             if (btn.active && btn.isInside(mouseX, mouseY)) {
-                NatosAtlas.get().platform.playSound("random.click", 1.0F, 1.0F);
+                NatosAtlasCore.get().platform.playSound("random.click", 1.0F, 1.0F);
                 onClick(btn);
                 return;
             }
@@ -172,7 +172,7 @@ public abstract class UIScreen {
         }
 
         if (keyCode == Keyboard.KEY_ESCAPE) {
-            NatosAtlas.get().platform.openNacScreen(parent);
+            NatosAtlasCore.get().platform.openNacScreen(parent);
         }
     }
 

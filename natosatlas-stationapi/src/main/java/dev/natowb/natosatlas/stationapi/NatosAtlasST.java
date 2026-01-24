@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.stationapi;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
+import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.map.MapScreen;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.client.option.KeyBinding;
@@ -19,11 +19,11 @@ public class NatosAtlasST {
     }
 
     public static KeyBinding KEY_BINDING_MAP;
-    private NatosAtlas nac;
+    private NatosAtlasCore nac;
 
     @EventListener
     public void init(InitFinishedEvent event) {
-        nac = new NatosAtlas(new PlatformST());
+        nac = new NatosAtlasCore(new PlatformST());
     }
 
 
@@ -41,12 +41,12 @@ public class NatosAtlasST {
 
     @EventListener
     public void handle(KeyStateChangedEvent event) {
-        if (NatosAtlas.get().isStopped()) return;
+        if (NatosAtlasCore.get().isStopped()) return;
 
         if (Keyboard.getEventKeyState()) {
             if (Keyboard.isKeyDown(NatosAtlasST.KEY_BINDING_MAP.code)) {
                 if (event.environment == KeyStateChangedEvent.Environment.IN_GAME) {
-                    NatosAtlas.get().platform.openNacScreen(new MapScreen(null));
+                    NatosAtlasCore.get().platform.openNacScreen(new MapScreen(null));
                 }
             }
         }

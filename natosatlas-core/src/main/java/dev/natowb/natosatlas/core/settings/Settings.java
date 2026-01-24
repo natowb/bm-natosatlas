@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.core.settings;
 
-import dev.natowb.natosatlas.core.utils.LogUtil;
-import dev.natowb.natosatlas.core.utils.NAPaths;
+import dev.natowb.natosatlas.core.io.LogUtil;
+import dev.natowb.natosatlas.core.io.NAPaths;
 
 import java.io.File;
 

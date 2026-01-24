@@ -3,31 +3,31 @@ package dev.natowb.natosatlas.core;
 import dev.natowb.natosatlas.core.layers.MapLayerManager;
 import dev.natowb.natosatlas.core.map.*;
 import dev.natowb.natosatlas.core.map.MapUpdater;
-import dev.natowb.natosatlas.core.tasks.MapSaveScheduler;
-import dev.natowb.natosatlas.core.platform.Platform;
+import dev.natowb.natosatlas.core.io.SaveScheduler;
 import dev.natowb.natosatlas.core.settings.Settings;
-import dev.natowb.natosatlas.core.utils.LogUtil;
-import dev.natowb.natosatlas.core.utils.NAPaths;
+import dev.natowb.natosatlas.core.io.LogUtil;
+import dev.natowb.natosatlas.core.io.NAPaths;
+import dev.natowb.natosatlas.core.texture.TextureProvider;
 import dev.natowb.natosatlas.core.waypoint.Waypoints;
 import dev.natowb.natosatlas.core.access.WorldAccess;
 
 
-public class NatosAtlas {
+public class NatosAtlasCore {
 
 
-    private static NatosAtlas instance = null;
+    private static NatosAtlasCore instance = null;
 
-    public static NatosAtlas get() {
+    public static NatosAtlasCore get() {
         return instance;
     }
 
-    public final Platform platform;
+    public final NatosAtlasPlatform platform;
 
 
     private MapUpdater mapUpdater;
     public final MapStorage storage = new MapStorage();
     public final MapCache cache = new MapCache(storage);
-    public final MapTextureProvider textures = new MapTextureProvider();
+    public final TextureProvider textures = new TextureProvider();
     public final MapLayerManager layers = new MapLayerManager();
 
 
@@ -39,7 +39,7 @@ public class NatosAtlas {
         return !running;
     }
 
-    public NatosAtlas(Platform platform) {
+    public NatosAtlasCore(NatosAtlasPlatform platform) {
         if (instance != null) {
             throw new IllegalStateException("NatosAtlas instance already created!");
         }
@@ -54,24 +54,24 @@ public class NatosAtlas {
 
     public void onTick() {
 
-        if (!WorldAccess.getInstance().exists() && running) {
+        if (!WorldAccess.get().exists() && running) {
             running = false;
             onLeave();
         }
 
-        if (WorldAccess.getInstance().exists() && !running) {
+        if (WorldAccess.get().exists() && !running) {
             onJoin();
         }
 
         if (!running) return;
 
         mapUpdater.tick();
-        MapSaveScheduler.tick();
+        SaveScheduler.tick();
         layers.tick();
     }
 
     private void onJoin() {
-        worldSaveName = WorldAccess.getInstance().getSaveName();
+        worldSaveName = WorldAccess.get().getSaveName();
 
         if (worldSaveName == null) {
             LogUtil.error("joined invalid world");
@@ -83,12 +83,12 @@ public class NatosAtlas {
         mapUpdater = new MapUpdater(layers, cache);
         NAPaths.updateWorldPath(worldSaveName);
         Waypoints.load();
-        MapSaveScheduler.start();
+        SaveScheduler.start();
     }
 
     private void onLeave() {
         LogUtil.info("Left world: {}", worldSaveName);
-        MapSaveScheduler.stop();
+        SaveScheduler.stop();
         cache.clear();
         worldSaveName = null;
         mapUpdater = null;

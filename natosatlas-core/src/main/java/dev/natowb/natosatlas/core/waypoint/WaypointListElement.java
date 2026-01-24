@@ -1,7 +1,6 @@
 package dev.natowb.natosatlas.core.waypoint;
 
-import dev.natowb.natosatlas.core.NatosAtlas;
-import dev.natowb.natosatlas.core.platform.PlatformPainter;
+import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.ui.UITheme;
 import dev.natowb.natosatlas.core.ui.elements.UIElementList;
 
@@ -44,7 +43,7 @@ public class WaypointListElement extends UIElementList<Waypoint> {
     }
 
     private void renderWaypoint(Waypoint wp, int x, int y, int w, int h, boolean hovered, boolean selected) {
-        PlatformPainter p = NatosAtlas.get().platform.painter;
+        PainterAccess p = PainterAccess.get();
 
         int bg = UITheme.LIST_BG;
         if (hovered) bg = UITheme.LIST_BG_HOVER;

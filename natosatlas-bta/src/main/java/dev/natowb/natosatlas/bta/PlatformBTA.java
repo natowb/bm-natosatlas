@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.bta;
 
-import dev.natowb.natosatlas.core.platform.Platform;
+import dev.natowb.natosatlas.core.NatosAtlasPlatform;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
@@ -8,7 +8,7 @@ import net.minecraft.core.sound.SoundCategory;
 
 import java.nio.file.Path;
 
-public class PlatformBTA extends Platform {
+public class PlatformBTA extends NatosAtlasPlatform {
     public PlatformBTA() {
         super(new PlatformPainterBTA(), new BlockAccessBTA(), new WorldAccessBTA());
     }

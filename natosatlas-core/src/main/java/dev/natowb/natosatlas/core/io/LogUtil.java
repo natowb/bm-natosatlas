@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core.utils;
+package dev.natowb.natosatlas.core.io;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

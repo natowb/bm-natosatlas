@@ -1,9 +1,9 @@
 package dev.natowb.natosatlas.core.map;
 
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.tasks.MapSaveWorker;
-import dev.natowb.natosatlas.core.utils.LogUtil;
-import dev.natowb.natosatlas.core.utils.NAPaths;
+import dev.natowb.natosatlas.core.io.SaveWorker;
+import dev.natowb.natosatlas.core.io.LogUtil;
+import dev.natowb.natosatlas.core.io.NAPaths;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Optional;
 
-import static dev.natowb.natosatlas.core.utils.Constants.BLOCKS_PER_CANVAS_REGION;
+import static dev.natowb.natosatlas.core.NatoAtlasConstants.BLOCKS_PER_CANVAS_REGION;
 
 public class MapStorage {
 
@@ -44,7 +44,7 @@ public class MapStorage {
     }
 
     public void saveRegion(int layerId, NACoord coord, MapRegion region) {
-        MapSaveWorker.enqueue(this, coord, region, getRegionPngFile(layerId, coord));
+        SaveWorker.enqueue(this, coord, region, getRegionPngFile(layerId, coord));
     }
 
 
