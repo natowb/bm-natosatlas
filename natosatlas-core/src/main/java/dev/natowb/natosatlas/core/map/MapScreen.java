@@ -3,15 +3,17 @@ package dev.natowb.natosatlas.core.map;
 import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.access.PainterAccess;
+import dev.natowb.natosatlas.core.screens.HelpScreen;
 import dev.natowb.natosatlas.core.settings.Settings;
-import dev.natowb.natosatlas.core.settings.SettingsOption;
 import dev.natowb.natosatlas.core.settings.SettingsScreen;
 import dev.natowb.natosatlas.core.io.SaveWorker;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.UITheme;
 import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
-import dev.natowb.natosatlas.core.ui.elements.UIElementOptionButton;
+import dev.natowb.natosatlas.core.ui.elements.UIElementIconButton;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
+import dev.natowb.natosatlas.core.ui.layout.UIHorizontalLayout;
+import dev.natowb.natosatlas.core.ui.layout.UILayout;
 import dev.natowb.natosatlas.core.waypoint.WaypointListScreen;
 import dev.natowb.natosatlas.core.waypoint.Waypoints;
 import dev.natowb.natosatlas.core.access.WorldAccess;
@@ -30,11 +32,13 @@ public class MapScreen extends UIScreen {
     private final MapStageGrid gridPainter = new MapStageGrid();
     private final MapStageEntities entitiesPainter = new MapStageEntities();
 
-    private UIElementButton settingsButton;
-    private UIElementOptionButton modeButton;
-    private UIElementOptionButton slimeChunksButton;
-    private UIElementButton waypointsButton;
-    private UIElementButton closeButton;
+    private UIElementIconButton closeButton;
+    private UIElementIconButton settingsButton;
+    private UIElementIconButton waypointsButton;
+    private UIElementIconButton slimeChunksButton;
+    private UIElementIconButton modeButton;
+    private UIElementIconButton helpButton;
+
 
     public MapScreen(UIScreen parent) {
         super(parent);
@@ -52,31 +56,47 @@ public class MapScreen extends UIScreen {
         viewport.initViewport(0, 0, width, height);
 
 
-        int padding = 6;
-        int buttonW = 80;
-        int buttonH = 20;
-        int hGap = 6;
+        UILayout layout = new UIHorizontalLayout(5, 15, 5);
 
-        closeButton = new UIElementButton(9999, width - buttonH - padding, padding, buttonH, buttonH, "X");
+
+        closeButton = new UIElementIconButton(101, layout, 20, 20, 4);
         addButton(closeButton);
 
-        settingsButton = new UIElementButton(1000, closeButton.x - hGap - buttonW, padding, buttonW, buttonH, "Settings");
+        settingsButton = new UIElementIconButton(102, layout, 20, 20, 3);
         addButton(settingsButton);
 
-        waypointsButton = new UIElementButton(1002, settingsButton.x - hGap - buttonW, padding, buttonW, buttonH, "Waypoints");
+        waypointsButton = new UIElementIconButton(103, layout, 20, 20, 2);
+        waypointsButton.setColor(0xFFFF0000);
         addButton(waypointsButton);
 
-        modeButton = new UIElementOptionButton(SettingsOption.MAP_RENDER_MODE, waypointsButton.x - hGap - buttonW, padding, buttonW, buttonH);
+        slimeChunksButton = new UIElementIconButton(104, layout, 20, 20, 0);
+        if (!Settings.showSlimeChunks) {
+            slimeChunksButton.setIcon(1);
+        }
+        addButton(slimeChunksButton);
 
-        if (WorldAccess.get().hasCeiling()) {
-            modeButton.active = false;
-            modeButton.label = "Mode: Cave";
+        modeButton = new UIElementIconButton(105, layout, 20, 20, 5);
+
+        Settings.MapRenderMode m = Settings.mapRenderMode;
+        switch (m) {
+            case Day:
+                modeButton.setIcon(5);
+                break;
+            case Night:
+                modeButton.setIcon(6);
+                break;
+            case Cave:
+                modeButton.setIcon(7);
+                break;
+            case Auto:
+                modeButton.setIcon(8);
+                break;
         }
 
         addButton(modeButton);
 
-        slimeChunksButton = new UIElementOptionButton(SettingsOption.SLIME_CHUNKS, modeButton.x - hGap - buttonW, padding, buttonW, buttonH);
-        addButton(slimeChunksButton);
+        helpButton = new UIElementIconButton(106, layout, 20, 20, 11);
+        addButton(helpButton);
     }
 
     @Override
@@ -97,8 +117,6 @@ public class MapScreen extends UIScreen {
         viewport.end();
 
         renderDebugInfo(ctx);
-        renderFooter(ctx);
-
         super.render(mouseX, mouseY, delta, scaleInfo);
     }
 
@@ -163,23 +181,62 @@ public class MapScreen extends UIScreen {
         }
 
         if (btn.id == modeButton.id) {
-            modeButton.cycle();
+            switch (Settings.mapRenderMode) {
+                case Day:
+                    Settings.mapRenderMode = Settings.MapRenderMode.Night;
+                    break;
+                case Night:
+                    Settings.mapRenderMode = Settings.MapRenderMode.Cave;
+                    break;
+                case Cave:
+                    Settings.mapRenderMode = Settings.MapRenderMode.Auto;
+                    break;
+                case Auto:
+                    Settings.mapRenderMode = Settings.MapRenderMode.Day;
+                    break;
+            }
+
+            switch (Settings.mapRenderMode) {
+                case Day:
+                    modeButton.setIcon(5);
+                    break;
+                case Night:
+                    modeButton.setIcon(6);
+                    break;
+                case Cave:
+                    modeButton.setIcon(7);
+                    break;
+                case Auto:
+                    modeButton.setIcon(8);
+                    break;
+            }
             Settings.save();
             return;
         }
 
         if (btn.id == slimeChunksButton.id) {
-            slimeChunksButton.cycle();
+            Settings.showSlimeChunks = !Settings.showSlimeChunks;
+            if (Settings.showSlimeChunks) {
+                ((UIElementIconButton) btn).setIcon(0);
+            } else {
+                ((UIElementIconButton) btn).setIcon(1);
+            }
             Settings.save();
+        }
+
+        if (btn.id == helpButton.id) {
+            NatosAtlasCore.get().platform.openNacScreen(new HelpScreen(this));
+            return;
         }
     }
 
     private void renderDebugInfo(MapContext ctx) {
         if (!Settings.debugInfo) return;
 
+
         GL11.glEnable(GL11.GL_TEXTURE_2D);
 
-        int y = 5;
+        int y = 25;
         painter.drawString("Canvas", 5, y, 0xFFFFFF);
         y += 10;
         painter.drawString(String.format("Size: %d x %d", ctx.canvasW, ctx.canvasH), 5, y, 0xFFFFFF);
@@ -198,31 +255,5 @@ public class MapScreen extends UIScreen {
         painter.drawString(String.format("Dirty Queue Size: %d", NatosAtlasCore.get().cache.getDirtyQueueSize()), 5, y, 0xFFFFFF);
         y += 10;
         painter.drawString(String.format("PNG Cache Size: %d", NatosAtlasCore.get().cache.getPngCacheSize()), 5, y, 0xFFFFFF);
-    }
-
-    private void renderFooter(MapContext ctx) {
-        int barHeight = 20;
-        int x = ctx.canvasX;
-        int y = ctx.canvasY + ctx.canvasH - barHeight;
-        int w = ctx.canvasW;
-        int h = barHeight;
-
-        painter.drawRect(x, y, x + w, y + h, UITheme.ELEMENT_BG);
-
-        double worldPixelX = ctx.scrollX + ctx.mouseX / ctx.zoom;
-        double worldPixelZ = ctx.scrollY + ctx.mouseY / ctx.zoom;
-
-        int blockX = (int) (worldPixelX / 8.0);
-        int blockZ = (int) (worldPixelZ / 8.0);
-
-        String blockInfo = "Block: " + blockX + ", " + blockZ;
-        String shortcuts = "[LM Drag] Pan | [RM Drag] Rotate | [Space] Reset Viewport";
-
-        int padding = 6;
-
-        painter.drawString(blockInfo, x + padding, y + 6, 0xFFFFFF);
-
-        int shortcutsWidth = painter.getStringWidth(shortcuts);
-        painter.drawString(shortcuts, x + w - shortcutsWidth - padding, y + 6, 0xCCCCCC);
     }
 }

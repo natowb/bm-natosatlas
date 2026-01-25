@@ -6,10 +6,10 @@ public final class UITheme {
     }
 
 
-    public static final int ELEMENT_BG = 0xAA000000;
-    public static final int ELEMENT_BG_HOVER = 0xFF404040;
-    public static final int ELEMENT_BORDER = 0xFF353535;
-    public static final int ELEMENT_BORDER_HOVER = 0xFFA0A0A0;
+    public static final int ELEMENT_BG = 0xFF000000;
+    public static final int ELEMENT_BG_HOVER = 0xFF505050;
+    public static final int ELEMENT_BORDER = 0xAA000000;
+    public static final int ELEMENT_BORDER_HOVER = 0xFF808080;
 
     public static final int BUTTON_BG = ELEMENT_BG;
     public static final int BUTTON_BG_HOVER = ELEMENT_BG_HOVER;
@@ -39,15 +39,10 @@ public final class UITheme {
     public static final int SCROLLBAR_BG = 0x202A2A2A;
     public static final int SCROLLBAR_THUMB = 0x80A0A0A0;
 
-
-    public static final int SLIDER_THUMB = 0xFFA0A0A0;
-    public static final int SLIDER_THUMB_HOVER = 0xFFC0C0C0;
-    public static final int SLIDER_THUMB_DRAG = 0xFFFFFFFF;
-
     public static final int SLIDER_TEXT = 0xFFD9D9D9;
 
 
-    public static final int PANEL_BG = 0xEE1A1A1A;
+    public static final int PANEL_BG = 0xFF181818;
 
     public static final int LABEL_TEXT = 0xFF808080;
     public static final int TITLE_TEXT = 0xFFD9D9D9;
