@@ -75,7 +75,8 @@ public class WaypointListElement {
         int bgColor = hovered ? UITheme.LIST_BG_HOVER : UITheme.LIST_BG;
         p.drawRect(x, yPos, x + width, yPos + entryHeight, bgColor);
 
-        int titleColor = wp.visible ? UITheme.LIST_TEXT : UITheme.LIST_SUBTEXT;
+        int colorVisible = 0xFF000000 | (wp.color & 0xFFFFFF);
+        int titleColor = wp.visible ? colorVisible : UITheme.LIST_SUBTEXT;
         p.drawString(wp.name, x + 5, yPos + 4, titleColor, false);
         p.drawString(
                 "X: " + wp.x + "  Y: " + wp.y + "  Z: " + wp.z,

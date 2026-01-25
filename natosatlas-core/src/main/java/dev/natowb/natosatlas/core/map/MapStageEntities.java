@@ -18,7 +18,6 @@ public class MapStageEntities implements MapStage {
     @Override
     public void draw(MapContext ctx, Set<Long> visibleRegions) {
         drawEntities(ctx);
-        drawWaypoints(ctx);
     }
 
     private void drawEntities(MapContext ctx) {
@@ -58,29 +57,6 @@ public class MapStageEntities implements MapStage {
         }
     }
 
-    private void drawWaypoints(MapContext ctx) {
-        for (Waypoint wp : Waypoints.getAll()) {
-            if (!wp.visible) continue;
-            renderMapMarker(ctx,
-                    new NAEntity(wp.x, wp.y, wp.z, 0, NAEntity.NAEntityType.Waypoint));
-        }
-
-        for (Waypoint wp : Waypoints.getAll()) {
-
-            if (!wp.visible) continue;
-
-            double x = wp.x * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
-            double z = wp.z * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
-            double s = 1 / ctx.zoom;
-
-            drawUpright(ctx, x, z, s, 0, () -> {
-                int w = PainterAccess.get().getStringWidth(wp.name);
-                PainterAccess.get().drawString(wp.name, -(w / 2) + 1, 11, 0xFF000000);
-                PainterAccess.get().drawString(wp.name, -(w / 2), 10, 0xFFFFFFFF);
-            });
-        }
-    }
-
     private void renderEntity(MapContext ctx, NAEntity e) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,
                 PainterAccess.get().getMinecraftTextureId(e.texturePath));
@@ -97,8 +73,7 @@ public class MapStageEntities implements MapStage {
     }
 
     private void renderMapMarker(MapContext ctx, NAEntity e) {
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D,
-                PainterAccess.get().getMinecraftTextureId("/misc/mapicons.png"));
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, PainterAccess.get().getMinecraftTextureId("/misc/mapicons.png"));
 
         double x = e.x * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
         double z = e.z * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
@@ -129,7 +104,7 @@ public class MapStageEntities implements MapStage {
         float v2 = v1 + 0.25f;
 
         if (e.type == NAEntity.NAEntityType.Player) {
-            drawPlayerMarker(ctx, x, z, s, e.yaw, () ->
+            drawPlayerMarker(x, z, s, e.yaw, () ->
                     PainterAccess.get().drawTexturedQuad(u1, v1, u2, v2)
             );
         } else {
@@ -140,7 +115,7 @@ public class MapStageEntities implements MapStage {
     }
 
 
-    private void drawPlayerMarker(MapContext ctx, double worldX, double worldZ, double scale, double yaw, Runnable draw) {
+    private void drawPlayerMarker(double worldX, double worldZ, double scale, double yaw, Runnable draw) {
         GL11.glPushMatrix();
         GL11.glTranslated(worldX, worldZ, 0);
         GL11.glRotated(yaw, 0, 0, 1);

@@ -35,9 +35,8 @@ public final class WaypointStorage {
             int y = parse(p[2]);
             int z = parse(p[3]);
             boolean visible = Boolean.parseBoolean(p[4]);
-            String color = p[5];
 
-            if (color == null || color.isEmpty()) color = "FFFFFF";
+            int color = parseColor(p[5]);
 
             Waypoint wp = new Waypoint(name, x, y, z);
             wp.visible = visible;
@@ -51,23 +50,28 @@ public final class WaypointStorage {
         List<String> lines = new ArrayList<>();
 
         for (Waypoint wp : waypoints) {
-            String color = (wp.color == null || wp.color.isEmpty()) ? "FFFFFF" : wp.color;
-
-            lines.add(
-                    wp.name + ":" +
-                            wp.x + ":" +
-                            wp.y + ":" +
-                            wp.z + ":" +
-                            wp.visible + ":" +
-                            color
-            );
+            int c = wp.color == 0 ? 0xFFFFFF : wp.color;
+            String hex = String.format("%06X", c & 0xFFFFFF);
+            lines.add(wp.name + ":" + wp.x + ":" + wp.y + ":" + wp.z + ":" + wp.visible + ":" + hex);
         }
 
         FileUtil.writeLines(file, lines);
     }
 
     private int parse(String s) {
-        try { return Integer.parseInt(s); }
-        catch (Exception e) { return 0; }
+        try {
+            return Integer.parseInt(s);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private int parseColor(String s) {
+        if (s == null || s.isEmpty()) return 0xFFFFFF;
+        try {
+            return Integer.parseInt(s, 16) & 0xFFFFFF;
+        } catch (Exception e) {
+            return 0xFFFFFF;
+        }
     }
 }

@@ -6,12 +6,14 @@ import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementIconButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementTextField;
+import dev.natowb.natosatlas.core.ui.elements.UIElementSlider;
 import dev.natowb.natosatlas.core.ui.UITheme;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import dev.natowb.natosatlas.core.access.WorldAccess;
 import dev.natowb.natosatlas.core.ui.layout.UIHorizontalLayout;
 import dev.natowb.natosatlas.core.ui.layout.UILayout;
+import dev.natowb.natosatlas.core.ui.layout.UIVerticalLayout;
 import org.lwjgl.input.Keyboard;
 
 import static dev.natowb.natosatlas.core.texture.TextureProvider.*;
@@ -26,8 +28,13 @@ public class WaypointCreateScreen extends UIScreen {
     private UIElementTextField yField;
     private UIElementTextField zField;
 
+    private UIElementSlider rSlider;
+    private UIElementSlider gSlider;
+    private UIElementSlider bSlider;
+
     private UIElementButton actionButton;
-    private UIElementButton cancelButton;
+
+    private int previewColor = 0xFFFFFF;
 
     int x = 0;
     int z = 0;
@@ -50,14 +57,13 @@ public class WaypointCreateScreen extends UIScreen {
         this.x = x;
         this.y = 64;
         this.z = z;
-
-
     }
 
     public WaypointCreateScreen(UIScreen parent, Waypoint waypoint) {
         super(parent);
         this.editMode = true;
         this.editing = waypoint;
+        this.previewColor = waypoint.color;
     }
 
     @Override
@@ -65,7 +71,7 @@ public class WaypointCreateScreen extends UIScreen {
         super.init(width, height);
 
         int panelW = 260;
-        int panelH = 160;
+        int panelH = 220;
         int px = (width - panelW) / 2;
         int py = (height - panelH) / 2;
 
@@ -79,7 +85,6 @@ public class WaypointCreateScreen extends UIScreen {
 
         UILayout coordsLayout = new UIHorizontalLayout(px + 20, fieldY, 20, false);
 
-
         xField = new UIElementTextField(coordsLayout, 60, 20, editMode ? Integer.toString(editing.x) : Integer.toString(x));
         yField = new UIElementTextField(coordsLayout, 60, 20, editMode ? Integer.toString(editing.y) : Integer.toString(y));
         zField = new UIElementTextField(coordsLayout, 60, 20, editMode ? Integer.toString(editing.z) : Integer.toString(z));
@@ -92,12 +97,34 @@ public class WaypointCreateScreen extends UIScreen {
         addTextField(yField);
         addTextField(zField);
 
+        UILayout vertical = new UIVerticalLayout(px + 130, py + 110, 4);
+
+        int red = editMode ? ((editing.color >> 16) & 0xFF) : 255;
+        int green = editMode ? ((editing.color >> 8) & 0xFF) : 255;
+        int blue = editMode ? (editing.color & 0xFF) : 255;
+
+        rSlider = new UIElementSlider(4001, vertical, 220, 20, red, "R");
+        rSlider.setRange(0, 255);
+        rSlider.setStep(1);
+        addSlider(rSlider);
+
+        gSlider = new UIElementSlider(4002, vertical, 220, 20, green, "G");
+        gSlider.setRange(0, 255);
+        gSlider.setStep(1);
+        addSlider(gSlider);
+
+        bSlider = new UIElementSlider(4003, vertical, 220, 20, blue, "B");
+        bSlider.setRange(0, 255);
+        bSlider.setStep(1);
+        addSlider(bSlider);
+
+
         UIElementIconButton back = new UIElementIconButton(3000, px + 20, py + panelH - 30, 20, 20, ICON_BACK);
         back.setTooltip("Back");
         back.setHandler(btn -> NatosAtlasCore.get().platform.openNacScreen(parent));
         addButton(back);
 
-        UIElementIconButton confirm = new UIElementIconButton(3001, px + panelW - 20 - 20, py + panelH - 30, 20, 20, ICON_CHECK);
+        UIElementIconButton confirm = new UIElementIconButton(3001, px + panelW - 40, py + panelH - 30, 20, 20, ICON_CHECK);
         confirm.setTooltip(editMode ? "Save" : "Create");
         confirm.active = false;
         confirm.setHandler(btn -> handleAction());
@@ -106,11 +133,15 @@ public class WaypointCreateScreen extends UIScreen {
         this.actionButton = confirm;
     }
 
-
     @Override
     public void tick() {
         super.tick();
         updateActionButtonState();
+
+        int r = (int) rSlider.getValue();
+        int g = (int) gSlider.getValue();
+        int b = (int) bSlider.getValue();
+        previewColor = (r << 16) | (g << 8) | b;
     }
 
     private void updateActionButtonState() {
@@ -133,10 +164,11 @@ public class WaypointCreateScreen extends UIScreen {
             Integer.parseInt(xs);
             Integer.parseInt(ys);
             Integer.parseInt(zs);
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             actionButton.active = false;
             return;
         }
+
         actionButton.active = true;
     }
 
@@ -147,7 +179,7 @@ public class WaypointCreateScreen extends UIScreen {
         p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
 
         int panelW = 260;
-        int panelH = 160;
+        int panelH = 220;
         int px = (width - panelW) / 2;
         int py = (height - panelH) / 2;
 
@@ -157,10 +189,20 @@ public class WaypointCreateScreen extends UIScreen {
         p.drawString("Y", px + 100, py + 68, UITheme.LABEL_TEXT, false);
         p.drawString("Z", px + 180, py + 68, UITheme.LABEL_TEXT, false);
 
+        int argb = 0xFF000000 | previewColor;
+
+        int leftBtnX = px + 20;
+        int rightBtnX = px + panelW - 40;
+
+        int centerX = (leftBtnX + rightBtnX) / 2;
+        int iconX = centerX;
+        int iconY = py + panelH - 30;
+
+        PainterAccess.get().drawIcon(ICON_WAYPOINTS, iconX, iconY, 20, argb);
+
 
         super.render(mouseX, mouseY, delta, scaleInfo);
     }
-
 
     @Override
     public void keyPressed(char character, int keyCode) {
@@ -199,13 +241,26 @@ public class WaypointCreateScreen extends UIScreen {
         int y = Integer.parseInt(yField.getText().trim());
         int z = Integer.parseInt(zField.getText().trim());
 
+        Waypoint wp = new Waypoint(name, x, y, z);
+        wp.color = previewColor;
+
         if (editMode) {
-            Waypoint updated = new Waypoint(name, x, y, z);
-            Waypoints.update(editing, updated);
+            Waypoints.update(editing, wp);
         } else {
-            Waypoints.add(new Waypoint(name, x, y, z));
+            Waypoints.add(wp);
         }
 
         NatosAtlasCore.get().platform.openNacScreen(parent);
     }
+
+    @Override
+    public void onSliderChanged(UIElementSlider slider) {
+        if (slider.id == 4001 || slider.id == 4002 || slider.id == 4003) {
+            int r = (int) rSlider.getValue();
+            int g = (int) gSlider.getValue();
+            int b = (int) bSlider.getValue();
+            previewColor = (r << 16) | (g << 8) | b;
+        }
+    }
+
 }
