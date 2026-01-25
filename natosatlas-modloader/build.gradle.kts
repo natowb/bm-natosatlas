@@ -10,11 +10,17 @@ loom {
     productionNamespace = "clientOfficial"
 }
 
+val projectDependencies = listOf(
+    project(":core")
+)
+
 dependencies {
     minecraft("com.mojang:minecraft:${project.properties["minecraft_version"]}")
     mappings("net.glasslauncher:biny:${project.properties["yarn_mappings"]}:v2")
 
-    implementation(project(":core"))
+    projectDependencies.forEach {
+        implementation(it)
+    }
 
     implementation(files("modloader/modloader.jar"))
 }
@@ -40,15 +46,19 @@ tasks {
     }
 
     jar {
+        projectDependencies.forEach {
+            from(it.sourceSets.main.get().output)
+        }
+
         from(rootProject.layout.projectDirectory.file("LICENSE")) {
             rename { "${it}_${base.archivesName.get()}" }
         }
 
-        from(project(":core").sourceSets.main.map { it.output })
-
         manifest {
             attributes("Implementation-Version" to version)
         }
+
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
     // Hide/Disable the runClient task because it doesn't work yet™

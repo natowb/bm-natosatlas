@@ -10,8 +10,6 @@ import dev.natowb.natosatlas.core.io.NAPaths;
 import dev.natowb.natosatlas.core.texture.TextureProvider;
 import dev.natowb.natosatlas.core.waypoint.Waypoints;
 import dev.natowb.natosatlas.core.access.WorldAccess;
-import jdk.jpackage.internal.Log;
-
 
 public class NatosAtlasCore {
 

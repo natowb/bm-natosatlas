@@ -9,11 +9,17 @@ loom {
     runs["client"].runDir = "../run"
 }
 
+val projectDependencies = listOf(
+    project(":core")
+)
+
 dependencies {
     minecraft("com.mojang:minecraft:${project.properties["minecraft_version"]}")
     mappings("net.glasslauncher:biny:${project.properties["yarn_mappings"]}:v2")
 
-    implementation(project(":core"))
+    projectDependencies.forEach {
+        implementation(it)
+    }
 
     implementation("org.slf4j:slf4j-api:1.8.0-beta4")
     implementation("org.apache.logging.log4j:log4j-core:2.17.2")
@@ -44,7 +50,9 @@ tasks {
     }
 
     processResources {
-        from(project(":core").sourceSets.main.get().resources.srcDirs)
+        projectDependencies.forEach {
+            from(it.sourceSets.main.get().resources)
+        }
 
         inputs.property("version", version)
 
@@ -54,10 +62,14 @@ tasks {
     }
 
     jar {
+        projectDependencies.forEach {
+            from(it.sourceSets.main.get().output)
+        }
+
         from(rootProject.layout.projectDirectory.file("LICENSE")) {
             rename { "${it}_${base.archivesName.get()}" }
         }
 
-        from(project(":core").sourceSets.main.map { it.output })
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }

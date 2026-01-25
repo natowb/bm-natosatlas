@@ -36,10 +36,16 @@ lwjgl {
     implementation(com.smushytaco.lwjgl_gradle.Preset.MINIMAL_OPENGL)
 }
 
+val projectDependencies = listOf(
+    project(":core")
+)
+
 dependencies {
     minecraft("::${libs.versions.bta.get()}")
 
-    implementation(project(":core"))
+    projectDependencies.forEach {
+        implementation(it)
+    }
 
     runtimeOnly(libs.clientJar)
     implementation(libs.loader)
@@ -74,7 +80,9 @@ tasks {
     }
 
     processResources {
-        from(project(":core").sourceSets.main.get().resources.srcDirs)
+        projectDependencies.forEach {
+            from(it.sourceSets.main.get().resources)
+        }
 
         val properties = mapOf(
             "version" to version,
@@ -95,10 +103,14 @@ tasks {
     }
 
     jar {
+        projectDependencies.forEach {
+            from(it.sourceSets.main.get().output)
+        }
+
         from(rootProject.layout.projectDirectory.file("LICENSE")) {
             rename { "${it}_${base.archivesName.get()}" }
         }
 
-        from(project(":core").sourceSets.main.map { it.output })
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }
