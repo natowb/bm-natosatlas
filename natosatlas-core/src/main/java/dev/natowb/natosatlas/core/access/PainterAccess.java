@@ -75,9 +75,15 @@ public abstract class PainterAccess {
         GL11.glEnd();
     }
 
-    public void drawTexturedQuad(float u1, float v1, float u2, float v2) {
+    public void drawTexturedQuad(int argb, float u1, float v1, float u2, float v2) {
+        float a = ((argb >> 24) & 0xFF) / 255f;
+        float r = ((argb >> 16) & 0xFF) / 255f;
+        float g = ((argb >> 8) & 0xFF) / 255f;
+        float b = (argb & 0xFF) / 255f;
+
         GL11.glBegin(GL11.GL_QUADS);
-        GL11.glColor4f(1f, 1f, 1f, 1f);
+        GL11.glColor4f(r, g, b, a);
+
         GL11.glTexCoord2f(u1, v1);
         GL11.glVertex2f(-1, 1);
 
@@ -89,8 +95,35 @@ public abstract class PainterAccess {
 
         GL11.glTexCoord2f(u1, v2);
         GL11.glVertex2f(-1, -1);
+
         GL11.glEnd();
     }
+
+    public void drawTexturedQuad(float u1, float v1, float u2, float v2) {
+        int argb = 0xFFFFFFFF;
+        float a = ((argb >> 24) & 0xFF) / 255f;
+        float r = ((argb >> 16) & 0xFF) / 255f;
+        float g = ((argb >> 8) & 0xFF) / 255f;
+        float b = (argb & 0xFF) / 255f;
+
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glColor4f(r, g, b, a);
+
+        GL11.glTexCoord2f(u1, v1);
+        GL11.glVertex2f(-1, 1);
+
+        GL11.glTexCoord2f(u2, v1);
+        GL11.glVertex2f(1, 1);
+
+        GL11.glTexCoord2f(u2, v2);
+        GL11.glVertex2f(1, -1);
+
+        GL11.glTexCoord2f(u1, v2);
+        GL11.glVertex2f(-1, -1);
+
+        GL11.glEnd();
+    }
+
 
     public void drawTextureRegion(int textureId, int x, int y, int u, int v, int w, int h) {
         float texW = 256f;

@@ -36,6 +36,7 @@ public class MapScreen extends UIScreen {
     private final MapStageSlime slimePainter = new MapStageSlime();
     private final MapStageGrid gridPainter = new MapStageGrid();
     private final MapStageEntities entitiesPainter = new MapStageEntities();
+    private final MapStageWaypoints waypointsPainter = new MapStageWaypoints();
 
     private long lastClickTime = 0;
     private static final long DOUBLE_CLICK_TIME_THRESHOLD = 300;
@@ -213,6 +214,7 @@ public class MapScreen extends UIScreen {
         slimePainter.draw(ctx, visible);
         gridPainter.draw(ctx, visible);
         entitiesPainter.draw(ctx, visible);
+        waypointsPainter.draw(ctx, visible);
         renderMouseBlockHighlight(ctx);
         viewport.end();
 
