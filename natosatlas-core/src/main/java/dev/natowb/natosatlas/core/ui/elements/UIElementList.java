@@ -20,19 +20,10 @@ public class UIElementList<T> {
     private int lastClickedIndex = -1;
     private long lastClickTime = 0;
 
-    public int getScrollOffset() {
-        return scrollOffset;
-    }
-
-    public List<T> getItems() {
-        return items;
-    }
-
-    public int getEntryHeight() {
-        return entryHeight;
-    }
-
     private boolean wasMouseDown = false;
+
+    private boolean draggingScrollbar = false;
+    private int scrollbarGrabOffset = 0;
 
     public interface NacListRenderer<T> {
         void render(T item, int x, int y, int w, int h, boolean hovered, boolean selected);
@@ -55,6 +46,18 @@ public class UIElementList<T> {
     public UIElementList<T> setRenderer(NacListRenderer<T> renderer) {
         this.renderer = renderer;
         return this;
+    }
+
+    public int getScrollOffset() {
+        return scrollOffset;
+    }
+
+    public int getEntryHeight() {
+        return entryHeight;
+    }
+
+    public List<T> getItems() {
+        return items;
     }
 
     public int getSelectedIndex() {
@@ -90,17 +93,17 @@ public class UIElementList<T> {
             yPos += entryHeight;
         }
 
-        renderScrollbar();
+        renderScrollbar(mouseX, mouseY);
     }
 
-    private void renderScrollbar() {
+    private void renderScrollbar(int mouseX, int mouseY) {
         PainterAccess p = PainterAccess.get();
 
         int contentHeight = items.size() * entryHeight;
         if (contentHeight <= h) return;
 
-        int barX1 = x + w - 6;
-        int barX2 = x + w;
+        int barX1 = x + w + 2;
+        int barX2 = barX1 + 6;
 
         float ratio = (float) h / contentHeight;
         int thumbHeight = Math.max(20, (int) (ratio * h));
@@ -110,6 +113,13 @@ public class UIElementList<T> {
 
         p.drawRect(barX1, y, barX2, y + h, UITheme.SCROLLBAR_BG);
         p.drawRect(barX1, thumbY, barX2, thumbY + thumbHeight, UITheme.SCROLLBAR_THUMB);
+
+        if (draggingScrollbar) {
+            int mouseYClamped = Math.max(y, Math.min(mouseY - scrollbarGrabOffset, y + h - thumbHeight));
+            float newRatio = (float) (mouseYClamped - y) / (h - thumbHeight);
+            scrollOffset = (int) (newRatio * (contentHeight - h));
+            clampScroll();
+        }
     }
 
     public void mouseScroll(int amount) {
@@ -126,27 +136,37 @@ public class UIElementList<T> {
     public boolean mouseDown(int mouseX, int mouseY) {
         boolean mouseDown = Mouse.isButtonDown(0);
 
-        if (mouseDown && !wasMouseDown) {
+        int contentHeight = items.size() * entryHeight;
 
-            if (mouseX >= x && mouseX <= x + w &&
+        if (contentHeight > h) {
+            int barX1 = x + w + 2;
+            int barX2 = barX1 + 6;
+
+            float ratio = (float) h / contentHeight;
+            int thumbHeight = Math.max(20, (int) (ratio * h));
+            float scrollRatio = (float) scrollOffset / (contentHeight - h);
+            int thumbY = y + (int) (scrollRatio * (h - thumbHeight));
+
+            if (mouseDown &&
+                    mouseX >= barX1 && mouseX <= barX2 &&
+                    mouseY >= thumbY && mouseY <= thumbY + thumbHeight) {
+
+                draggingScrollbar = true;
+                scrollbarGrabOffset = mouseY - thumbY;
+                return true;
+            }
+        }
+
+        int fullWidth = w + 8;
+        if (mouseDown && !wasMouseDown) {
+            if (mouseX >= x && mouseX <= x + fullWidth &&
                     mouseY >= y && mouseY <= y + h) {
 
                 int index = (mouseY - y + scrollOffset) / entryHeight;
 
                 if (index >= 0 && index < items.size()) {
-
-                    long now = System.currentTimeMillis();
-                    boolean doubleClick =
-                            (index == lastClickedIndex) &&
-                                    ((now - lastClickTime) < 250);
-
-                    lastClickTime = now;
-                    lastClickedIndex = index;
-
-                    selectedIndex = index;
-
                     wasMouseDown = true;
-                    return doubleClick;
+                    return true;
                 }
             }
         }
@@ -155,7 +175,9 @@ public class UIElementList<T> {
         return false;
     }
 
+
     public void mouseUp() {
+        draggingScrollbar = false;
         wasMouseDown = false;
     }
 }

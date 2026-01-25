@@ -56,6 +56,11 @@ public final class Waypoints {
         save();
     }
 
+    public static void toggle(Waypoint wp) {
+        wp.visible = !wp.visible;
+        update(wp, wp);
+    }
+
     public static void remove(Waypoint wp) {
         STORAGE.getAll().remove(wp);
         LogUtil.debug("Removed waypoint {}", wp.name);

@@ -6,14 +6,16 @@ import dev.natowb.natosatlas.core.ui.UITheme;
 import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementIconButton;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
-import dev.natowb.natosatlas.core.ui.layout.UIHorizontalLayout;
-import dev.natowb.natosatlas.core.ui.layout.UILayout;
 import dev.natowb.natosatlas.core.access.PainterAccess;
+
+import static dev.natowb.natosatlas.core.texture.TextureProvider.ICON_BACK;
 
 public class HelpScreen extends UIScreen {
 
     private UIElementIconButton closeButton;
     private final PainterAccess painter = PainterAccess.get();
+
+    private int headerY;
 
     String[][] entries = {
             {"[Left Mouse]", "Pan the map"},
@@ -31,9 +33,16 @@ public class HelpScreen extends UIScreen {
     public void init(int width, int height) {
         super.init(width, height);
 
-        UILayout layout = new UIHorizontalLayout(5, 15, 5);
+        int headerHeight = 20;
+        int headerGap = 10;
+        int contentHeight = entries.length * 18 + 40;
 
-        closeButton = new UIElementIconButton(200, layout, 20, 20, 4);
+        int totalHeight = headerHeight + headerGap + contentHeight;
+        int contentTop = (height - totalHeight) / 2;
+
+        headerY = contentTop;
+
+        closeButton = new UIElementIconButton(200, width / 2 - 100, headerY, 20, 20, ICON_BACK);
         addButton(closeButton);
     }
 
@@ -42,9 +51,9 @@ public class HelpScreen extends UIScreen {
         painter.drawRect(0, 0, width, height, UITheme.PANEL_BG);
 
         int centerX = width / 2;
-        int y = 50;
+        int y = headerY + 4;
 
-        painter.drawCenteredString("Help & Controls", centerX, y, 0xFFFFFF);
+        painter.drawCenteredString("Help & Controls", centerX, y, UITheme.TITLE_TEXT);
         y += 30;
 
         int maxKeyWidth = 0;
@@ -74,7 +83,6 @@ public class HelpScreen extends UIScreen {
 
         super.render(mouseX, mouseY, delta, scaleInfo);
     }
-
 
     @Override
     public void onClick(UIElementButton btn) {

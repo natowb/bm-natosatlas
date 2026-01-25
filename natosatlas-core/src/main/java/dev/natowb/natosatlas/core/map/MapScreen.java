@@ -56,17 +56,18 @@ public class MapScreen extends UIScreen {
         viewport.initViewport(0, 0, width, height);
 
 
-        UILayout layout = new UIHorizontalLayout(5, 15, 5);
+        UILayout layout = new UIHorizontalLayout(5, 15, 5, false);
 
 
         closeButton = new UIElementIconButton(101, layout, 20, 20, 4);
+        closeButton.setColor(0xFFFF0000);
         addButton(closeButton);
 
         settingsButton = new UIElementIconButton(102, layout, 20, 20, 3);
         addButton(settingsButton);
 
         waypointsButton = new UIElementIconButton(103, layout, 20, 20, 2);
-        waypointsButton.setColor(0xFFFF0000);
+        waypointsButton.setColor(0xFF0000FF);
         addButton(waypointsButton);
 
         slimeChunksButton = new UIElementIconButton(104, layout, 20, 20, 0);
@@ -75,25 +76,28 @@ public class MapScreen extends UIScreen {
         }
         addButton(slimeChunksButton);
 
-        modeButton = new UIElementIconButton(105, layout, 20, 20, 5);
 
-        Settings.MapRenderMode m = Settings.mapRenderMode;
-        switch (m) {
-            case Day:
-                modeButton.setIcon(5);
-                break;
-            case Night:
-                modeButton.setIcon(6);
-                break;
-            case Cave:
-                modeButton.setIcon(7);
-                break;
-            case Auto:
-                modeButton.setIcon(8);
-                break;
+        if (!WorldAccess.get().hasCeiling()) {
+            modeButton = new UIElementIconButton(105, layout, 20, 20, 5);
+
+            Settings.MapRenderMode m = Settings.mapRenderMode;
+            switch (m) {
+                case Day:
+                    modeButton.setIcon(5);
+                    break;
+                case Night:
+                    modeButton.setIcon(6);
+                    break;
+                case Cave:
+                    modeButton.setIcon(7);
+                    break;
+                case Auto:
+                    modeButton.setIcon(8);
+                    break;
+            }
+            addButton(modeButton);
         }
 
-        addButton(modeButton);
 
         helpButton = new UIElementIconButton(106, layout, 20, 20, 11);
         addButton(helpButton);
@@ -180,38 +184,41 @@ public class MapScreen extends UIScreen {
             return;
         }
 
-        if (btn.id == modeButton.id) {
-            switch (Settings.mapRenderMode) {
-                case Day:
-                    Settings.mapRenderMode = Settings.MapRenderMode.Night;
-                    break;
-                case Night:
-                    Settings.mapRenderMode = Settings.MapRenderMode.Cave;
-                    break;
-                case Cave:
-                    Settings.mapRenderMode = Settings.MapRenderMode.Auto;
-                    break;
-                case Auto:
-                    Settings.mapRenderMode = Settings.MapRenderMode.Day;
-                    break;
-            }
 
-            switch (Settings.mapRenderMode) {
-                case Day:
-                    modeButton.setIcon(5);
-                    break;
-                case Night:
-                    modeButton.setIcon(6);
-                    break;
-                case Cave:
-                    modeButton.setIcon(7);
-                    break;
-                case Auto:
-                    modeButton.setIcon(8);
-                    break;
+        if (!WorldAccess.get().hasCeiling()) {
+            if (btn.id == modeButton.id) {
+                switch (Settings.mapRenderMode) {
+                    case Day:
+                        Settings.mapRenderMode = Settings.MapRenderMode.Night;
+                        break;
+                    case Night:
+                        Settings.mapRenderMode = Settings.MapRenderMode.Cave;
+                        break;
+                    case Cave:
+                        Settings.mapRenderMode = Settings.MapRenderMode.Auto;
+                        break;
+                    case Auto:
+                        Settings.mapRenderMode = Settings.MapRenderMode.Day;
+                        break;
+                }
+
+                switch (Settings.mapRenderMode) {
+                    case Day:
+                        modeButton.setIcon(5);
+                        break;
+                    case Night:
+                        modeButton.setIcon(6);
+                        break;
+                    case Cave:
+                        modeButton.setIcon(7);
+                        break;
+                    case Auto:
+                        modeButton.setIcon(8);
+                        break;
+                }
+                Settings.save();
+                return;
             }
-            Settings.save();
-            return;
         }
 
         if (btn.id == slimeChunksButton.id) {
