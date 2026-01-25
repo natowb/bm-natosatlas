@@ -3,7 +3,6 @@ package dev.natowb.natosatlas.core.screens;
 import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.UITheme;
-import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementIconButton;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import dev.natowb.natosatlas.core.access.PainterAccess;
@@ -18,8 +17,9 @@ public class HelpScreen extends UIScreen {
     private int headerY;
 
     String[][] entries = {
-            {"[Left Mouse]", "Pan the map"},
-            {"[Right Mouse]", "Rotate the map"},
+            {"[L Mouse Drag]", "Pan the map"},
+            {"[R Mouse Drag]", "Rotate the map"},
+            {"[L Mouse DBClick]", "Create Waypoint"},
             {"[Mouse Wheel]", "Zoom in/out"},
             {"[Space]", "Reset camera"},
             {"[P]", "Export map layers"}
@@ -43,6 +43,7 @@ public class HelpScreen extends UIScreen {
         headerY = contentTop;
 
         closeButton = new UIElementIconButton(200, width / 2 - 100, headerY, 20, 20, ICON_BACK);
+        closeButton.setHandler(btn -> NatosAtlasCore.get().platform.openNacScreen(parent));
         addButton(closeButton);
     }
 
@@ -82,12 +83,5 @@ public class HelpScreen extends UIScreen {
         }
 
         super.render(mouseX, mouseY, delta, scaleInfo);
-    }
-
-    @Override
-    public void onClick(UIElementButton btn) {
-        if (btn.id == closeButton.id) {
-            NatosAtlasCore.get().platform.openNacScreen(parent);
-        }
     }
 }

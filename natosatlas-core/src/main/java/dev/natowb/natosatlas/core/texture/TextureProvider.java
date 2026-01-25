@@ -12,23 +12,35 @@ import java.util.Objects;
 
 public final class TextureProvider {
 
-    public static final int ICON_SLIME_ACTIVE = 0;
+    public static final int ICON_SLIME_ENABLED = 0;
     public static final int ICON_SLIME_DISABLED = 1;
-    public static final int ICON_WAYPOINTS = 2;
-    public static final int ICON_COG = 3;
-    public static final int ICON_CROSS = 4;
-    public static final int ICON_DAY = 5;
-    public static final int ICON_NIGHT = 6;
-    public static final int ICON_CAVE = 7;
-    public static final int ICON_AUTO = 8;
-    public static final int ICON_EYE_OPEN = 9;
-    public static final int ICON_EYE_CLOSED = 10;
-    public static final int ICON_HELP = 11;
-    public static final int ICON_PLUS = 12;
-    public static final int ICON_BACK = 13;
+
+    public static final int ICON_GRID_ENABLED = 2;
+    public static final int ICON_GRID_DISABLED = 3;
+
+    public static final int ICON_DAY = 4;
+    public static final int ICON_NIGHT = 5;
+    public static final int ICON_CAVE = 6;
+    public static final int ICON_AUTO = 7;
+
+    public static final int ICON_COG = 8;
+    public static final int ICON_HELP = 9;
+    public static final int ICON_WAYPOINTS = 10;
+
+    public static final int ICON_BACK = 11;
+    public static final int ICON_FORWARD = 12;
+
+    public static final int ICON_CROSS = 13;
     public static final int ICON_CHECK = 14;
-    public static final int ICON_MENU_DOWN = 15;
-    public static final int ICON_MENU_UP = 16;
+    public static final int ICON_PLUS = 15;
+    public static final int ICON_MINUS = 16;
+
+    public static final int ICON_EYE_OPEN = 17;
+    public static final int ICON_EYE_CLOSED = 18;
+
+    public static final int ICON_ENTITY_PLAYER = 19;
+    public static final int ICON_ENTITY_ALL = 20;
+    public static final int ICON_ENTITY_NONE = 21;
 
 
     private int iconsTextureId = -1;

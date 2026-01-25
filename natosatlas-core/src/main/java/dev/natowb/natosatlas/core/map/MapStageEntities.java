@@ -60,6 +60,7 @@ public class MapStageEntities implements MapStage {
 
     private void drawWaypoints(MapContext ctx) {
         for (Waypoint wp : Waypoints.getAll()) {
+            if (!wp.visible) continue;
             renderMapMarker(ctx,
                     new NAEntity(wp.x, wp.y, wp.z, 0, NAEntity.NAEntityType.Waypoint));
         }
@@ -142,7 +143,7 @@ public class MapStageEntities implements MapStage {
     private void drawPlayerMarker(MapContext ctx, double worldX, double worldZ, double scale, double yaw, Runnable draw) {
         GL11.glPushMatrix();
         GL11.glTranslated(worldX, worldZ, 0);
-        GL11.glRotated(yaw, 0, 0, 1);   // only yaw, no unrotation
+        GL11.glRotated(yaw, 0, 0, 1);
         GL11.glScaled(scale, scale, 1);
         draw.run();
         GL11.glPopMatrix();

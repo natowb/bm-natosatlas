@@ -98,11 +98,7 @@ public class WaypointListElement {
     private int renderButton(PainterAccess p, int x, int y, int icon, int mouseX, int mouseY) {
         boolean hover = isMouseOver(x, y, BTN_SIZE, BTN_SIZE, mouseX, mouseY);
         if (hover) {
-            p.drawRect(
-                    x - 2, y - 2,
-                    x + BTN_SIZE + 2, y + BTN_SIZE + 2,
-                    UITheme.BUTTON_BG_HOVER
-            );
+            p.drawRect(x - 2, y - 2, x + BTN_SIZE + 2, y + BTN_SIZE + 2, UITheme.BUTTON_BG_HOVER);
         }
 
         p.drawIcon(icon, x, y, BTN_SIZE, 0xFFFFFFFF);
@@ -171,7 +167,6 @@ public class WaypointListElement {
     }
 
     private boolean isMouseOver(int x, int y, int w, int h, int mouseX, int mouseY) {
-        return mouseX >= x && mouseX <= x + w &&
-                mouseY >= y && mouseY <= y + h;
+        return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
     }
 }

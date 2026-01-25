@@ -5,7 +5,6 @@ import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.UITheme;
-import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementIconButton;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 
@@ -44,10 +43,13 @@ public class WaypointListScreen extends UIScreen {
         int listY = headerY + headerHeight + headerGap;
 
         backButton = new UIElementIconButton(1000, listX, headerY, 20, 20, ICON_BACK);
-        createButton = new UIElementIconButton(1001, listX + listWidth - 20, headerY, 20, 20, ICON_PLUS);
-
-        addButton(createButton);
+        backButton.setHandler(btn -> NatosAtlasCore.get().platform.openNacScreen(parent));
         addButton(backButton);
+
+        createButton = new UIElementIconButton(1001, listX + listWidth - 20, headerY, 20, 20, ICON_PLUS);
+        createButton.setHandler(btn -> NatosAtlasCore.get().platform.openNacScreen(new WaypointCreateScreen(this)));
+        addButton(createButton);
+
 
         list = new WaypointListElement(listX, listY, listWidth, listHeight, 30);
         list.setHandler(new WaypointListElement.ClickHandler() {
@@ -98,19 +100,5 @@ public class WaypointListScreen extends UIScreen {
     public void mouseUp(int mouseX, int mouseY, int button) {
         if (Settings.useReiMinimapWaypointStorage) return;
         super.mouseUp(mouseX, mouseY, button);
-    }
-
-    @Override
-    protected void onClick(UIElementButton btn) {
-        if (Settings.useReiMinimapWaypointStorage) return;
-
-        if (btn.id == createButton.id) {
-            NatosAtlasCore.get().platform.openNacScreen(new WaypointCreateScreen(this));
-            return;
-        }
-
-        if (btn.id == backButton.id) {
-            NatosAtlasCore.get().platform.openNacScreen(parent);
-        }
     }
 }

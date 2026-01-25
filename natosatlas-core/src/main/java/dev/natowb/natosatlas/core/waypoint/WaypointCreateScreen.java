@@ -4,12 +4,17 @@ import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.elements.UIElementButton;
+import dev.natowb.natosatlas.core.ui.elements.UIElementIconButton;
 import dev.natowb.natosatlas.core.ui.elements.UIElementTextField;
 import dev.natowb.natosatlas.core.ui.UITheme;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import dev.natowb.natosatlas.core.access.WorldAccess;
+import dev.natowb.natosatlas.core.ui.layout.UIHorizontalLayout;
+import dev.natowb.natosatlas.core.ui.layout.UILayout;
 import org.lwjgl.input.Keyboard;
+
+import static dev.natowb.natosatlas.core.texture.TextureProvider.*;
 
 public class WaypointCreateScreen extends UIScreen {
 
@@ -24,10 +29,29 @@ public class WaypointCreateScreen extends UIScreen {
     private UIElementButton actionButton;
     private UIElementButton cancelButton;
 
+    int x = 0;
+    int z = 0;
+    int y = 0;
+
     public WaypointCreateScreen(UIScreen parent) {
         super(parent);
         this.editMode = false;
         this.editing = null;
+        NAEntity player = WorldAccess.get().getPlayer();
+        this.x = (int) player.x;
+        this.y = (int) player.y;
+        this.z = (int) player.z;
+    }
+
+    public WaypointCreateScreen(UIScreen parent, int x, int z) {
+        super(parent);
+        this.editMode = false;
+        this.editing = null;
+        this.x = x;
+        this.y = 64;
+        this.z = z;
+
+
     }
 
     public WaypointCreateScreen(UIScreen parent, Waypoint waypoint) {
@@ -45,56 +69,43 @@ public class WaypointCreateScreen extends UIScreen {
         int px = (width - panelW) / 2;
         int py = (height - panelH) / 2;
 
-        nameField = new UIElementTextField(px + 20, py + 40, 220, 20,
-                editMode ? editing.name : "");
-        nameField.setMaxLength(32);
+        nameField = new UIElementTextField(px + 20, py + 40, 220, 20, editMode ? editing.name : "");
+        nameField.setMaxLength(24);
         nameField.setFocused(true);
-
         addTextField(nameField);
 
-        xField = new UIElementTextField(px + 20, py + 80, 60, 20,
-                editMode ? Integer.toString(editing.x) : "");
-        yField = new UIElementTextField(px + 100, py + 80, 60, 20,
-                editMode ? Integer.toString(editing.y) : "");
-        zField = new UIElementTextField(px + 180, py + 80, 60, 20,
-                editMode ? Integer.toString(editing.z) : "");
+        int labelY = py + 68;
+        int fieldY = labelY + 22;
+
+        UILayout coordsLayout = new UIHorizontalLayout(px + 20, fieldY, 20, false);
+
+
+        xField = new UIElementTextField(coordsLayout, 60, 20, editMode ? Integer.toString(editing.x) : Integer.toString(x));
+        yField = new UIElementTextField(coordsLayout, 60, 20, editMode ? Integer.toString(editing.y) : Integer.toString(y));
+        zField = new UIElementTextField(coordsLayout, 60, 20, editMode ? Integer.toString(editing.z) : Integer.toString(z));
 
         xField.setMaxLength(8);
         yField.setMaxLength(8);
         zField.setMaxLength(8);
 
-        if (!editMode) {
-            NAEntity player = WorldAccess.get().getPlayer();
-            xField.setText("" + (int) player.x);
-            yField.setText("" + (int) player.y);
-            zField.setText("" + (int) player.z);
-        }
-
-
         addTextField(xField);
         addTextField(yField);
         addTextField(zField);
 
-        int buttonW = 100;
-        int buttonH = 20;
-        int gap = 10;
+        UIElementIconButton back = new UIElementIconButton(3000, px + 20, py + panelH - 30, 20, 20, ICON_BACK);
+        back.setTooltip("Back");
+        back.setHandler(btn -> NatosAtlasCore.get().platform.openNacScreen(parent));
+        addButton(back);
 
-        int totalW = (buttonW * 2) + gap;
-        int blockX = px + (panelW - totalW) / 2;
-        int buttonY = py + panelH - buttonH - 10;
+        UIElementIconButton confirm = new UIElementIconButton(3001, px + panelW - 20 - 20, py + panelH - 30, 20, 20, ICON_CHECK);
+        confirm.setTooltip(editMode ? "Save" : "Create");
+        confirm.active = false;
+        confirm.setHandler(btn -> handleAction());
+        addButton(confirm);
 
-        cancelButton = new UIElementButton(3000, blockX, buttonY, buttonW, buttonH, "Cancel");
-
-        addButton(cancelButton);
-
-        actionButton = new UIElementButton(3001, blockX + buttonW + gap, buttonY, buttonW, buttonH,
-                editMode ? "Save" : "Create");
-        actionButton.active = false;
-
-        addButton(actionButton);
-
-
+        this.actionButton = confirm;
     }
+
 
     @Override
     public void tick() {
@@ -140,9 +151,7 @@ public class WaypointCreateScreen extends UIScreen {
         int px = (width - panelW) / 2;
         int py = (height - panelH) / 2;
 
-        p.drawCenteredString(editMode ? "Edit Waypoint" : "Create Waypoint",
-                width / 2, py + 10, UITheme.TITLE_TEXT);
-
+        p.drawCenteredString(editMode ? "Edit Waypoint" : "Create Waypoint", width / 2, py + 10, UITheme.TITLE_TEXT);
         p.drawString("Name (A-Za-z0-9 _-)", px + 20, py + 28, UITheme.LABEL_TEXT, false);
         p.drawString("X", px + 20, py + 68, UITheme.LABEL_TEXT, false);
         p.drawString("Y", px + 100, py + 68, UITheme.LABEL_TEXT, false);
@@ -150,18 +159,6 @@ public class WaypointCreateScreen extends UIScreen {
 
 
         super.render(mouseX, mouseY, delta, scaleInfo);
-    }
-
-
-    @Override
-    protected void onClick(UIElementButton button) {
-        if (button.id == cancelButton.id) {
-            NatosAtlasCore.get().platform.openNacScreen(parent);
-            return;
-        }
-        if (button.id == actionButton.id) {
-            handleAction();
-        }
     }
 
 

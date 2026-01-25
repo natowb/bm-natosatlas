@@ -18,11 +18,6 @@ import dev.natowb.natosatlas.core.access.WorldAccess;
 import static dev.natowb.natosatlas.core.texture.TextureProvider.ICON_BACK;
 
 public class SettingsScreen extends UIScreen {
-
-    private static final int SLIDER_ID_ZOOM = 3001;
-    private static final int BUTTON_ID_GENERATE_EXISTING = 3002;
-    private static final int BUTTON_ID_CLOSE = 3003;
-
     private int headerY;
 
     public SettingsScreen(UIScreen parent) {
@@ -42,45 +37,39 @@ public class SettingsScreen extends UIScreen {
 
         headerY = contentTop;
 
-        addButton(new UIElementIconButton(BUTTON_ID_CLOSE, width / 2 - 100, headerY, 20, 20, ICON_BACK));
+        UIElementIconButton closeButton = new UIElementIconButton(101, width / 2 - 100, headerY, 20, 20, ICON_BACK);
+        closeButton.setHandler(btn -> {
+            Settings.save();
+            NatosAtlasCore.get().platform.openNacScreen(parent);
+        });
+
+        addButton(closeButton);
 
         UILayout layout = new UIVerticalLayout(width / 2, headerY + headerHeight + headerGap, 5);
 
-        addButton(new UIElementOptionButton(SettingsOption.MAP_GRID, layout, 150, 20));
-        addButton(new UIElementOptionButton(SettingsOption.ENTITY_DISPLAY, layout, 150, 20));
-        addButton(new UIElementOptionButton(SettingsOption.DEBUG_INFO, layout, 150, 20));
-        addButton(new UIElementOptionButton(SettingsOption.USE_REIMINIMAP_WAYPOINTS, layout, 150, 20));
+        UIElementOptionButton debugButton = new UIElementOptionButton(SettingsOption.DEBUG_INFO, layout, 150, 20);
+        debugButton.setHandler(btn -> debugButton.cycle());
+        addButton(debugButton);
+
+        UIElementOptionButton reiButton = new UIElementOptionButton(SettingsOption.USE_REIMINIMAP_WAYPOINTS, layout, 150, 20);
+        reiButton.setHandler(btn -> reiButton.cycle());
+        addButton(reiButton);
 
         boolean isServer = WorldAccess.get().isServer();
-        addButton(new UIElementButton(BUTTON_ID_GENERATE_EXISTING, layout, 150, 20, "Generate Existing", !isServer));
+        UIElementButton existingButton = new UIElementButton(102, layout, 150, 20, "Generate Existing", !isServer);
+        existingButton.setHandler(btn -> ChunkBuilder.rebuildExistingChunks(NatosAtlasCore.get().storage, NatosAtlasCore.get().cache));
+        addButton(existingButton);
 
-        UIElementSlider zoomSlider = new UIElementSlider(SLIDER_ID_ZOOM, layout, 150, 20, Settings.defaultZoom, "Default Zoom");
+        UIElementSlider zoomSlider = new UIElementSlider(103, layout, 150, 20, Settings.defaultZoom, "Default Zoom");
         zoomSlider.setRange(MapConfig.MIN_ZOOM, MapConfig.MAX_ZOOM);
         zoomSlider.setStep(0.01f);
         addSlider(zoomSlider);
     }
 
-    @Override
-    protected void onClick(UIElementButton button) {
-        if (button instanceof UIElementOptionButton) {
-            ((UIElementOptionButton) button).cycle();
-            return;
-        }
-
-        if (button.id == BUTTON_ID_CLOSE) {
-            Settings.save();
-            NatosAtlasCore.get().platform.openNacScreen(parent);
-            return;
-        }
-
-        if (button.id == BUTTON_ID_GENERATE_EXISTING) {
-            ChunkBuilder.rebuildExistingChunks(NatosAtlasCore.get().storage, NatosAtlasCore.get().cache);
-        }
-    }
 
     @Override
     public void onSliderChanged(UIElementSlider slider) {
-        if (slider.id == SLIDER_ID_ZOOM) {
+        if (slider.id == 103) {
             Settings.defaultZoom = slider.getValue();
         }
     }

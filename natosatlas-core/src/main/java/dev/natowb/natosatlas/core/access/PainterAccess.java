@@ -92,6 +92,31 @@ public abstract class PainterAccess {
         GL11.glEnd();
     }
 
+    public void drawTextureRegion(int textureId, int x, int y, int u, int v, int w, int h) {
+        float texW = 256f;
+        float texH = 256f;
+
+        float u1 = u / texW;
+        float v1 = v / texH;
+        float u2 = (u + w) / texW;
+        float v2 = (v + h) / texH;
+
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureId);
+        GL11.glColor4f(1f, 1f, 1f, 1f);
+
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glTexCoord2f(u1, v2);
+        GL11.glVertex2f(x, y + h);
+        GL11.glTexCoord2f(u2, v2);
+        GL11.glVertex2f(x + w, y + h);
+        GL11.glTexCoord2f(u2, v1);
+        GL11.glVertex2f(x + w, y);
+        GL11.glTexCoord2f(u1, v1);
+        GL11.glVertex2f(x, y);
+        GL11.glEnd();
+    }
+
+
     public void drawIcon(int iconIndex, int x, int y, int size, int argbColor) {
         final int ICON_SIZE = 16;
         final int SHEET_SIZE = 128;
@@ -138,9 +163,15 @@ public abstract class PainterAccess {
         GL11.glColor4f(1f, 1f, 1f, 1f);
     }
 
-    public void drawIcon(int iconIndex, int x, int y, int size) {
-        drawIcon(iconIndex, x, y, size, 0xFFFFFFFF);
+    public void drawIconWithShadow(int iconIndex, int x, int y, int size, int argbColor) {
+        int alpha = argbColor & 0xFF000000;
+        int shadowRGB = (argbColor & 0x00FCFCFC) >> 2;
+        int shadowColor = alpha | shadowRGB;
+
+        drawIcon(iconIndex, x + 1, y + 1, size, shadowColor);
+        drawIcon(iconIndex, x, y, size, argbColor);
     }
+
 
 
     public abstract int getStringWidth(String text);
@@ -152,4 +183,10 @@ public abstract class PainterAccess {
     public abstract void drawCenteredString(String text, int centerX, int y, int color);
 
     public abstract int getMinecraftTextureId(String string);
+
+
+    public void drawStringWithShadow(String text, int x, int y, int color) {
+        drawString(text, x + 1, y + 1, color, true);
+        drawString(text, x, y, color);
+    }
 }

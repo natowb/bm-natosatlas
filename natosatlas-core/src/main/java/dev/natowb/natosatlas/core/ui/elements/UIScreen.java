@@ -62,6 +62,13 @@ public abstract class UIScreen {
         for (UIElementTextField tf : textFields) {
             tf.render();
         }
+
+        for (UIElementButton btn : buttons) {
+            if (btn instanceof UIElementIconButton) {
+                ((UIElementIconButton) btn).renderTooltip(mouseX, mouseY, scaleInfo.scaledWidth, scaleInfo.scaledHeight);
+            }
+        }
+
     }
 
 
@@ -77,6 +84,9 @@ public abstract class UIScreen {
         }
 
         if (button >= 0 && button <= 2) {
+            if (button == 0 && pressed && handleClickDispatch(x, y)) {
+                return;
+            }
 
             if (pressed) {
                 mouseButtons[button] = true;
@@ -86,10 +96,6 @@ public abstract class UIScreen {
 
             mouseButtons[button] = false;
             mouseUp(x, y, button);
-
-            if (button == 0) {
-                handleClickDispatch(x, y);
-            }
             return;
         }
 
@@ -101,19 +107,19 @@ public abstract class UIScreen {
     }
 
 
-    private void handleClickDispatch(int mouseX, int mouseY) {
+    private boolean handleClickDispatch(int mouseX, int mouseY) {
         for (UIElementButton btn : buttons) {
-            if (btn.active && btn.isInside(mouseX, mouseY)) {
+            if (btn.active && btn.isHovered(mouseX, mouseY)) {
                 NatosAtlasCore.get().platform.playSound("random.click", 1.0F, 1.0F);
-                onClick(btn);
-                return;
+                if (btn.handler != null)  {
+                    btn.handler.onClick(btn);
+                    return true;
+                }
             }
         }
+        return false;
     }
 
-    protected void onClick(UIElementButton button) {
-
-    }
 
     protected void onSliderChanged(UIElementSlider slider) {
 
