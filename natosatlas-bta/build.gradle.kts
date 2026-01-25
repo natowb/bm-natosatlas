@@ -74,6 +74,8 @@ tasks {
     }
 
     processResources {
+        from(project(":core").sourceSets.main.get().resources.srcDirs)
+
         val properties = mapOf(
             "version" to version,
             "fabricloader" to libs.versions.loader.get(),
