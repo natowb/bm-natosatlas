@@ -9,13 +9,15 @@ public class PlatformPainterML extends PainterAccess {
 
     @Override
     public void drawString(String text, int x, int y, int color, boolean shadow) {
+        Minecraft mc = ModLoader.getMinecraftInstance();
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-        ModLoader.getMinecraftInstance().textRenderer.draw(text, x, y, color);
+        mc.textRenderer.draw(text, x, y, color);
     }
 
     @Override
     public int getStringWidth(String str) {
-        return ModLoader.getMinecraftInstance().textRenderer.getWidth(str);
+        Minecraft mc = ModLoader.getMinecraftInstance();
+        return mc.textRenderer.getWidth(str);
     }
 
     @Override
@@ -25,7 +27,8 @@ public class PlatformPainterML extends PainterAccess {
 
     @Override
     public int getMinecraftTextureId(String string) {
-        return ModLoader.getMinecraftInstance().textureManager.getTextureId(string);
+        Minecraft mc = ModLoader.getMinecraftInstance();
+        return mc.textureManager.getTextureId(string);
     }
 
     @Override

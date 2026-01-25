@@ -8,7 +8,7 @@ import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.screens.HelpScreen;
 import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.settings.SettingsOption;
-import dev.natowb.natosatlas.core.settings.SettingsScreen;
+import dev.natowb.natosatlas.core.settings.OptionScreen;
 import dev.natowb.natosatlas.core.io.SaveWorker;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.UITheme;
@@ -63,11 +63,11 @@ public class MapScreen extends UIScreen {
         closeButton.setTooltip("Close");
         addButton(closeButton);
 
-        UIElementIconButton settingsButton = new UIElementIconButton(102, leftLayout, 20, 20, ICON_COG);
-        settingsButton.setHandler(btn -> NatosAtlasCore.get().platform.openNacScreen(new SettingsScreen(this)));
-        settingsButton.setTooltip("Settings");
+        UIElementIconButton optionsButton = new UIElementIconButton(102, leftLayout, 20, 20, ICON_COG);
+        optionsButton.setHandler(btn -> NatosAtlasCore.get().platform.openNacScreen(new OptionScreen(this)));
+        optionsButton.setTooltip("Options");
 
-        addButton(settingsButton);
+        addButton(optionsButton);
 
         UIElementIconButton helpButton = new UIElementIconButton(106, leftLayout, 20, 20, ICON_HELP);
         helpButton.setHandler(btn -> NatosAtlasCore.get().platform.openNacScreen(new HelpScreen(this)));

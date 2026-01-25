@@ -55,19 +55,30 @@ public class UIElementSlider extends UIElementButton {
 
     @Override
     public void render(int mouseX, int mouseY) {
-        boolean hovered = isHovered(mouseX, mouseY);
-        drawButtonBackground(1);
-
         PainterAccess p = PainterAccess.get();
+
+        boolean hovered = isHovered(mouseX, mouseY);
+
+        int texture = p.getMinecraftTextureId("/gui/gui.png");
+        int texY = 46;
+        int half = w / 2;
+
+        p.drawTextureRegion(texture, x, y, 0, texY, half, h);
+        p.drawTextureRegion(texture, x + half, y, 200 - half, texY, half, h);
+
         float t = (value - min) / (max - min);
         int thumbX = x + (int) (t * (w - 8));
 
-        int texture = p.getMinecraftTextureId("/gui/gui.png");
         p.drawTextureRegion(texture, thumbX, y, 0, 66, 4, h);
         p.drawTextureRegion(texture, thumbX + 4, y, 196, 66, 4, h);
 
+        String text = getDisplayText();
+        int tw = p.getStringWidth(text);
+        int tx = x + (w - tw) / 2;
+        int ty = y + (h - 8) / 2;
+
         int color = getTextColor(active, hovered);
-        drawCenteredText(getDisplayText(), color);
+        p.drawStringWithShadow(text, tx, ty, color);
     }
 
     public boolean mouseDown(int mouseX, int mouseY) {

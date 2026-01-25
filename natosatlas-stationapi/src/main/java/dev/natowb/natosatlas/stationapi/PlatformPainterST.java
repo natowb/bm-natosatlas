@@ -36,4 +36,5 @@ public class PlatformPainterST extends PainterAccess {
         Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
         mc.textRenderer.drawWithShadow(text, centerX - mc.textRenderer.getWidth(text) / 2, y, color);
     }
+
 }

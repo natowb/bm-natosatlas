@@ -173,7 +173,6 @@ public abstract class PainterAccess {
     }
 
 
-
     public abstract int getStringWidth(String text);
 
     public abstract void drawString(String text, int x, int y, int color);
@@ -185,8 +184,12 @@ public abstract class PainterAccess {
     public abstract int getMinecraftTextureId(String string);
 
 
-    public void drawStringWithShadow(String text, int x, int y, int color) {
-        drawString(text, x + 1, y + 1, color, true);
-        drawString(text, x, y, color);
+    public void drawStringWithShadow(String text, int x, int y, int argbColor) {
+        int alpha = argbColor & 0xFF000000;
+        int shadowRGB = (argbColor & 0x00FCFCFC) >> 2;
+        int shadowColor = alpha | shadowRGB;
+
+        drawString(text, x + 1, y + 1, shadowColor);
+        drawString(text, x, y, argbColor);
     }
 }

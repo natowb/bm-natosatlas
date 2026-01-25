@@ -17,10 +17,10 @@ import dev.natowb.natosatlas.core.access.WorldAccess;
 
 import static dev.natowb.natosatlas.core.texture.TextureProvider.ICON_BACK;
 
-public class SettingsScreen extends UIScreen {
+public class OptionScreen extends UIScreen {
     private int headerY;
 
-    public SettingsScreen(UIScreen parent) {
+    public OptionScreen(UIScreen parent) {
         super(parent);
     }
 
@@ -79,7 +79,7 @@ public class SettingsScreen extends UIScreen {
         PainterAccess p = PainterAccess.get();
 
         p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
-        p.drawCenteredString("Settings", width / 2, headerY + 4, UITheme.TITLE_TEXT);
+        p.drawCenteredString("Options", width / 2, headerY + 4, UITheme.TITLE_TEXT);
 
         super.render(mouseX, mouseY, delta, scaleInfo);
     }
