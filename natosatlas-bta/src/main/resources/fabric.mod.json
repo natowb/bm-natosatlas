@@ -5,7 +5,8 @@
   "name": "Natos Atlas",
   "description": "world map mod for minecraft 1.7.3 ported to BTA",
   "authors": [
-    "natowb"
+    "natowb",
+    "ProdOrDev"
   ],
   "contact": {
     "homepage": "https://github.com/natowb/bm-natosatlas",
