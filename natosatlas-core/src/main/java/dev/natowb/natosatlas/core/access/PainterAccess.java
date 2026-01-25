@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.access;
 
+import dev.natowb.natosatlas.core.NatosAtlasCore;
 import org.lwjgl.opengl.GL11;
 
 public abstract class PainterAccess {
@@ -91,6 +92,87 @@ public abstract class PainterAccess {
         GL11.glEnd();
     }
 
+    public void drawTextureRegion(int textureId, int x, int y, int u, int v, int w, int h) {
+        float texW = 256f;
+        float texH = 256f;
+
+        float u1 = u / texW;
+        float v1 = v / texH;
+        float u2 = (u + w) / texW;
+        float v2 = (v + h) / texH;
+
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureId);
+        GL11.glColor4f(1f, 1f, 1f, 1f);
+
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glTexCoord2f(u1, v2);
+        GL11.glVertex2f(x, y + h);
+        GL11.glTexCoord2f(u2, v2);
+        GL11.glVertex2f(x + w, y + h);
+        GL11.glTexCoord2f(u2, v1);
+        GL11.glVertex2f(x + w, y);
+        GL11.glTexCoord2f(u1, v1);
+        GL11.glVertex2f(x, y);
+        GL11.glEnd();
+    }
+
+
+    public void drawIcon(int iconIndex, int x, int y, int size, int argbColor) {
+        final int ICON_SIZE = 16;
+        final int SHEET_SIZE = 128;
+        final int ICONS_PER_ROW = SHEET_SIZE / ICON_SIZE;
+
+        int iconX = (iconIndex % ICONS_PER_ROW) * ICON_SIZE;
+        int iconY = (iconIndex / ICONS_PER_ROW) * ICON_SIZE;
+
+        float u1 = iconX / (float) SHEET_SIZE;
+        float v1 = iconY / (float) SHEET_SIZE;
+        float u2 = (iconX + ICON_SIZE) / (float) SHEET_SIZE;
+        float v2 = (iconY + ICON_SIZE) / (float) SHEET_SIZE;
+
+        int a = (argbColor >> 24) & 0xFF;
+        int r = (argbColor >> 16) & 0xFF;
+        int g = (argbColor >> 8) & 0xFF;
+        int b = argbColor & 0xFF;
+
+        float rf = r / 255f;
+        float gf = g / 255f;
+        float bf = b / 255f;
+        float af = a / 255f;
+
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glDisable(GL11.GL_FOG);
+
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, NatosAtlasCore.get().textures.getIconTexture());
+        GL11.glColor4f(rf, gf, bf, af);
+
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glTexCoord2f(u1, v2);
+        GL11.glVertex2f(x, y + size);
+
+        GL11.glTexCoord2f(u2, v2);
+        GL11.glVertex2f(x + size, y + size);
+
+        GL11.glTexCoord2f(u2, v1);
+        GL11.glVertex2f(x + size, y);
+
+        GL11.glTexCoord2f(u1, v1);
+        GL11.glVertex2f(x, y);
+        GL11.glEnd();
+
+        GL11.glColor4f(1f, 1f, 1f, 1f);
+    }
+
+    public void drawIconWithShadow(int iconIndex, int x, int y, int size, int argbColor) {
+        int alpha = argbColor & 0xFF000000;
+        int shadowRGB = (argbColor & 0x00FCFCFC) >> 2;
+        int shadowColor = alpha | shadowRGB;
+
+        drawIcon(iconIndex, x + 1, y + 1, size, shadowColor);
+        drawIcon(iconIndex, x, y, size, argbColor);
+    }
+
+
     public abstract int getStringWidth(String text);
 
     public abstract void drawString(String text, int x, int y, int color);
@@ -100,4 +182,14 @@ public abstract class PainterAccess {
     public abstract void drawCenteredString(String text, int centerX, int y, int color);
 
     public abstract int getMinecraftTextureId(String string);
+
+
+    public void drawStringWithShadow(String text, int x, int y, int argbColor) {
+        int alpha = argbColor & 0xFF000000;
+        int shadowRGB = (argbColor & 0x00FCFCFC) >> 2;
+        int shadowColor = alpha | shadowRGB;
+
+        drawString(text, x + 1, y + 1, shadowColor);
+        drawString(text, x, y, argbColor);
+    }
 }

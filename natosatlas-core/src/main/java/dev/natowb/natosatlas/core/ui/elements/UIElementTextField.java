@@ -1,14 +1,15 @@
 package dev.natowb.natosatlas.core.ui.elements;
 
 import dev.natowb.natosatlas.core.access.PainterAccess;
-import dev.natowb.natosatlas.core.ui.UITheme;
+import dev.natowb.natosatlas.core.ui.layout.UILayout;
+import dev.natowb.natosatlas.core.ui.layout.UIPoint;
+import dev.natowb.natosatlas.core.ui.themes.UIThemeMinecraft;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
 
 public class UIElementTextField extends UIElement {
-
 
     private String text = "";
     private int maxLength = 32;
@@ -33,10 +34,15 @@ public class UIElementTextField extends UIElement {
         this.selectionStart = this.selectionEnd = cursor;
     }
 
-    public void setText(String t) {
-        this.text = t != null ? t : "";
-        cursor = text.length();
-        selectionStart = selectionEnd = cursor;
+    public UIElementTextField(UILayout layout, int w, int h, String initial) {
+        UIPoint p = layout.next(w, h);
+        this.x = p.x;
+        this.y = p.y;
+        this.w = w;
+        this.h = h;
+        this.text = initial != null ? initial : "";
+        this.cursor = text.length();
+        this.selectionStart = this.selectionEnd = cursor;
     }
 
     public String getText() {
@@ -48,9 +54,7 @@ public class UIElementTextField extends UIElement {
     }
 
     public void setFocused(boolean f) {
-        if (f && !this.focused) {
-            focusedTicks = 0;
-        }
+        if (f && !this.focused) focusedTicks = 0;
         this.focused = f;
         if (!f) clearSelection();
     }
@@ -98,25 +102,16 @@ public class UIElementTextField extends UIElement {
 
     private void pasteClipboard() {
         try {
-            String clip = (String) Toolkit.getDefaultToolkit()
-                    .getSystemClipboard()
-                    .getData(DataFlavor.stringFlavor);
-
+            String clip = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
             if (clip == null) return;
-
             deleteSelection();
-
             int space = maxLength - text.length();
             if (space <= 0) return;
-
             clip = clip.substring(0, Math.min(space, clip.length()));
-
             text = text.substring(0, cursor) + clip + text.substring(cursor);
             cursor += clip.length();
             clearSelection();
-
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
     }
 
     public void keyPressed(char c, int keyCode) {
@@ -162,9 +157,8 @@ public class UIElementTextField extends UIElement {
         }
 
         if (keyCode == Keyboard.KEY_BACK) {
-            if (hasSelection()) {
-                deleteSelection();
-            } else if (cursor > 0) {
+            if (hasSelection()) deleteSelection();
+            else if (cursor > 0) {
                 text = text.substring(0, cursor - 1) + text.substring(cursor);
                 cursor--;
             }
@@ -172,15 +166,14 @@ public class UIElementTextField extends UIElement {
         }
 
         if (keyCode == Keyboard.KEY_DELETE) {
-            if (hasSelection()) {
-                deleteSelection();
-            } else if (cursor < text.length()) {
+            if (hasSelection()) deleteSelection();
+            else if (cursor < text.length()) {
                 text = text.substring(0, cursor) + text.substring(cursor + 1);
             }
             return;
         }
 
-        if (isValidChar(c)) {
+        if (c >= 32 && c != 127) {
             deleteSelection();
             if (text.length() < maxLength) {
                 text = text.substring(0, cursor) + c + text.substring(cursor);
@@ -189,20 +182,10 @@ public class UIElementTextField extends UIElement {
         }
     }
 
-    private boolean isValidChar(char c) {
-        return c >= 32 && c != 127;
-    }
-
     public void mouseClicked(int mouseX, int mouseY, int button) {
-        boolean inside =
-                enabled &&
-                        mouseX >= x && mouseX < x + w &&
-                        mouseY >= y && mouseY < y + h;
-
+        boolean inside = enabled && isHovered(mouseX, mouseY);
         setFocused(inside);
-
         if (!inside) return;
-
         int relX = mouseX - (x + 4);
         cursor = getCharIndexAtPixel(relX);
         clearSelection();
@@ -211,12 +194,10 @@ public class UIElementTextField extends UIElement {
 
     public void mouseDragged(int mouseX, int mouseY, int button) {
         if (!dragging || !focused) return;
-
         int relX = mouseX - (x + 4);
-        int newPos = getCharIndexAtPixel(relX);
-
-        selectionEnd = newPos;
-        cursor = newPos;
+        int pos = getCharIndexAtPixel(relX);
+        selectionEnd = pos;
+        cursor = pos;
     }
 
     public void mouseUp(int mouseX, int mouseY, int button) {
@@ -225,44 +206,40 @@ public class UIElementTextField extends UIElement {
 
     private int getCharIndexAtPixel(int px) {
         PainterAccess p = PainterAccess.get();
-
         int pos = 0;
         int currentX = 0;
-
         for (int i = 0; i < text.length(); i++) {
             int w = p.getStringWidth(text.substring(i, i + 1));
             if (currentX + w / 2 >= px) return i;
             currentX += w;
             pos = i + 1;
         }
-
         return pos;
     }
 
     public void render() {
         PainterAccess p = PainterAccess.get();
 
-        p.drawRect(x - 1, y - 1, x + w + 1, y + h + 1, UITheme.TEXTFIELD_BORDER);
-        p.drawRect(x, y, x + w, y + h, UITheme.TEXTFIELD_BG);
+        p.drawRect(x - 1, y - 1, x + w + 1, y + h + 1, UIThemeMinecraft.TEXTFIELD_BORDER);
+        p.drawRect(x, y, x + w, y + h, UIThemeMinecraft.TEXTFIELD_BG);
 
         int textY = y + (h - 8) / 2;
+        int color = enabled ? UIThemeMinecraft.TEXTFIELD_TEXT : UIThemeMinecraft.TEXTFIELD_TEXT_DISABLED;
 
         if (hasSelection()) {
             int min = getSelectionMin();
             int max = getSelectionMax();
-
-            int selX1 = x + 4 + p.getStringWidth(text.substring(0, min));
-            int selX2 = x + 4 + p.getStringWidth(text.substring(0, max));
-
-            p.drawRect(selX1, y + 1, selX2, y + h - 1, UITheme.TEXTFIELD_SELECTION);
+            int sx1 = x + 4 + p.getStringWidth(text.substring(0, min));
+            int sx2 = x + 4 + p.getStringWidth(text.substring(0, max));
+            p.drawRect(sx1, y + 1, sx2, y + h - 1, UIThemeMinecraft.TEXTFIELD_SELECTION);
         }
 
-        p.drawString(text, x + 4, textY, UITheme.TEXTFIELD_TEXT, false);
+        p.drawString(text, x + 4, textY, color, false);
 
         boolean showCursor = focused && (focusedTicks / 6) % 2 == 0;
         if (showCursor && !hasSelection()) {
             int cx = x + 4 + p.getStringWidth(text.substring(0, cursor));
-            p.drawRect(cx, y + 2, cx + 1, y + h - 2, UITheme.TEXTFIELD_TEXT);
+            p.drawRect(cx, y + 2, cx + 1, y + h - 2, color);
         }
     }
 }

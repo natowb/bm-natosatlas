@@ -38,6 +38,12 @@ public class MapLayerManager {
     }
 
     public void tick() {
+
+        if (WorldAccess.get().hasCeiling()) {
+            setActiveLayer(2);
+            return;
+        }
+
         switch (Settings.mapRenderMode) {
             case Day:
                 setActiveLayer(0);

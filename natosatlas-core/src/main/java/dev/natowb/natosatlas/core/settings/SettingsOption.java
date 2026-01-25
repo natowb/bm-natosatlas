@@ -7,14 +7,14 @@ public enum SettingsOption {
         public void cycle() {
             Settings.EntityDisplayMode m = Settings.entityDisplayMode;
             switch (m) {
-                case All:
-                    Settings.entityDisplayMode = Settings.EntityDisplayMode.Player;
-                    break;
                 case Player:
+                    Settings.entityDisplayMode = Settings.EntityDisplayMode.All;
+                    break;
+                case All:
                     Settings.entityDisplayMode = Settings.EntityDisplayMode.Nothing;
                     break;
                 case Nothing:
-                    Settings.entityDisplayMode = Settings.EntityDisplayMode.All;
+                    Settings.entityDisplayMode = Settings.EntityDisplayMode.Player;
                     break;
             }
         }
