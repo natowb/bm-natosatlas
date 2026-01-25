@@ -70,7 +70,7 @@ public class ChunkBuilder {
                 for (NACoord chunkCoord : naRegion.iterateExistingChunks()) {
                     int layerIndex = 0;
                     for (MapLayer layer : NatosAtlasCore.get().layers.getLayers()) {
-                        layer.renderer.applyChunkToRegion(layers[layerIndex], chunkCoord, layer.usesBlockLight);
+                        layer.renderer.applyChunkToRegion(layers[layerIndex], chunkCoord, layer.usesBlockLight, true);
                         layerIndex++;
                     }
                 }
@@ -125,10 +125,19 @@ public class ChunkBuilder {
     }
 
     public static NAChunk buildCaveChunk(NACoord chunkCoord) {
-        int playerY = (int) WorldAccess.get().getPlayer().y;
         ChunkWrapper chunk = WorldAccess.get().getChunk(chunkCoord);
         if (chunk == null) return null;
+        return buildCave(chunkCoord, chunk);
+    }
 
+    public static NAChunk buildCaveChunkFromDisk(NACoord chunkCoord) {
+        ChunkWrapper chunk = WorldAccess.get().getChunkFromDisk(chunkCoord);
+        if (chunk == null) return null;
+        return buildCave(chunkCoord, chunk);
+    }
+
+    private static NAChunk buildCave(NACoord chunkCoord, ChunkWrapper chunk) {
+        int playerY = (int) WorldAccess.get().getPlayer().y;
         NAChunk caveChunk = new NAChunk();
 
         for (int z = 0; z < 16; z++) {
@@ -160,7 +169,7 @@ public class ChunkBuilder {
     private static int findTopmostCaveFloor(ChunkWrapper chunk, int x, int z, int playerY) {
 
 
-        int startY = Math.min(playerY, 127);
+        int startY = Math.min(playerY, WorldAccess.get().getWorldHeight() - 1);
 
         for (int y = startY; y > 1; y--) {
 

@@ -34,6 +34,11 @@ public class WorldAccessML extends WorldAccess {
     }
 
     @Override
+    public int getWorldHeight() {
+        return 128;
+    }
+
+    @Override
     public boolean exists() {
         return mc.world != null;
     }

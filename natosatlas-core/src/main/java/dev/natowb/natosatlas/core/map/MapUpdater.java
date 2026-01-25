@@ -110,6 +110,6 @@ public class MapUpdater {
                 region = diskLoaded;
             }
         }
-        layer.renderer.applyChunkToRegion(region, chunkCoord, layer.usesBlockLight);
+        layer.renderer.applyChunkToRegion(region, chunkCoord, layer.usesBlockLight, false);
     }
 }

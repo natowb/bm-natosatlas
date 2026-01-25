@@ -27,6 +27,11 @@ public class WorldAccessBTA extends WorldAccess {
     private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
     @Override
+    public int getWorldHeight() {
+        return mc.currentWorld.getHeightBlocks();
+    }
+
+    @Override
     public boolean exists() {
         return mc.currentWorld != null;
     }

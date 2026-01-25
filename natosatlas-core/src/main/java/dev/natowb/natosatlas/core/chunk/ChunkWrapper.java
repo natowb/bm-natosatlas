@@ -1,6 +1,7 @@
 package dev.natowb.natosatlas.core.chunk;
 
 import dev.natowb.natosatlas.core.access.BlockAccess;
+import dev.natowb.natosatlas.core.access.WorldAccess;
 
 public abstract class ChunkWrapper {
 
@@ -12,7 +13,7 @@ public abstract class ChunkWrapper {
 
     public int getTopSolidBlockY(int x, int z) {
 
-        int y = 127;
+        int y = WorldAccess.get().getWorldHeight() - 1;
         x &= 15;
         int z0 = z & 15;
 

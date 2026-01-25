@@ -33,6 +33,11 @@ public class WorldAccessST extends WorldAccess {
     }
 
     @Override
+    public int getWorldHeight() {
+        return mc.world.getHeight();
+    }
+
+    @Override
     public boolean exists() {
         return mc.world != null;
     }

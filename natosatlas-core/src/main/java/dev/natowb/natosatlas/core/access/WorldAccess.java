@@ -19,6 +19,8 @@ public abstract class WorldAccess {
         return instance;
     }
 
+    public abstract int getWorldHeight();
+
     public abstract boolean exists();
 
     public abstract String getSaveName();

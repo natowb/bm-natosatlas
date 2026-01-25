@@ -12,8 +12,8 @@ public class ChunkSurfaceRenderer implements ChunkRenderer {
     private final ChunkColorEngine colorEngine = new ChunkColorEngine();
 
     @Override
-    public void applyChunkToRegion(MapRegion region, NACoord chunkCoord, boolean useBlockLight) {
-        NAChunk chunk = ChunkBuilder.buildChunkSurface(chunkCoord);
+    public void applyChunkToRegion(MapRegion region, NACoord chunkCoord, boolean useBlockLight, boolean fromDisk) {
+        NAChunk chunk = fromDisk ? ChunkBuilder.buildChunkSurfaceFromDisk(chunkCoord) : ChunkBuilder.buildChunkSurface(chunkCoord);
         if (chunk == null) return;
 
         int[] pixels = region.getPixels();
