@@ -2,20 +2,18 @@
   "schemaVersion": 1,
   "id": "natosatlas",
   "version": "${version}",
-
   "name": "Natos Atlas",
   "description": "world map mod for minecraft 1.7.3",
   "authors": [
-    "natowb"
+    "natowb",
+    "ProdOrDev"
   ],
   "contact": {
     "homepage": "https://github.com/natowb/bm-natosatlas",
     "sources": "https://github.com/natowb/bm-natosatlas"
   },
-
   "license": "MIT",
   "icon": "assets/natosatlas/icon.png",
-
   "environment": "*",
   "entrypoints": {
     "stationapi:event_bus": [
@@ -28,7 +26,6 @@
   },
   "mixins": [
   ],
-
   "depends": {
     "minecraft": "1.0.0-beta.7.3"
   }
