@@ -44,6 +44,8 @@ tasks {
     }
 
     processResources {
+        from(project(":core").sourceSets.main.get().resources.srcDirs)
+
         inputs.property("version", version)
 
         filesMatching("fabric.mod.json") {
