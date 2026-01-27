@@ -12,9 +12,9 @@ import java.util.HashMap;
 
 public class MapUpdater {
 
-
     private static final int RADIUS = 8;
     private static final int CHUNKS_PER_TICK = 5;
+    private static final long REFRESH_INTERVAL_MS = 10_000;
 
     private int activeChunkX;
     private int activeChunkZ;
@@ -22,7 +22,8 @@ public class MapUpdater {
     private final MapLayerManager layerManager;
     private final MapCache cache;
 
-    private final HashMap<NACoord, Long> chunkSaveTimes = new HashMap<>();
+    private final HashMap<NACoord, Long> chunkUpdateTimes = new HashMap<>();
+
     private final java.util.List<NACoord> scanOrder = new java.util.ArrayList<>();
     private int scanIndex = 0;
 
@@ -69,22 +70,21 @@ public class MapUpdater {
             return;
         }
 
-        long latestSaveTime = chunk.getLastSaveTime();
-        Long oldTime = chunkSaveTimes.get(coord);
+        long now = System.currentTimeMillis();
+        Long lastUpdate = chunkUpdateTimes.get(coord);
 
-        if (oldTime == null) {
+        if (lastUpdate == null) {
             LogUtil.trace("MapUpdater: First-time scan of chunk {}, generating region", coord);
-            chunkSaveTimes.put(coord, latestSaveTime);
+            chunkUpdateTimes.put(coord, now);
             updateChunk(coord);
             return;
         }
 
-        if (oldTime != latestSaveTime) {
-            LogUtil.debug("MapUpdater: Chunk {} changed ({} -> {}), regenerating", coord, oldTime, latestSaveTime);
-            chunkSaveTimes.put(coord, latestSaveTime);
+        if (now - lastUpdate >= REFRESH_INTERVAL_MS) {
+            LogUtil.debug("MapUpdater: Chunk {} due for refresh ({} ms elapsed), regenerating", coord, now - lastUpdate);
+            chunkUpdateTimes.put(coord, now);
             updateChunk(coord);
         }
-
     }
 
     private void updateChunk(NACoord chunkCoord) {
@@ -110,6 +110,7 @@ public class MapUpdater {
                 region = diskLoaded;
             }
         }
+
         layer.renderer.applyChunkToRegion(region, chunkCoord, layer.usesBlockLight, false);
     }
 }
