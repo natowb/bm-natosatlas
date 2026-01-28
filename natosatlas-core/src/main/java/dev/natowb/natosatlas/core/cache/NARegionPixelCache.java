@@ -1,10 +1,12 @@
 package dev.natowb.natosatlas.core.cache;
 
+import dev.natowb.natosatlas.client.NAClientPaths;
 import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionPixelData;
 import dev.natowb.natosatlas.core.storage.NARegionStorage;
 
+import java.io.File;
 import java.util.*;
 
 public class NARegionPixelCache {
@@ -41,7 +43,8 @@ public class NARegionPixelCache {
         if (arr != null && arr[layerId] != null)
             return arr[layerId];
 
-        Optional<NARegionPixelData> loaded = NARegionStorage.get().loadRegion(layerId, coord);
+        File rFile = NAClientPaths.getWorldMapStoragePath(layerId).resolve("region_" + coord.x + "_" + coord.z + ".png").toFile();
+        Optional<NARegionPixelData> loaded = NARegionStorage.get().loadRegion(layerId, coord, rFile);
         if (loaded.isPresent()) {
             if (arr == null) {
                 arr = new NARegionPixelData[LayerRegistry.getLayers().size()];

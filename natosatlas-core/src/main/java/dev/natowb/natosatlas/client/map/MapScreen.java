@@ -10,7 +10,7 @@ import dev.natowb.natosatlas.client.help.HelpScreen;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.client.settings.SettingsOption;
 import dev.natowb.natosatlas.client.settings.OptionScreen;
-import dev.natowb.natosatlas.core.storage.SaveWorker;
+import dev.natowb.natosatlas.client.saving.SaveWorker;
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.UITheme;
 import dev.natowb.natosatlas.client.ui.elements.UIElementIconButton;

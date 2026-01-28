@@ -4,7 +4,6 @@ import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.map.MapConfig;
 import dev.natowb.natosatlas.core.storage.NARegionStorage;
 import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
-import dev.natowb.natosatlas.core.chunk.ChunkBuilderOld;
 import dev.natowb.natosatlas.client.access.PainterAccess;
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.elements.UIElementButton;
@@ -56,10 +55,11 @@ public class OptionScreen extends UIScreen {
         reiButton.setHandler(btn -> reiButton.cycle());
         addButton(reiButton);
 
-        boolean isServer = NAClient.get().getPlatform().world.isServer();
-        UIElementButton existingButton = new UIElementButton(102, layout, 150, 20, "Generate Existing", !isServer);
-        existingButton.setHandler(btn -> ChunkBuilderOld.rebuildExistingChunks(NARegionStorage.get(),  NARegionPixelCache.get()));
-        addButton(existingButton);
+        // FIXME: add this again but better
+//        boolean isServer = NAClient.get().getPlatform().world.isServer();
+//        UIElementButton existingButton = new UIElementButton(102, layout, 150, 20, "Generate Existing", !isServer);
+//        existingButton.setHandler(btn -> ChunkBuilderOld.rebuildExistingChunks(NARegionStorage.get(),  NARegionPixelCache.get()));
+//        addButton(existingButton);
 
         UIElementSlider zoomSlider = new UIElementSlider(103, layout, 150, 20, Settings.defaultZoom, "Default Zoom");
         zoomSlider.setRange(MapConfig.MIN_ZOOM, MapConfig.MAX_ZOOM);

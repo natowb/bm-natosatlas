@@ -2,12 +2,12 @@ package dev.natowb.natosatlas.client;
 
 import dev.natowb.natosatlas.client.cache.NARegionTextureCache;
 import dev.natowb.natosatlas.client.map.MapLayerController;
+import dev.natowb.natosatlas.client.saving.SaveScheduler;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.NASession;
 import dev.natowb.natosatlas.core.data.NALayer;
 import dev.natowb.natosatlas.core.util.LogUtil;
-import dev.natowb.natosatlas.core.storage.SaveScheduler;
 import dev.natowb.natosatlas.client.map.MapUpdater;
 import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.client.waypoint.Waypoints;

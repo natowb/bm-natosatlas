@@ -49,17 +49,8 @@ public class NARegionStorage {
     }
 
 
-    public File getRegionPngFile(int layerId, NACoord regionCoord) {
-        return NAClientPaths.getWorldMapStoragePath(layerId).resolve("region_" + regionCoord.x + "_" + regionCoord.z + ".png").toFile();
-    }
 
-    public void saveRegion(int layerId, NACoord coord, NARegionPixelData region) {
-        SaveWorker.enqueue(this, coord, region, getRegionPngFile(layerId, coord));
-    }
-
-
-    public Optional<NARegionPixelData> loadRegion(int layerId, NACoord coord) {
-        File file = getRegionPngFile(layerId, coord);
+    public Optional<NARegionPixelData> loadRegion(int layerId, NACoord coord, File file) {
 
         if (!file.exists()) {
             return Optional.empty();

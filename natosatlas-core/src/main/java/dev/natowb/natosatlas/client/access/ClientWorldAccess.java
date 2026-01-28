@@ -6,12 +6,13 @@ import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.data.NARegionFile;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 
+import java.io.File;
 import java.util.List;
 
 public abstract class ClientWorldAccess {
-    public abstract int getWorldHeight();
-
     public abstract boolean exists();
+
+    public abstract int getWorldHeight();
 
     public abstract String getSaveName();
 
@@ -36,8 +37,4 @@ public abstract class ClientWorldAccess {
     public abstract NAEntity getPlayer();
 
     public abstract ChunkWrapper getChunk(NACoord chunkCoord);
-
-    public abstract ChunkWrapper getChunkFromDisk(NACoord chunkCoord);
-
-    public abstract List<NARegionFile> getRegionFiles();
 }

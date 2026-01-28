@@ -148,9 +148,7 @@ public class WorldAccessML extends ClientWorldAccess {
         Chunk chunk = mc.world.getChunk(chunkCoord.x, chunkCoord.z);
         if (chunk == null) return null;
 
-
         return new ChunkWrapper(chunk, getWorldHeight()) {
-
             @Override
             public int getBlockId(int x, int y, int z) {
                 return ((Chunk) chunk).getBlockId(x, y, z);
@@ -171,93 +169,5 @@ public class WorldAccessML extends ClientWorldAccess {
                 return ((Chunk) chunk).getLight(LightType.SKY, x, y, z);
             }
         };
-    }
-
-    @Override
-    public ChunkWrapper getChunkFromDisk(NACoord chunkCoord) {
-        RegionChunkStorage chunkLoader = new RegionChunkStorage(NAClientPaths.getWorldSavePath().toFile());
-        Chunk chunk = chunkLoader.loadChunk(mc.world, chunkCoord.x, chunkCoord.z);
-
-        if (chunk == null) return null;
-
-        return new ChunkWrapper(chunk, getWorldHeight()) {
-
-            @Override
-            public int getBlockId(int x, int y, int z) {
-                return ((Chunk) chunk).getBlockId(x, y, z);
-            }
-
-            @Override
-            public int getBlockMeta(int x, int y, int z) {
-                return ((Chunk) chunk).getBlockMeta(x, y, z);
-            }
-
-            @Override
-            public int getBlockLight(int x, int y, int z) {
-                return ((Chunk) chunk).getLight(LightType.BLOCK, x, y, z);
-            }
-
-            @Override
-            public int getSkyLight(int x, int y, int z) {
-                return ((Chunk) chunk).getLight(LightType.SKY, x, y, z);
-            }
-        };
-    }
-
-    @Override
-    public List<NARegionFile> getRegionFiles() {
-        List<NARegionFile> result = new ArrayList<>();
-
-        File regionDir = new File(NAClientPaths.getWorldSavePath().toFile(), "region");
-        File[] regionFiles = regionDir.listFiles((dir, name) -> name.endsWith(".mcr") || name.endsWith(".mca"));
-        if (regionFiles == null || regionFiles.length == 0) {
-            return result;
-        }
-
-        int index = 0;
-
-        for (File regionFile : regionFiles) {
-            index++;
-
-            boolean success = false;
-
-            try {
-                String name = regionFile.getName();
-                String[] parts = name.substring(2, name.length() - 4).split("\\.");
-                if (parts.length != 2) {
-                    continue;
-                }
-
-                int rx = Integer.parseInt(parts[0]);
-                int rz = Integer.parseInt(parts[1]);
-                NACoord regionCoord = new NACoord(rx, rz);
-
-                NARegionFile naRegion = new NARegionFile(regionFile, regionCoord);
-
-                RegionFile rf = new RegionFile(regionFile);
-                for (int x = 0; x < NARegionFile.CHUNKS_PER_REGION; x++) {
-                    for (int z = 0; z < NARegionFile.CHUNKS_PER_REGION; z++) {
-                        if (rf.hasChunkData(x, z)) {
-                            naRegion.chunkExists[x][z] = true;
-                        }
-                    }
-                }
-                rf.close();
-
-                result.add(naRegion);
-                success = true;
-
-            } catch (Exception ignored) {
-            }
-
-            if (success) {
-                LogUtil.info("[{}/{}] Successfully processed region file: {}", index, regionFiles.length, regionFile.getName());
-
-            } else {
-                LogUtil.info("[{}/{}] Failed to processed region file: {}", index, regionFiles.length, regionFile.getName());
-            }
-        }
-
-        return result;
     }
 }
