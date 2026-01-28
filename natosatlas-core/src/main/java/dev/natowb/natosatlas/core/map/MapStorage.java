@@ -24,7 +24,17 @@ public class MapStorage {
     private final ImageWriter pngWriter;
     private final ImageWriteParam pngParams;
 
-    public MapStorage() {
+    private static MapStorage instance;
+
+    public static MapStorage get() {
+        if (instance == null) {
+            instance = new MapStorage();
+        }
+
+        return instance;
+    }
+
+    private MapStorage() {
         this.reusableImage = new BufferedImage(BLOCKS_PER_CANVAS_REGION, BLOCKS_PER_CANVAS_REGION, BufferedImage.TYPE_INT_ARGB);
         Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("png");
         this.pngWriter = writers.hasNext() ? writers.next() : null;

@@ -57,7 +57,7 @@ public class OptionScreen extends UIScreen {
 
         boolean isServer = WorldAccess.get().isServer();
         UIElementButton existingButton = new UIElementButton(102, layout, 150, 20, "Generate Existing", !isServer);
-        existingButton.setHandler(btn -> ChunkBuilder.rebuildExistingChunks(NatosAtlasCore.get().storage, NatosAtlasCore.get().cache));
+        existingButton.setHandler(btn -> ChunkBuilder.rebuildExistingChunks(MapStorage.get(), NatosAtlasCore.get().cache));
         addButton(existingButton);
 
         UIElementSlider zoomSlider = new UIElementSlider(103, layout, 150, 20, Settings.defaultZoom, "Default Zoom");

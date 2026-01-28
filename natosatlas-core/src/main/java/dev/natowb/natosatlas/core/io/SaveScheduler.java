@@ -32,7 +32,7 @@ public class SaveScheduler {
             if (key == null) break;
 
             NACoord coord = NACoord.fromKey(key);
-            MapStorage storage = NatosAtlasCore.get().storage;
+            MapStorage storage = MapStorage.get();
 
             for (MapLayer layer : NatosAtlasCore.get().layers.getLayers()) {
                 MapRegion region = cache.getRegion(layer.id, coord);

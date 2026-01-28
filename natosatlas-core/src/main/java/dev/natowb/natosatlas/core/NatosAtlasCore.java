@@ -24,8 +24,7 @@ public class NatosAtlasCore {
 
 
     private MapUpdater mapUpdater;
-    public final MapStorage storage = new MapStorage();
-    public final MapCache cache = new MapCache(storage);
+    public final MapCache cache = new MapCache();
     public final TextureProvider textures = new TextureProvider();
     public final MapLayerManager layers = new MapLayerManager();
 

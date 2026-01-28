@@ -13,7 +13,6 @@ public class MapCache {
 
     private static final int PNG_CACHE_SIZE = 256;
 
-    private final MapStorage storage;
     private final Map<Long, MapRegion[]> regions = new LinkedHashMap<>();
 
     private final Map<Long, int[][]> pngCache =
@@ -24,9 +23,6 @@ public class MapCache {
                 }
             };
 
-    public MapCache(MapStorage storage) {
-        this.storage = storage;
-    }
 
     public MapRegion getRegion(int layerId, NACoord coord) {
         long key = coord.toKey();
@@ -49,7 +45,7 @@ public class MapCache {
             return region;
         }
 
-        Optional<MapRegion> loaded = storage.loadRegion(layerId, coord);
+        Optional<MapRegion> loaded = MapStorage.get().loadRegion(layerId, coord);
         if (loaded.isPresent()) {
             if (arr == null) {
                 arr = new MapRegion[NatosAtlasCore.get().layers.getLayers().size()];
