@@ -3,7 +3,7 @@ package dev.natowb.natosatlas.client.map;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.client.settings.Settings;
-import dev.natowb.natosatlas.core.NatoAtlasConstants;
+import dev.natowb.natosatlas.core.NAConstants;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Set;
@@ -58,8 +58,8 @@ public class MapStageEntities implements MapStage {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,
                 NACore.getClient().getPlatform().painter.getMinecraftTextureId(e.texturePath));
 
-        double x = e.x * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
-        double z = e.z * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
+        double x = e.x * NAConstants.PIXELS_PER_CANVAS_UNIT;
+        double z = e.z * NAConstants.PIXELS_PER_CANVAS_UNIT;
         double s = 4 / ctx.zoom;
 
         NAEntity.UV uv = NAEntity.getUV(e.texturePath);
@@ -72,8 +72,8 @@ public class MapStageEntities implements MapStage {
     private void renderMapMarker(MapContext ctx, NAEntity e) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, NACore.getClient().getPlatform().painter.getMinecraftTextureId("/misc/mapicons.png"));
 
-        double x = e.x * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
-        double z = e.z * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
+        double x = e.x * NAConstants.PIXELS_PER_CANVAS_UNIT;
+        double z = e.z * NAConstants.PIXELS_PER_CANVAS_UNIT;
         double s = 6 / ctx.zoom;
 
         int idx;

@@ -6,15 +6,15 @@ import dev.natowb.natosatlas.client.texture.TextureProvider;
 
 import java.util.Set;
 
-import static dev.natowb.natosatlas.core.NatoAtlasConstants.PIXELS_PER_CANVAS_REGION;
-import static dev.natowb.natosatlas.core.NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
+import static dev.natowb.natosatlas.core.NAConstants.PIXELS_PER_CANVAS_REGION;
+import static dev.natowb.natosatlas.core.NAConstants.PIXELS_PER_CANVAS_UNIT;
 
 public class MapStageRegions implements MapStage {
     @Override
     public void draw(MapContext ctx, Set<Long> visibleRegions) {
         for (long key : visibleRegions) {
             NACoord coord = NACoord.fromKey(key);
-            int texId = TextureProvider.getTexture(coord);
+            int texId = TextureProvider.getTexture(coord, NACore.getClient().getLayerController().getActiveLayer());
             if (texId != -1) {
                 drawRegionTexture(coord.x, coord.z, texId);
             }

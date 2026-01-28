@@ -1,9 +1,6 @@
-package dev.natowb.natosatlas.client.map;
+package dev.natowb.natosatlas.core.io;
 
-import dev.natowb.natosatlas.core.io.SaveWorker;
-import dev.natowb.natosatlas.core.io.LogUtil;
-import dev.natowb.natosatlas.core.io.NAPaths;
-import dev.natowb.natosatlas.client.layers.MapLayerHandler;
+import dev.natowb.natosatlas.core.LayerRegistry;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -12,13 +9,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static dev.natowb.natosatlas.core.NatoAtlasConstants.BLOCKS_PER_CANVAS_REGION;
+import static dev.natowb.natosatlas.core.NAConstants.BLOCKS_PER_CANVAS_REGION;
 
 public class MapExporter {
 
 
     public static void exportAllLayers() {
-        for (int i = 0; i < MapLayerHandler.get().getLayers().size(); i++) {
+        for (int i = 0; i < LayerRegistry.getLayers().size(); i++) {
             MapExporter.exportMapLayer(i);
         }
     }

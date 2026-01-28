@@ -4,6 +4,8 @@ import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.NAClientPlatform;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.io.NAPaths;
+import dev.natowb.natosatlas.server.NAServer;
+import dev.natowb.natosatlas.server.NAServerPlatform;
 
 import java.nio.file.Path;
 
@@ -26,7 +28,6 @@ public final class NACore {
         return (NAClient) session;
     }
 
-
     public static void initClient(Path minecraftPath, NAClientPlatform platform) {
         if (!init(minecraftPath)) return;
 
@@ -34,8 +35,9 @@ public final class NACore {
         LogUtil.info("Successfully initialized client");
     }
 
-    public static void initServer(Path minecraftPath) {
+    public static void initServer(Path minecraftPath, NAServerPlatform platform) {
         if (!init(minecraftPath)) return;
+        session = new NAServer(platform);
         LogUtil.info("Successfully initialized server");
     }
 

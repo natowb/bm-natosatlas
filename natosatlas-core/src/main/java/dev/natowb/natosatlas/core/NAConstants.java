@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core;
 
-public class NatoAtlasConstants {
+public class NAConstants {
     public static final int BLOCKS_PER_MINECRAFT_CHUNK = 16;
     public static final int CHUNKS_PER_MINECRAFT_REGION = 32;
     public static final int PIXELS_PER_CANVAS_UNIT = 8;

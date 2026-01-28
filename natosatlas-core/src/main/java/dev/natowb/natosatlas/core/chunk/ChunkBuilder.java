@@ -1,15 +1,15 @@
 package dev.natowb.natosatlas.core.chunk;
 
+import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionFile;
-import dev.natowb.natosatlas.client.layers.MapLayerHandler;
-import dev.natowb.natosatlas.client.map.NARegionCache;
-import dev.natowb.natosatlas.client.layers.MapLayer;
-import dev.natowb.natosatlas.client.map.NARegionPixelData;
-import dev.natowb.natosatlas.client.map.MapStorage;
+import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
+import dev.natowb.natosatlas.core.data.NALayer;
+import dev.natowb.natosatlas.core.data.NARegionPixelData;
+import dev.natowb.natosatlas.core.io.NARegionStorage;
 import dev.natowb.natosatlas.core.io.SaveScheduler;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.client.access.ClientBlockAccess;
@@ -17,7 +17,7 @@ import dev.natowb.natosatlas.client.access.ClientBlockAccess;
 import java.io.File;
 import java.util.List;
 
-import static dev.natowb.natosatlas.core.NatoAtlasConstants.BLOCKS_PER_MINECRAFT_CHUNK;
+import static dev.natowb.natosatlas.core.NAConstants.BLOCKS_PER_MINECRAFT_CHUNK;
 
 public class ChunkBuilder {
 
@@ -40,7 +40,7 @@ public class ChunkBuilder {
     }
 
 
-    public static void rebuildExistingChunks(MapStorage storage, NARegionCache cache) {
+    public static void rebuildExistingChunks(NARegionStorage storage, NARegionPixelCache cache) {
         List<NARegionFile> regions = NACore.getClient().getPlatform().world.getRegionFiles();
 
         if (regions.isEmpty()) {
@@ -62,14 +62,14 @@ public class ChunkBuilder {
             boolean success = false;
 
             try {
-                NARegionPixelData[] layers = new NARegionPixelData[MapLayerHandler.get().getLayers().size()];
+                NARegionPixelData[] layers = new NARegionPixelData[LayerRegistry.getLayers().size()];
                 for (int i = 0; i < layers.length; i++) {
                     layers[i] = new NARegionPixelData();
                 }
 
                 for (NACoord chunkCoord : naRegion.iterateExistingChunks()) {
                     int layerIndex = 0;
-                    for (MapLayer layer : MapLayerHandler.get().getLayers()) {
+                    for (NALayer layer : LayerRegistry.getLayers()) {
                         layer.renderer.applyChunkToRegion(layers[layerIndex], chunkCoord, layer.usesBlockLight, true);
                         layerIndex++;
                     }
@@ -167,7 +167,6 @@ public class ChunkBuilder {
 
 
     private static int findTopmostCaveFloor(ChunkWrapper chunk, int x, int z, int playerY) {
-
 
         int startY = Math.min(playerY, NACore.getClient().getPlatform().world.getWorldHeight() - 1);
 

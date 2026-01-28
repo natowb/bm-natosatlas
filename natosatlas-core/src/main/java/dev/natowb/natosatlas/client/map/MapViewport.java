@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.client.map;
 
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.NatoAtlasConstants;
+import dev.natowb.natosatlas.core.NAConstants;
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import org.lwjgl.opengl.GL11;
 
@@ -156,10 +156,10 @@ public class MapViewport {
     public Set<Long> computeVisibleRegions() {
         visibleRegions.clear();
 
-        double leftBlock = ctx.scrollX / NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
-        double topBlock = ctx.scrollY / NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
-        double rightBlock = (ctx.scrollX + ctx.canvasW / ctx.zoom) / NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
-        double bottomBlock = (ctx.scrollY + ctx.canvasH / ctx.zoom) / NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
+        double leftBlock = ctx.scrollX / NAConstants.PIXELS_PER_CANVAS_UNIT;
+        double topBlock = ctx.scrollY / NAConstants.PIXELS_PER_CANVAS_UNIT;
+        double rightBlock = (ctx.scrollX + ctx.canvasW / ctx.zoom) / NAConstants.PIXELS_PER_CANVAS_UNIT;
+        double bottomBlock = (ctx.scrollY + ctx.canvasH / ctx.zoom) / NAConstants.PIXELS_PER_CANVAS_UNIT;
 
         int startChunkX = (int) Math.floor(leftBlock / 16);
         int endChunkX = (int) Math.floor(rightBlock / 16);

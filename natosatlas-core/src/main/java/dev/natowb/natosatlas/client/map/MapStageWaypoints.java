@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.client.map;
 
 import dev.natowb.natosatlas.core.NACore;
-import dev.natowb.natosatlas.core.NatoAtlasConstants;
+import dev.natowb.natosatlas.core.NAConstants;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.client.waypoint.Waypoint;
 import dev.natowb.natosatlas.client.waypoint.Waypoints;
@@ -30,8 +30,8 @@ public class MapStageWaypoints implements MapStage {
     }
 
     private void renderWaypointMarker(MapContext ctx, NAEntity e, Waypoint wp) {
-        double x = e.x * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
-        double z = e.z * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
+        double x = e.x * NAConstants.PIXELS_PER_CANVAS_UNIT;
+        double z = e.z * NAConstants.PIXELS_PER_CANVAS_UNIT;
         double s = 6 / ctx.zoom;
 
         int idx = 4;
@@ -53,8 +53,8 @@ public class MapStageWaypoints implements MapStage {
         for (Waypoint wp : Waypoints.getAll()) {
             if (!wp.visible) continue;
 
-            double x = wp.x * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
-            double z = wp.z * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
+            double x = wp.x * NAConstants.PIXELS_PER_CANVAS_UNIT;
+            double z = wp.z * NAConstants.PIXELS_PER_CANVAS_UNIT;
             double s = 1 / ctx.zoom;
 
             drawUpright(ctx, x, z, s, 0, () -> {

@@ -1,25 +1,27 @@
-package dev.natowb.natosatlas.client.map;
+package dev.natowb.natosatlas.core.cache;
 
+import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.client.layers.MapLayerHandler;
+import dev.natowb.natosatlas.core.data.NARegionPixelData;
+import dev.natowb.natosatlas.core.io.NARegionStorage;
 
 import java.util.*;
 
-public class NARegionCache {
+public class NARegionPixelCache {
 
     private final Queue<Long> dirtyQueue = new ArrayDeque<>();
     private final Set<Long> dirtySet = new HashSet<>();
 
     private static final int CACHE_SIZE = 256;
 
-    private static NARegionCache instance;
+    private static NARegionPixelCache instance;
 
-    private NARegionCache() {
+    private NARegionPixelCache() {
     }
 
-    public static NARegionCache get() {
+    public static NARegionPixelCache get() {
         if (instance == null) {
-            instance = new NARegionCache();
+            instance = new NARegionPixelCache();
         }
         return instance;
     }
@@ -39,10 +41,10 @@ public class NARegionCache {
         if (arr != null && arr[layerId] != null)
             return arr[layerId];
 
-        Optional<NARegionPixelData> loaded = MapStorage.get().loadRegion(layerId, coord);
+        Optional<NARegionPixelData> loaded = NARegionStorage.get().loadRegion(layerId, coord);
         if (loaded.isPresent()) {
             if (arr == null) {
-                arr = new NARegionPixelData[MapLayerHandler.get().getLayers().size()];
+                arr = new NARegionPixelData[LayerRegistry.getLayers().size()];
                 regions.put(key, arr);
             }
 
@@ -55,7 +57,7 @@ public class NARegionCache {
 
     public void put(int layerId, NACoord coord, NARegionPixelData region) {
         long key = coord.toKey();
-        NARegionPixelData[] arr = regions.computeIfAbsent(key, k -> new NARegionPixelData[MapLayerHandler.get().getLayers().size()]);
+        NARegionPixelData[] arr = regions.computeIfAbsent(key, k -> new NARegionPixelData[LayerRegistry.getLayers().size()]);
         arr[layerId] = region;
     }
 
@@ -75,13 +77,9 @@ public class NARegionCache {
     public void clear() {
         for (NARegionPixelData[] arr : regions.values()) {
             if (arr == null) continue;
-            for (int i = 0; i < arr.length; i++) {
-                if (arr[i] != null) {
-                    arr[i].deleteTexture();
-                    arr[i] = null;
-                }
-            }
+            Arrays.fill(arr, null);
         }
+
         regions.clear();
         dirtyQueue.clear();
         dirtySet.clear();
