@@ -1,5 +1,8 @@
-import dev.natowb.natosatlas.core.NatosAtlasCore;
-import dev.natowb.natosatlas.core.map.MapScreen;
+import dev.natowb.natosatlas.client.NAClient;
+import dev.natowb.natosatlas.client.access.BlockAccess;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.core.NACore;
+import dev.natowb.natosatlas.client.map.MapScreen;
 import dev.natowb.natosatlas.modloader.*;
 
 import net.minecraft.client.Minecraft;
@@ -12,41 +15,42 @@ import org.lwjgl.input.Keyboard;
 
 public class mod_NatosMap extends BaseMod {
 
-    private static final KeyBinding KEY_BINDING_MAP = new KeyBinding("Nato's Map", Keyboard.KEY_M);
-    private NatosAtlasCore nac;
+    private static final KeyBinding KEY_BINDING_MAP = new KeyBinding("Natos Atlas", Keyboard.KEY_M);
 
     @Override
     public void ModsLoaded() {
         ModLoader.RegisterKey(this, KEY_BINDING_MAP, false);
         ModLoader.SetInGameHook(this, true, true);
         ModLoader.SetInGUIHook(this, true, true);
-        nac = new NatosAtlasCore(new PlatformML());
+        BlockAccess.set(new BlockAccessML());
+        ClientWorldAccess.set(new WorldAccessML());
+        NACore.initClient(Minecraft.getRunDirectory().toPath(), new PlatformML());
     }
 
     @Override
     public boolean OnTickInGUI(Minecraft mc, Screen gui) {
-        NatosAtlasCore.get().onTick();
+        NACore.tick();
         return true;
     }
 
     @Override
     public boolean OnTickInGame(Minecraft mc) {
-        NatosAtlasCore.get().onTick();
+        NACore.tick();
         return true;
     }
 
     @Override
     public void KeyboardEvent(KeyBinding key) {
-        if(NatosAtlasCore.get().isStopped()) return;
+        if (!NACore.isInitialized()) return;
         Minecraft mc = ModLoader.getMinecraftInstance();
         if (key.code != KEY_BINDING_MAP.code) return;
         if (mc.currentScreen == null) {
-            nac.platform.openNacScreen(new MapScreen(null));
+            NAClient.get().getPlatform().screen.openNacScreen(new MapScreen(null));
         }
     }
 
     @Override
     public String Version() {
-        return NatosAtlasCore.class.getPackage().getImplementationVersion();
+        return NACore.class.getPackage().getImplementationVersion();
     }
 }

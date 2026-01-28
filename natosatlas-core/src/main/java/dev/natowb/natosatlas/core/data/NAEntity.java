@@ -13,6 +13,7 @@ public class NAEntity {
     public final int localX;
     public final int localZ;
     public final double yaw;
+    public String name = "";
     public String texturePath = "/mob/char.png";
 
     public NAEntity(double x, double y, double z, double yaw, NAEntityType type) {
@@ -25,6 +26,10 @@ public class NAEntity {
         this.chunkZ = (int) Math.floor(z / 16.0);
         this.localX = ((int) Math.floor(x)) & 15;
         this.localZ = ((int) Math.floor(z)) & 15;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public NAEntity setTexturePath(String texturePath) {

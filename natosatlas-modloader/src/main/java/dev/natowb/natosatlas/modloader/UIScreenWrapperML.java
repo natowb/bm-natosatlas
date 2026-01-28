@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.modloader;
 
-import dev.natowb.natosatlas.core.ui.UIScaleInfo;
-import dev.natowb.natosatlas.core.ui.elements.UIScreen;
+import dev.natowb.natosatlas.client.ui.UIScaleInfo;
+import dev.natowb.natosatlas.client.ui.elements.UIScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ScreenScaler;

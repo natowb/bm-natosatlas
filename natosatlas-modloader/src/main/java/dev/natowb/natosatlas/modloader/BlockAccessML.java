@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.modloader;
 
 import dev.natowb.natosatlas.core.mapper.ColorMapper;
-import dev.natowb.natosatlas.core.access.BlockAccess;
+import dev.natowb.natosatlas.client.access.BlockAccess;
 import net.minecraft.block.Block;
 
 public class BlockAccessML extends BlockAccess {
@@ -22,10 +22,6 @@ public class BlockAccessML extends BlockAccess {
 
         if (blockId == Block.WOOL.id) {
             return ColorMapper.getWoolColor(blockMeta);
-        }
-
-        if (blockId == Block.LEAVES.id) {
-            return Block.LEAVES.getColor(blockMeta);
         }
 
         if (Block.BLOCKS[blockId].material == null) {

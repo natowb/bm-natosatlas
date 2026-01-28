@@ -5,7 +5,6 @@ plugins {
 }
 
 loom {
-    clientOnlyMinecraftJar()
     runs["client"].runDir = "../run"
 }
 

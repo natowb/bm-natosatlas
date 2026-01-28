@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core.data;
 
-import static dev.natowb.natosatlas.core.NatoAtlasConstants.BLOCKS_PER_MINECRAFT_CHUNK;
+import static dev.natowb.natosatlas.core.NAConstants.BLOCKS_PER_MINECRAFT_CHUNK;
 
 public class NAChunk {
     public final int[] blockIds;
@@ -9,6 +9,7 @@ public class NAChunk {
     public final int[] meta;
     public final int[] blockLight;
     public final NABiome[] biome;
+    public boolean isEmpty = true;
 
     public NAChunk() {
         this.blockIds = new int[BLOCKS_PER_MINECRAFT_CHUNK * BLOCKS_PER_MINECRAFT_CHUNK];
@@ -31,6 +32,9 @@ public class NAChunk {
         this.blockLight[i] = blockLight;
         this.meta[i] = meta;
         this.biome[i] = biome;
+        if (blockId != 0) {
+            isEmpty = false;
+        }
     }
 
 }
