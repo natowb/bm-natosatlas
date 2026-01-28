@@ -6,8 +6,8 @@ import dev.natowb.natosatlas.client.texture.TextureProvider;
 
 import java.util.Set;
 
-import static dev.natowb.natosatlas.core.NatoAtlasConstants.PIXELS_PER_CANVAS_REGION;
-import static dev.natowb.natosatlas.core.NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
+import static dev.natowb.natosatlas.core.NAConstants.PIXELS_PER_CANVAS_REGION;
+import static dev.natowb.natosatlas.core.NAConstants.PIXELS_PER_CANVAS_UNIT;
 
 public class MapStageRegions implements MapStage {
     @Override

@@ -2,11 +2,10 @@ package dev.natowb.natosatlas.core.io;
 
 
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.client.layers.MapLayerHandler;
-import dev.natowb.natosatlas.client.map.NARegionCache;
-import dev.natowb.natosatlas.client.layers.MapLayer;
-import dev.natowb.natosatlas.client.map.NARegionPixelData;
-import dev.natowb.natosatlas.client.map.MapStorage;
+import dev.natowb.natosatlas.client.map.MapLayerHandler;
+import dev.natowb.natosatlas.client.map.NARegionPixelCache;
+import dev.natowb.natosatlas.core.data.NALayer;
+import dev.natowb.natosatlas.core.data.NARegionPixelData;
 
 
 public class SaveScheduler {
@@ -26,15 +25,15 @@ public class SaveScheduler {
 
     public static void tick() {
         if (!running) return;
-        NARegionCache cache =  NARegionCache.get();
+        NARegionPixelCache cache =  NARegionPixelCache.get();
         for (int i = 0; i < MAX_SAVES_PER_TICK; i++) {
             Long key = cache.pollDirty();
             if (key == null) break;
 
             NACoord coord = NACoord.fromKey(key);
-            MapStorage storage = MapStorage.get();
+            NARegionStorage storage = NARegionStorage.get();
 
-            for (MapLayer layer : MapLayerHandler.get().getLayers()) {
+            for (NALayer layer : MapLayerHandler.get().getLayers()) {
                 NARegionPixelData region = cache.getRegion(layer.id, coord);
                 if (region != null) {
                     SaveWorker.enqueue(storage, coord, region, storage.getRegionPngFile(layer.id, coord));

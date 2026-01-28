@@ -6,9 +6,9 @@ import dev.natowb.natosatlas.core.NASession;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.io.NAPaths;
 import dev.natowb.natosatlas.core.io.SaveScheduler;
-import dev.natowb.natosatlas.client.layers.MapLayerHandler;
+import dev.natowb.natosatlas.client.map.MapLayerHandler;
 import dev.natowb.natosatlas.client.map.MapUpdater;
-import dev.natowb.natosatlas.client.map.NARegionCache;
+import dev.natowb.natosatlas.client.map.NARegionPixelCache;
 import dev.natowb.natosatlas.client.waypoint.Waypoints;
 
 public class NAClient implements NASession {
@@ -17,7 +17,6 @@ public class NAClient implements NASession {
     private String worldSaveName;
     private int dim;
     private final NAClientPlatform platform;
-
 
     public NAClient(NAClientPlatform platform) {
         this.platform = platform;
@@ -67,13 +66,13 @@ public class NAClient implements NASession {
 
     private void onWorldLeft() {
         SaveScheduler.stop();
-        NARegionCache.get().clear();
+        NARegionPixelCache.get().clear();
         LogUtil.info("Client left world {}", worldSaveName);
     }
 
     private void onDimensionChange(int newDim) {
         LogUtil.info("Client dimension changed to {}", newDim);
-        NARegionCache.get().clear();
+        NARegionPixelCache.get().clear();
     }
 
     private void onWorldTick() {

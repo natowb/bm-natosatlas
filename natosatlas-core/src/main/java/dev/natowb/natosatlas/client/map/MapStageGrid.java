@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.Set;
 
-import static dev.natowb.natosatlas.core.NatoAtlasConstants.PIXELS_PER_CANVAS_CHUNK;
+import static dev.natowb.natosatlas.core.NAConstants.PIXELS_PER_CANVAS_CHUNK;
 
 public class MapStageGrid implements MapStage {
     @Override

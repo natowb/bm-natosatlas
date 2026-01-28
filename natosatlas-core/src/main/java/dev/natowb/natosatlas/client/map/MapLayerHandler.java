@@ -1,5 +1,6 @@
-package dev.natowb.natosatlas.client.layers;
+package dev.natowb.natosatlas.client.map;
 
+import dev.natowb.natosatlas.core.data.NALayer;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.chunk.ChunkCaveRenderer;
 import dev.natowb.natosatlas.core.chunk.ChunkSurfaceRenderer;
@@ -23,14 +24,14 @@ public class MapLayerHandler {
         return instance;
     }
 
-    private final List<MapLayer> layers = new ArrayList<>();
+    private final List<NALayer> layers = new ArrayList<>();
     private int activeLayer = 0;
 
     private MapLayerHandler() {
         ChunkSurfaceRenderer surface = new ChunkSurfaceRenderer();
-        layers.add(new MapLayer(0, "Day", surface, false));
-        layers.add(new MapLayer(1, "Night", surface, true));
-        layers.add(new MapLayer(2, "Cave", new ChunkCaveRenderer(), true));
+        layers.add(new NALayer(0, "Day", surface, false));
+        layers.add(new NALayer(1, "Night", surface, true));
+        layers.add(new NALayer(2, "Cave", new ChunkCaveRenderer(), true));
     }
 
     public void setActiveLayer(int index) {
@@ -39,11 +40,11 @@ public class MapLayerHandler {
         }
     }
 
-    public MapLayer getActiveLayer() {
+    public NALayer getActiveLayer() {
         return layers.get(activeLayer);
     }
 
-    public List<MapLayer> getLayers() {
+    public List<NALayer> getLayers() {
         return layers;
     }
 

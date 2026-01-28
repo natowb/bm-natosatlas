@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.client.map;
 
 import dev.natowb.natosatlas.core.NACore;
-import dev.natowb.natosatlas.core.NatoAtlasConstants;
+import dev.natowb.natosatlas.core.NAConstants;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.client.access.PainterAccess;
@@ -226,10 +226,10 @@ public class MapScreen extends UIScreen {
     public void renderMouseBlockHighlight(MapContext ctx) {
         NACoord bc = getMouseBlock(ctx);
 
-        double px = (bc.x - 1) * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
-        double pz = (bc.z - 1) * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
+        double px = (bc.x - 1) * NAConstants.PIXELS_PER_CANVAS_UNIT;
+        double pz = (bc.z - 1) * NAConstants.PIXELS_PER_CANVAS_UNIT;
 
-        double size = NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
+        double size = NAConstants.PIXELS_PER_CANVAS_UNIT;
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glColor4f(1f, 1f, 0f, 0.5f);
@@ -292,8 +292,8 @@ public class MapScreen extends UIScreen {
         float worldX = ctx.scrollX + rx;
         float worldZ = ctx.scrollY + ry;
 
-        int blockX = (int) Math.floor(worldX / NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT) + 1;
-        int blockZ = (int) Math.floor(worldZ / NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT) + 1;
+        int blockX = (int) Math.floor(worldX / NAConstants.PIXELS_PER_CANVAS_UNIT) + 1;
+        int blockZ = (int) Math.floor(worldZ / NAConstants.PIXELS_PER_CANVAS_UNIT) + 1;
 
         return new NACoord(blockX, blockZ);
     }
@@ -373,9 +373,9 @@ public class MapScreen extends UIScreen {
         y += 10;
         painter.drawString(String.format("Pending Saves: %d", SaveWorker.getPendingCount()), 5, y, 0xFFFFFF);
         y += 10;
-        painter.drawString(String.format("Cache size: r=%d, t=%d", NARegionCache.get().getRegionCount(), NARegionCache.get().getTotalCount()), 5, y, 0xFFFFFF);
+        painter.drawString(String.format("Cache size: r=%d, t=%d", NARegionPixelCache.get().getRegionCount(), NARegionPixelCache.get().getTotalCount()), 5, y, 0xFFFFFF);
         y += 10;
-        painter.drawString(String.format("Dirty Queue Size: %d", NARegionCache.get().getDirtyQueueSize()), 5, y, 0xFFFFFF);
+        painter.drawString(String.format("Dirty Queue Size: %d", NARegionPixelCache.get().getDirtyQueueSize()), 5, y, 0xFFFFFF);
         y += 10;
     }
 }

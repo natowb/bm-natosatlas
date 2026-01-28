@@ -3,14 +3,14 @@ package dev.natowb.natosatlas.client.map;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.client.settings.Settings;
-import dev.natowb.natosatlas.core.NatoAtlasConstants;
+import dev.natowb.natosatlas.core.NAConstants;
 import dev.natowb.natosatlas.client.texture.TextureProvider;
 
 import java.util.Random;
 import java.util.Set;
 
-import static dev.natowb.natosatlas.core.NatoAtlasConstants.CHUNKS_PER_MINECRAFT_REGION;
-import static dev.natowb.natosatlas.core.NatoAtlasConstants.PIXELS_PER_CANVAS_CHUNK;
+import static dev.natowb.natosatlas.core.NAConstants.CHUNKS_PER_MINECRAFT_REGION;
+import static dev.natowb.natosatlas.core.NAConstants.PIXELS_PER_CANVAS_CHUNK;
 
 public class MapStageSlime implements MapStage {
     @Override
@@ -42,8 +42,8 @@ public class MapStageSlime implements MapStage {
         double worldX = chunkX * 16;
         double worldZ = chunkZ * 16;
 
-        int px = (int) (worldX * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT);
-        int pz = (int) (worldZ * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT);
+        int px = (int) (worldX * NAConstants.PIXELS_PER_CANVAS_UNIT);
+        int pz = (int) (worldZ * NAConstants.PIXELS_PER_CANVAS_UNIT);
 
         int size = PIXELS_PER_CANVAS_CHUNK;
 

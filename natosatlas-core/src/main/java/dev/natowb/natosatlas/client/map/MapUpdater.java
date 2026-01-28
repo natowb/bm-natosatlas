@@ -3,8 +3,8 @@ package dev.natowb.natosatlas.client.map;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
-import dev.natowb.natosatlas.client.layers.MapLayer;
-import dev.natowb.natosatlas.client.layers.MapLayerHandler;
+import dev.natowb.natosatlas.core.data.NALayer;
+import dev.natowb.natosatlas.core.data.NARegionPixelData;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 
@@ -95,22 +95,22 @@ public class MapUpdater {
     private void updateChunk(NACoord chunkCoord) {
         NACoord regionCoord = new NACoord(chunkCoord.x >> 5, chunkCoord.z >> 5);
 
-        for (MapLayer layer : MapLayerHandler.get().getLayers()) {
+        for (NALayer layer : MapLayerHandler.get().getLayers()) {
             updateChunkForLayer(regionCoord, chunkCoord, layer);
         }
 
-        NARegionCache.get().markDirty(regionCoord);
+        NARegionPixelCache.get().markDirty(regionCoord);
     }
 
-    private void updateChunkForLayer(NACoord regionCoord, NACoord chunkCoord, MapLayer layer) {
-        NARegionPixelData region = NARegionCache.get().getRegion(layer.id, regionCoord);
+    private void updateChunkForLayer(NACoord regionCoord, NACoord chunkCoord, NALayer layer) {
+        NARegionPixelData region = NARegionPixelCache.get().getRegion(layer.id, regionCoord);
 
         if (region == null) {
             LogUtil.debug("MapUpdater: Creating new MapRegion for layer {} at {}", layer.id, regionCoord);
             region = new NARegionPixelData();
-            NARegionCache.get().put(layer.id, regionCoord, region);
+            NARegionPixelCache.get().put(layer.id, regionCoord, region);
 
-            NARegionPixelData diskLoaded = NARegionCache.get().getRegion(layer.id, regionCoord);
+            NARegionPixelData diskLoaded = NARegionPixelCache.get().getRegion(layer.id, regionCoord);
             if (diskLoaded != null) {
                 region = diskLoaded;
             }

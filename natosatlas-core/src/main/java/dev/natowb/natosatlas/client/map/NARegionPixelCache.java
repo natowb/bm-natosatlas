@@ -1,25 +1,26 @@
 package dev.natowb.natosatlas.client.map;
 
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.client.layers.MapLayerHandler;
+import dev.natowb.natosatlas.core.data.NARegionPixelData;
+import dev.natowb.natosatlas.core.io.NARegionStorage;
 
 import java.util.*;
 
-public class NARegionCache {
+public class NARegionPixelCache {
 
     private final Queue<Long> dirtyQueue = new ArrayDeque<>();
     private final Set<Long> dirtySet = new HashSet<>();
 
     private static final int CACHE_SIZE = 256;
 
-    private static NARegionCache instance;
+    private static NARegionPixelCache instance;
 
-    private NARegionCache() {
+    private NARegionPixelCache() {
     }
 
-    public static NARegionCache get() {
+    public static NARegionPixelCache get() {
         if (instance == null) {
-            instance = new NARegionCache();
+            instance = new NARegionPixelCache();
         }
         return instance;
     }
@@ -39,7 +40,7 @@ public class NARegionCache {
         if (arr != null && arr[layerId] != null)
             return arr[layerId];
 
-        Optional<NARegionPixelData> loaded = MapStorage.get().loadRegion(layerId, coord);
+        Optional<NARegionPixelData> loaded = NARegionStorage.get().loadRegion(layerId, coord);
         if (loaded.isPresent()) {
             if (arr == null) {
                 arr = new NARegionPixelData[MapLayerHandler.get().getLayers().size()];

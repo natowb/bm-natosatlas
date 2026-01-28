@@ -5,11 +5,11 @@ import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionFile;
-import dev.natowb.natosatlas.client.layers.MapLayerHandler;
-import dev.natowb.natosatlas.client.map.NARegionCache;
-import dev.natowb.natosatlas.client.layers.MapLayer;
-import dev.natowb.natosatlas.client.map.NARegionPixelData;
-import dev.natowb.natosatlas.client.map.MapStorage;
+import dev.natowb.natosatlas.client.map.MapLayerHandler;
+import dev.natowb.natosatlas.client.map.NARegionPixelCache;
+import dev.natowb.natosatlas.core.data.NALayer;
+import dev.natowb.natosatlas.core.data.NARegionPixelData;
+import dev.natowb.natosatlas.core.io.NARegionStorage;
 import dev.natowb.natosatlas.core.io.SaveScheduler;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.client.access.ClientBlockAccess;
@@ -17,7 +17,7 @@ import dev.natowb.natosatlas.client.access.ClientBlockAccess;
 import java.io.File;
 import java.util.List;
 
-import static dev.natowb.natosatlas.core.NatoAtlasConstants.BLOCKS_PER_MINECRAFT_CHUNK;
+import static dev.natowb.natosatlas.core.NAConstants.BLOCKS_PER_MINECRAFT_CHUNK;
 
 public class ChunkBuilder {
 
@@ -40,7 +40,7 @@ public class ChunkBuilder {
     }
 
 
-    public static void rebuildExistingChunks(MapStorage storage, NARegionCache cache) {
+    public static void rebuildExistingChunks(NARegionStorage storage, NARegionPixelCache cache) {
         List<NARegionFile> regions = NACore.getClient().getPlatform().world.getRegionFiles();
 
         if (regions.isEmpty()) {
@@ -69,7 +69,7 @@ public class ChunkBuilder {
 
                 for (NACoord chunkCoord : naRegion.iterateExistingChunks()) {
                     int layerIndex = 0;
-                    for (MapLayer layer : MapLayerHandler.get().getLayers()) {
+                    for (NALayer layer : MapLayerHandler.get().getLayers()) {
                         layer.renderer.applyChunkToRegion(layers[layerIndex], chunkCoord, layer.usesBlockLight, true);
                         layerIndex++;
                     }

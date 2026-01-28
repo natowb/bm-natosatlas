@@ -3,7 +3,6 @@ package dev.natowb.natosatlas.client.map;
 import dev.natowb.natosatlas.core.io.SaveWorker;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.io.NAPaths;
-import dev.natowb.natosatlas.client.layers.MapLayerHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -12,7 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static dev.natowb.natosatlas.core.NatoAtlasConstants.BLOCKS_PER_CANVAS_REGION;
+import static dev.natowb.natosatlas.core.NAConstants.BLOCKS_PER_CANVAS_REGION;
 
 public class MapExporter {
 

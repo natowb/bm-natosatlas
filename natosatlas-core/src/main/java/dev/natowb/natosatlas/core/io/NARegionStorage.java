@@ -1,9 +1,7 @@
-package dev.natowb.natosatlas.client.map;
+package dev.natowb.natosatlas.core.io;
 
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.io.SaveWorker;
-import dev.natowb.natosatlas.core.io.LogUtil;
-import dev.natowb.natosatlas.core.io.NAPaths;
+import dev.natowb.natosatlas.core.data.NARegionPixelData;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -16,25 +14,25 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Optional;
 
-import static dev.natowb.natosatlas.core.NatoAtlasConstants.BLOCKS_PER_CANVAS_REGION;
+import static dev.natowb.natosatlas.core.NAConstants.BLOCKS_PER_CANVAS_REGION;
 
-public class MapStorage {
+public class NARegionStorage {
 
     private final BufferedImage reusableImage;
     private final ImageWriter pngWriter;
     private final ImageWriteParam pngParams;
 
-    private static MapStorage instance;
+    private static NARegionStorage instance;
 
-    public static MapStorage get() {
+    public static NARegionStorage get() {
         if (instance == null) {
-            instance = new MapStorage();
+            instance = new NARegionStorage();
         }
 
         return instance;
     }
 
-    private MapStorage() {
+    private NARegionStorage() {
         this.reusableImage = new BufferedImage(BLOCKS_PER_CANVAS_REGION, BLOCKS_PER_CANVAS_REGION, BufferedImage.TYPE_INT_ARGB);
         Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("png");
         this.pngWriter = writers.hasNext() ? writers.next() : null;

@@ -1,8 +1,8 @@
-package dev.natowb.natosatlas.client.map;
+package dev.natowb.natosatlas.core.data;
 
 import dev.natowb.natosatlas.client.texture.TextureUtils;
 
-import static dev.natowb.natosatlas.core.NatoAtlasConstants.*;
+import static dev.natowb.natosatlas.core.NAConstants.*;
 
 public class NARegionPixelData {
 
