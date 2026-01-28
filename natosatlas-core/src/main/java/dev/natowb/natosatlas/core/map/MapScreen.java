@@ -374,10 +374,9 @@ public class MapScreen extends UIScreen {
         y += 10;
         painter.drawString(String.format("Pending Saves: %d", SaveWorker.getPendingCount()), 5, y, 0xFFFFFF);
         y += 10;
-        painter.drawString(String.format("Total Cache Size: %d", NatosAtlasCore.get().cache.getCacheSize()), 5, y, 0xFFFFFF);
+        painter.drawString(String.format("Cache size: r=%d, t=%d", NARegionCache.get().getRegionCount(), NARegionCache.get().getTotalCount()), 5, y, 0xFFFFFF);
         y += 10;
-        painter.drawString(String.format("Dirty Queue Size: %d", NatosAtlasCore.get().cache.getDirtyQueueSize()), 5, y, 0xFFFFFF);
+        painter.drawString(String.format("Dirty Queue Size: %d", NARegionCache.get().getDirtyQueueSize()), 5, y, 0xFFFFFF);
         y += 10;
-        painter.drawString(String.format("PNG Cache Size: %d", NatosAtlasCore.get().cache.getPngCacheSize()), 5, y, 0xFFFFFF);
     }
 }

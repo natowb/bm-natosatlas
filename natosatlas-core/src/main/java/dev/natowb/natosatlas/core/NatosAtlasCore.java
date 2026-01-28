@@ -24,7 +24,6 @@ public class NatosAtlasCore {
 
 
     private MapUpdater mapUpdater;
-    public final MapCache cache = new MapCache();
     public final TextureProvider textures = new TextureProvider();
     public final MapLayerManager layers = new MapLayerManager();
 
@@ -65,7 +64,7 @@ public class NatosAtlasCore {
         int currentDim = WorldAccess.get().getDimensionId();
         if (dim != currentDim) {
             dim = currentDim;
-            cache.clear();
+            NARegionCache.get().clear();
             return;
         }
 
@@ -84,7 +83,7 @@ public class NatosAtlasCore {
         LogUtil.info("Joined world saveName={}", worldSaveName);
 
         running = true;
-        mapUpdater = new MapUpdater(layers, cache);
+        mapUpdater = new MapUpdater(layers,  NARegionCache.get());
         NAPaths.updateWorldPath(worldSaveName);
         Waypoints.load();
         SaveScheduler.start();
@@ -93,7 +92,7 @@ public class NatosAtlasCore {
     private void onLeave() {
         LogUtil.info("Left world: {}", worldSaveName);
         SaveScheduler.stop();
-        cache.clear();
+        NARegionCache.get().clear();
         worldSaveName = null;
         mapUpdater = null;
         running = false;

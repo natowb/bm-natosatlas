@@ -53,12 +53,12 @@ public class MapStorage {
         return NAPaths.getWorldMapStoragePath(layerId).resolve("region_" + regionCoord.x + "_" + regionCoord.z + ".png").toFile();
     }
 
-    public void saveRegion(int layerId, NACoord coord, MapRegion region) {
+    public void saveRegion(int layerId, NACoord coord, NARegionPixelData region) {
         SaveWorker.enqueue(this, coord, region, getRegionPngFile(layerId, coord));
     }
 
 
-    public Optional<MapRegion> loadRegion(int layerId, NACoord coord) {
+    public Optional<NARegionPixelData> loadRegion(int layerId, NACoord coord) {
         File file = getRegionPngFile(layerId, coord);
 
         if (!file.exists()) {
@@ -72,7 +72,7 @@ public class MapStorage {
                 return Optional.empty();
             }
 
-            MapRegion region = new MapRegion();
+            NARegionPixelData region = new NARegionPixelData();
             img.getRGB(
                     0, 0,
                     BLOCKS_PER_CANVAS_REGION,
@@ -91,7 +91,7 @@ public class MapStorage {
     }
 
 
-    public void saveRegionBlocking(NACoord regionCoord, MapRegion region, File file) {
+    public void saveRegionBlocking(NACoord regionCoord, NARegionPixelData region, File file) {
         try {
             reusableImage.setRGB(
                     0, 0,

@@ -20,14 +20,14 @@ public class MapUpdater {
     private int activeChunkZ;
 
     private final MapLayerManager layerManager;
-    private final MapCache cache;
+    private final NARegionCache cache;
 
     private final HashMap<NACoord, Long> chunkUpdateTimes = new HashMap<>();
 
     private final java.util.List<NACoord> scanOrder = new java.util.ArrayList<>();
     private int scanIndex = 0;
 
-    public MapUpdater(MapLayerManager layerManager, MapCache cache) {
+    public MapUpdater(MapLayerManager layerManager, NARegionCache cache) {
         this.layerManager = layerManager;
         this.cache = cache;
         buildScanOrder();
@@ -98,14 +98,14 @@ public class MapUpdater {
     }
 
     private void updateChunkForLayer(NACoord regionCoord, NACoord chunkCoord, MapLayer layer) {
-        MapRegion region = cache.getRegion(layer.id, regionCoord);
+        NARegionPixelData region = cache.getRegion(layer.id, regionCoord);
 
         if (region == null) {
             LogUtil.debug("MapUpdater: Creating new MapRegion for layer {} at {}", layer.id, regionCoord);
-            region = new MapRegion();
+            region = new NARegionPixelData();
             cache.put(layer.id, regionCoord, region);
 
-            MapRegion diskLoaded = cache.getRegion(layer.id, regionCoord);
+            NARegionPixelData diskLoaded = cache.getRegion(layer.id, regionCoord);
             if (diskLoaded != null) {
                 region = diskLoaded;
             }

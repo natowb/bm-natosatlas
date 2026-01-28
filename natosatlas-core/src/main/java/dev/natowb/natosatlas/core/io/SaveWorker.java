@@ -2,7 +2,7 @@ package dev.natowb.natosatlas.core.io;
 
 
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.map.MapRegion;
+import dev.natowb.natosatlas.core.map.NARegionPixelData;
 import dev.natowb.natosatlas.core.map.MapStorage;
 
 import java.io.File;
@@ -23,7 +23,7 @@ public class SaveWorker {
 
     private static Thread workerThread;
 
-    public static synchronized void enqueue(MapStorage storage, NACoord coord, MapRegion region, File regionFile) {
+    public static synchronized void enqueue(MapStorage storage, NACoord coord, NARegionPixelData region, File regionFile) {
         if (shutdownRequested) return;
 
         String key = regionFile.getAbsolutePath();
@@ -88,10 +88,10 @@ public class SaveWorker {
     private static final class SaveTask {
         final MapStorage storage;
         final NACoord coord;
-        MapRegion region;
+        NARegionPixelData region;
         final File regionFile;
 
-        SaveTask(MapStorage storage, NACoord coord, MapRegion region, File regionFile) {
+        SaveTask(MapStorage storage, NACoord coord, NARegionPixelData region, File regionFile) {
             this.storage = storage;
             this.coord = coord;
             this.region = region;

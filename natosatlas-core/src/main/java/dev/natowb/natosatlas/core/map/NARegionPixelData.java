@@ -4,12 +4,12 @@ import dev.natowb.natosatlas.core.texture.TextureUtils;
 
 import static dev.natowb.natosatlas.core.NatoAtlasConstants.*;
 
-public class MapRegion {
+public class NARegionPixelData {
 
     private int textureId = -1;
     private final int[] pixels = new int[BLOCKS_PER_CANVAS_REGION * BLOCKS_PER_CANVAS_REGION];
 
-    public MapRegion() {
+    public NARegionPixelData() {
 
     }
 
@@ -27,7 +27,7 @@ public class MapRegion {
         textureId = TextureUtils.createBlankTexture(BLOCKS_PER_CANVAS_REGION, BLOCKS_PER_CANVAS_REGION);
     }
 
-    public void clearTexture() {
+    public void deleteTexture() {
         if (textureId == -1) return;
         TextureUtils.deleteTexture(textureId);
         textureId = -1;
