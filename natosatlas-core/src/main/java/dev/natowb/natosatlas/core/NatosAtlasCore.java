@@ -7,7 +7,6 @@ import dev.natowb.natosatlas.core.io.SaveScheduler;
 import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.io.NAPaths;
-import dev.natowb.natosatlas.core.texture.TextureProvider;
 import dev.natowb.natosatlas.core.waypoint.Waypoints;
 import dev.natowb.natosatlas.core.access.WorldAccess;
 
@@ -24,7 +23,6 @@ public class NatosAtlasCore {
 
 
     private MapUpdater mapUpdater;
-    public final TextureProvider textures = new TextureProvider();
     public final MapLayerManager layers = new MapLayerManager();
 
 

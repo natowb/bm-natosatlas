@@ -6,6 +6,7 @@ import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.NatoAtlasConstants;
 import dev.natowb.natosatlas.core.access.WorldAccess;
+import dev.natowb.natosatlas.core.texture.TextureProvider;
 
 import java.util.Random;
 import java.util.Set;
@@ -19,7 +20,7 @@ public class MapStageSlime implements MapStage {
         if (!Settings.showSlimeChunks) return;
         for (long key : visibleRegions) {
             NACoord coord = NACoord.fromKey(key);
-            int texId = NatosAtlasCore.get().textures.getTexture(coord);
+            int texId = TextureProvider.getTexture(coord);
             if (texId != -1) {
                 for (int x = 0; x < CHUNKS_PER_MINECRAFT_REGION; x++) {
                     for (int z = 0; z < CHUNKS_PER_MINECRAFT_REGION; z++) {

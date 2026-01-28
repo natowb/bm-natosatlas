@@ -3,6 +3,7 @@ package dev.natowb.natosatlas.core.map;
 import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.access.PainterAccess;
+import dev.natowb.natosatlas.core.texture.TextureProvider;
 
 import java.util.Set;
 
@@ -14,7 +15,7 @@ public class MapStageRegions implements MapStage {
     public void draw(MapContext ctx, Set<Long> visibleRegions) {
         for (long key : visibleRegions) {
             NACoord coord = NACoord.fromKey(key);
-            int texId = NatosAtlasCore.get().textures.getTexture(coord);
+            int texId = TextureProvider.getTexture(coord);
             if (texId != -1) {
                 drawRegionTexture(coord.x, coord.z, texId);
             }

@@ -6,6 +6,7 @@ import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.layers.MapLayer;
 import dev.natowb.natosatlas.core.map.NARegionCache;
 import dev.natowb.natosatlas.core.map.NARegionPixelData;
+import org.w3c.dom.Text;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -44,12 +45,16 @@ public final class TextureProvider {
     public static final int ICON_ENTITY_NONE = 21;
 
 
-    private int iconsTextureId = -1;
+    private TextureProvider() {
+    }
 
-    public int getIconTexture() {
+
+    private static int iconsTextureId = -1;
+
+    public static int getIconTexture() {
         if (iconsTextureId == -1) {
             try {
-                BufferedImage img = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("assets/natosatlas/textures/ui.png")));
+                BufferedImage img = ImageIO.read(Objects.requireNonNull(TextureProvider.class.getClassLoader().getResourceAsStream("assets/natosatlas/textures/ui.png")));
                 iconsTextureId = TextureUtils.createTextureFromBufferedImage(img);
             } catch (Exception e) {
                 LogUtil.error("Failed to load icons.png texture!, error={}", e);
@@ -59,7 +64,7 @@ public final class TextureProvider {
         return iconsTextureId;
     }
 
-    public int getTexture(NACoord coord) {
+    public static int getTexture(NACoord coord) {
         MapLayer layer = NatosAtlasCore.get().layers.getActiveLayer();
         NARegionPixelData region = NARegionCache.get().getRegion(layer.id, coord);
         if (region == null) return -1;

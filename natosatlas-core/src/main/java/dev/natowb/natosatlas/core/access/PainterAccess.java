@@ -1,6 +1,7 @@
 package dev.natowb.natosatlas.core.access;
 
 import dev.natowb.natosatlas.core.NatosAtlasCore;
+import dev.natowb.natosatlas.core.texture.TextureProvider;
 import org.lwjgl.opengl.GL11;
 
 public abstract class PainterAccess {
@@ -176,7 +177,7 @@ public abstract class PainterAccess {
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glDisable(GL11.GL_FOG);
 
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, NatosAtlasCore.get().textures.getIconTexture());
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, TextureProvider.getIconTexture());
         GL11.glColor4f(rf, gf, bf, af);
 
         GL11.glBegin(GL11.GL_QUADS);
