@@ -3,90 +3,53 @@ package dev.natowb.natosatlas.core;
 import dev.natowb.natosatlas.core.settings.Settings;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.io.NAPaths;
-import dev.natowb.natosatlas.core.io.SaveScheduler;
-import dev.natowb.natosatlas.core.layers.MapLayerHandler;
-import dev.natowb.natosatlas.core.map.MapUpdater;
-import dev.natowb.natosatlas.core.map.NARegionCache;
-import dev.natowb.natosatlas.core.waypoint.Waypoints;
-import dev.natowb.natosatlas.core.access.WorldAccess;
 
-public class NACore {
+import java.nio.file.Path;
 
-    private static NACore instance;
+public final class NACore {
 
-    public static NACore get() {
-        return instance;
+    private static boolean initialized;
+    private static NASession session;
+
+
+    private NACore() {
     }
 
-    public final NatosAtlasPlatform platform;
-
-    private boolean running;
-    private String worldSaveName;
-    private int dim;
-
-    public boolean isStopped() {
-        return !running;
+    public static boolean isInitialized() {
+        return initialized;
     }
 
-    public NACore(NatosAtlasPlatform platform) {
-        if (instance != null)
-            throw new IllegalStateException("NatosAtlas instance already created!");
 
-        instance = this;
-        this.platform = platform;
+    public static NAClient getClient() {
+        return (NAClient) session;
+    }
+
+
+    public static void initClient(Path minecraftPath, NAClientPlatform platform) {
+        if (initialized) return;
+        initialized = true;
+
 
         LogUtil.setLoggingLevel(LogUtil.LogLevel.INFO);
-        NAPaths.updateBasePaths(platform.getMinecraftDirectory());
+        NAPaths.updateBasePaths(minecraftPath);
         Settings.load();
+
+        session = new NAClient(platform);
+        LogUtil.info("Successfully initialized client");
     }
 
-    public void onTick() {
+    public static void initServer(Path minecraftPath) {
+        if (initialized) return;
+        initialized = true;
 
-        if (!WorldAccess.get().exists() && running) {
-            running = false;
-            onWorldLeft();
-            return;
-        }
-
-        if (WorldAccess.get().exists() && !running) {
-            running = true;
-            dim = WorldAccess.get().getDimensionId();
-            worldSaveName = WorldAccess.get().getSaveName();
-            onWorldJoined(worldSaveName, dim);
-        }
-
-        if (!running) return;
-
-        int currentDim = WorldAccess.get().getDimensionId();
-        if (dim != currentDim) {
-            dim = currentDim;
-            onDimensionChange(dim);
-            return;
-        }
-        onWorldTick();
+        LogUtil.setLoggingLevel(LogUtil.LogLevel.INFO);
+        NAPaths.updateBasePaths(minecraftPath);
+        Settings.load();
+        LogUtil.info("Successfully initialized server");
     }
 
-    private void onWorldJoined(String worldSaveName, int dim) {
-        NAPaths.updateWorldPath(worldSaveName);
-        Waypoints.load();
-        SaveScheduler.start();
-        LogUtil.info("Joined world={} dim={}", worldSaveName, dim);
-    }
-
-    private void onWorldLeft() {
-        SaveScheduler.stop();
-        NARegionCache.get().clear();
-        LogUtil.info("Left world {}", worldSaveName);
-    }
-
-    private void onDimensionChange(int newDim) {
-        LogUtil.info("Dimension changed to {}", newDim);
-        NARegionCache.get().clear();
-    }
-
-    private void onWorldTick() {
-        MapUpdater.get().tick();
-        SaveScheduler.tick();
-        MapLayerHandler.get().tick();
+    public static void tick() {
+        if (!initialized) return;
+        session.tick();
     }
 }

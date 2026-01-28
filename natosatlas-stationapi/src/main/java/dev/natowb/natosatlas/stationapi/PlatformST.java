@@ -1,23 +1,19 @@
 package dev.natowb.natosatlas.stationapi;
 
-import dev.natowb.natosatlas.core.NatosAtlasPlatform;
+import dev.natowb.natosatlas.core.NAClientPlatform;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 
 import java.nio.file.Path;
 
-public class PlatformST extends NatosAtlasPlatform {
+public class PlatformST extends NAClientPlatform {
 
     public PlatformST() {
         super(new PlatformPainterST(), new BlockAccessST(), new WorldAccessST());
     }
 
 
-    @Override
-    public Path getMinecraftDirectory() {
-        return FabricLoader.getInstance().getGameDir();
-    }
 
     @Override
     public void openNacScreen(UIScreen screen) {

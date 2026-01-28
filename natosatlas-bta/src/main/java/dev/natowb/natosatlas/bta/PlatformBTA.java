@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.bta;
 
-import dev.natowb.natosatlas.core.NatosAtlasPlatform;
+import dev.natowb.natosatlas.core.NAClientPlatform;
 import dev.natowb.natosatlas.core.ui.elements.UIScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
@@ -8,14 +8,9 @@ import net.minecraft.core.sound.SoundCategory;
 
 import java.nio.file.Path;
 
-public class PlatformBTA extends NatosAtlasPlatform {
+public class PlatformBTA extends NAClientPlatform {
     public PlatformBTA() {
         super(new PlatformPainterBTA(), new BlockAccessBTA(), new WorldAccessBTA());
-    }
-
-    @Override
-    public Path getMinecraftDirectory() {
-        return FabricLoader.getInstance().getGameDir();
     }
 
     @Override

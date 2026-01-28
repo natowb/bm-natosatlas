@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.waypoint;
 
+import dev.natowb.natosatlas.core.NAClientPlatform;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
@@ -121,7 +122,7 @@ public class WaypointCreateScreen extends UIScreen {
 
         UIElementIconButton back = new UIElementIconButton(3000, px + 20, py + panelH - 30, 20, 20, ICON_BACK);
         back.setTooltip("Back");
-        back.setHandler(btn -> NACore.get().platform.openNacScreen(parent));
+        back.setHandler(btn -> NACore.getClient().getPlatform().openNacScreen(parent));
         addButton(back);
 
         UIElementIconButton confirm = new UIElementIconButton(3001, px + panelW - 40, py + panelH - 30, 20, 20, ICON_CHECK);
@@ -250,7 +251,7 @@ public class WaypointCreateScreen extends UIScreen {
             Waypoints.add(wp);
         }
 
-        NACore.get().platform.openNacScreen(parent);
+        NACore.getClient().getPlatform().openNacScreen(parent);
     }
 
     @Override

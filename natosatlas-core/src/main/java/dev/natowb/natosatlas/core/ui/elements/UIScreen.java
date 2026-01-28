@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.ui.elements;
 
+import dev.natowb.natosatlas.core.NAClientPlatform;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import org.lwjgl.input.Keyboard;
@@ -110,8 +111,8 @@ public abstract class UIScreen {
     private boolean handleClickDispatch(int mouseX, int mouseY) {
         for (UIElementButton btn : buttons) {
             if (btn.active && btn.isHovered(mouseX, mouseY)) {
-                NACore.get().platform.playSound("random.click", 1.0F, 1.0F);
-                if (btn.handler != null)  {
+                NACore.getClient().getPlatform().playSound("random.click", 1.0F, 1.0F);
+                if (btn.handler != null) {
                     btn.handler.onClick(btn);
                     return true;
                 }
@@ -178,7 +179,7 @@ public abstract class UIScreen {
         }
 
         if (keyCode == Keyboard.KEY_ESCAPE) {
-            NACore.get().platform.openNacScreen(parent);
+            NACore.getClient().getPlatform().openNacScreen(parent);
         }
     }
 

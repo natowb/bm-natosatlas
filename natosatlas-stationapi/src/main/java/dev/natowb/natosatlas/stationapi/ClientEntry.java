@@ -1,7 +1,9 @@
 package dev.natowb.natosatlas.stationapi;
 
 import dev.natowb.natosatlas.core.NACore;
+import dev.natowb.natosatlas.core.NAClientPlatform;
 import dev.natowb.natosatlas.core.map.MapScreen;
+import net.fabricmc.loader.api.FabricLoader;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.client.option.KeyBinding;
 import net.modificationstation.stationapi.api.client.event.keyboard.KeyStateChangedEvent;
@@ -19,11 +21,10 @@ public class ClientEntry {
     }
 
     public static KeyBinding KEY_BINDING_MAP;
-    private NACore nac;
 
     @EventListener
     public void init(InitFinishedEvent event) {
-        nac = new NACore(new PlatformST());
+        NACore.initClient(FabricLoader.getInstance().getGameDir(),new PlatformST());
     }
 
 
@@ -36,17 +37,17 @@ public class ClientEntry {
 
     @EventListener
     void onGameTick(GameTickEvent.End event) {
-        nac.onTick();
+        NACore.tick();
     }
 
     @EventListener
     public void handle(KeyStateChangedEvent event) {
-        if (NACore.get().isStopped()) return;
+        if (!NACore.isInitialized()) return;
 
         if (Keyboard.getEventKeyState()) {
             if (Keyboard.isKeyDown(ClientEntry.KEY_BINDING_MAP.code)) {
                 if (event.environment == KeyStateChangedEvent.Environment.IN_GAME) {
-                    NACore.get().platform.openNacScreen(new MapScreen(null));
+                    NACore.getClient().getPlatform().openNacScreen(new MapScreen(null));
                 }
             }
         }

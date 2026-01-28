@@ -1,4 +1,5 @@
 import dev.natowb.natosatlas.core.NACore;
+import dev.natowb.natosatlas.core.NAClientPlatform;
 import dev.natowb.natosatlas.core.map.MapScreen;
 import dev.natowb.natosatlas.modloader.*;
 
@@ -12,36 +13,35 @@ import org.lwjgl.input.Keyboard;
 
 public class mod_NatosMap extends BaseMod {
 
-    private static final KeyBinding KEY_BINDING_MAP = new KeyBinding("Nato's Map", Keyboard.KEY_M);
-    private NACore nac;
+    private static final KeyBinding KEY_BINDING_MAP = new KeyBinding("Natos Atlas", Keyboard.KEY_M);
 
     @Override
     public void ModsLoaded() {
         ModLoader.RegisterKey(this, KEY_BINDING_MAP, false);
         ModLoader.SetInGameHook(this, true, true);
         ModLoader.SetInGUIHook(this, true, true);
-        nac = new NACore(new PlatformML());
+        NACore.initClient(Minecraft.getRunDirectory().toPath(), new PlatformML());
     }
 
     @Override
     public boolean OnTickInGUI(Minecraft mc, Screen gui) {
-        NACore.get().onTick();
+        NACore.tick();
         return true;
     }
 
     @Override
     public boolean OnTickInGame(Minecraft mc) {
-        NACore.get().onTick();
+        NACore.tick();
         return true;
     }
 
     @Override
     public void KeyboardEvent(KeyBinding key) {
-        if(NACore.get().isStopped()) return;
+        if (!NACore.isInitialized()) return;
         Minecraft mc = ModLoader.getMinecraftInstance();
         if (key.code != KEY_BINDING_MAP.code) return;
         if (mc.currentScreen == null) {
-            nac.platform.openNacScreen(new MapScreen(null));
+            NACore.getClient().getPlatform().openNacScreen(new MapScreen(null));
         }
     }
 
