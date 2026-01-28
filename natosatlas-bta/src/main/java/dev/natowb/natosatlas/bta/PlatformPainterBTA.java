@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.bta;
 
-import dev.natowb.natosatlas.core.access.PainterAccess;
+import dev.natowb.natosatlas.client.access.PainterAccess;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.texture.Texture;

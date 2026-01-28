@@ -1,13 +1,10 @@
 package dev.natowb.natosatlas.modloader;
 
-import dev.natowb.natosatlas.core.data.NABiome;
-import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.data.NAEntity;
-import dev.natowb.natosatlas.core.data.NARegionFile;
-import dev.natowb.natosatlas.core.io.LogUtil;
-import dev.natowb.natosatlas.core.io.NAPaths;
+import dev.natowb.natosatlas.client.NAClientPaths;
+import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
-import dev.natowb.natosatlas.core.access.WorldAccess;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.core.util.LogUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -24,23 +21,22 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldAccessML extends WorldAccess {
+public class WorldAccessML extends ClientWorldAccess {
 
     private static final Minecraft mc = ModLoader.getMinecraftInstance();
 
     @Override
-    public String getName() {
-        return mc.world.getProperties().getName();
-    }
+    public NAWorldInfo getWorldInfo() {
+        if (mc.world == null) return null;
+        int worldHeight = 128;
+        String name = mc.world.getProperties().getName();
+        long time = mc.world.getTime();
+        long seed = mc.world.getSeed();
+        int dimensionId = mc.world.dimension.id;
+        boolean hasCeiling = mc.world.dimension.hasCeiling;
+        boolean multiplayer = mc.world.isRemote;
 
-    @Override
-    public int getWorldHeight() {
-        return 128;
-    }
-
-    @Override
-    public boolean exists() {
-        return mc.world != null;
+        return new NAWorldInfo(worldHeight, name, time, seed, dimensionId, hasCeiling, multiplayer);
     }
 
     @Override
@@ -52,9 +48,11 @@ public class WorldAccessML extends WorldAccess {
         mc.world.attemptSaving(0);
         List<WorldSaveInfo> saves = mc.getWorldStorageSource().getAll();
         if (saves == null || saves.isEmpty()) return null;
+
         String currentName = mc.world.getProperties().getName();
         WorldSaveInfo best = null;
         long bestTime = Long.MIN_VALUE;
+
         for (WorldSaveInfo info : saves) {
             if (info.getName().equals(currentName)) {
                 long t = info.getLastPlayed();
@@ -65,35 +63,7 @@ public class WorldAccessML extends WorldAccess {
             }
         }
 
-        if (best != null) {
-            return best.getSaveName();
-        }
-        return null;
-    }
-
-    @Override
-    public long getTime() {
-        return mc.world.getTime();
-    }
-
-    @Override
-    public long getSeed() {
-        return mc.world.getSeed();
-    }
-
-    @Override
-    public int getDimensionId() {
-        return mc.world.dimension.id;
-    }
-
-    @Override
-    public boolean hasCeiling() {
-        return mc.world.dimension.hasCeiling;
-    }
-
-    @Override
-    public boolean isServer() {
-        return mc.world.isRemote;
+        return best != null ? best.getSaveName() : null;
     }
 
     @Override
@@ -146,20 +116,11 @@ public class WorldAccessML extends WorldAccess {
     @Override
     public ChunkWrapper getChunk(NACoord chunkCoord) {
         Chunk chunk = mc.world.getChunk(chunkCoord.x, chunkCoord.z);
+        // FIXME: find a better way to get world height opposed to this hardcoded value
+        final int worldHeight = 128;
         if (chunk == null) return null;
 
-
-        return new ChunkWrapper(chunk) {
-            @Override
-            public long getLastSaveTime() {
-                return ((Chunk) chunk).lastSaveTime;
-            }
-
-            @Override
-            public boolean isDirty() {
-                return ((Chunk) chunk).dirty;
-            }
-
+        return new ChunkWrapper(chunk, worldHeight) {
             @Override
             public int getBlockId(int x, int y, int z) {
                 return ((Chunk) chunk).getBlockId(x, y, z);
@@ -184,21 +145,12 @@ public class WorldAccessML extends WorldAccess {
 
     @Override
     public ChunkWrapper getChunkFromDisk(NACoord chunkCoord) {
-        RegionChunkStorage chunkLoader = new RegionChunkStorage(NAPaths.getWorldSavePath().toFile());
+        RegionChunkStorage chunkLoader = new RegionChunkStorage(NAClientPaths.getWorldSavePath().toFile());
         Chunk chunk = chunkLoader.loadChunk(mc.world, chunkCoord.x, chunkCoord.z);
 
         if (chunk == null) return null;
 
-        return new ChunkWrapper(chunk) {
-            @Override
-            public long getLastSaveTime() {
-                return ((Chunk) chunk).lastSaveTime;
-            }
-
-            @Override
-            public boolean isDirty() {
-                return ((Chunk) chunk).dirty;
-            }
+        return new ChunkWrapper(chunk, getWorldInfo().getWorldHeight()) {
 
             @Override
             public int getBlockId(int x, int y, int z) {
@@ -223,14 +175,15 @@ public class WorldAccessML extends WorldAccess {
     }
 
     @Override
-    public List<NARegionFile> getRegionFiles() {
+    public List<NARegionFile> getRegionFiles(File dimDir) {
         List<NARegionFile> result = new ArrayList<>();
+        File regionDir = new File(dimDir, "region");
 
-        File regionDir = new File(NAPaths.getWorldSavePath().toFile(), "region");
-        File[] regionFiles = regionDir.listFiles((dir, name) -> name.endsWith(".mcr") || name.endsWith(".mca"));
-        if (regionFiles == null || regionFiles.length == 0) {
-            return result;
-        }
+        File[] regionFiles = regionDir.listFiles((dir, name) ->
+                name.endsWith(".mcr") || name.endsWith(".mca")
+        );
+
+        if (regionFiles == null) return result;
 
         int index = 0;
 
@@ -242,9 +195,7 @@ public class WorldAccessML extends WorldAccess {
             try {
                 String name = regionFile.getName();
                 String[] parts = name.substring(2, name.length() - 4).split("\\.");
-                if (parts.length != 2) {
-                    continue;
-                }
+                if (parts.length != 2) continue;
 
                 int rx = Integer.parseInt(parts[0]);
                 int rz = Integer.parseInt(parts[1]);
@@ -270,12 +221,10 @@ public class WorldAccessML extends WorldAccess {
 
             if (success) {
                 LogUtil.info("[{}/{}] Successfully processed region file: {}", index, regionFiles.length, regionFile.getName());
-
             } else {
-                LogUtil.info("[{}/{}] Failed to processed region file: {}", index, regionFiles.length, regionFile.getName());
+                LogUtil.info("[{}/{}] Failed to process region file: {}", index, regionFiles.length, regionFile.getName());
             }
         }
-
         return result;
     }
 }

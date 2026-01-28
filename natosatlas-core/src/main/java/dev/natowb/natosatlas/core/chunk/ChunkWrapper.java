@@ -1,19 +1,20 @@
 package dev.natowb.natosatlas.core.chunk;
 
-import dev.natowb.natosatlas.core.access.BlockAccess;
-import dev.natowb.natosatlas.core.access.WorldAccess;
+import dev.natowb.natosatlas.client.access.BlockAccess;
 
 public abstract class ChunkWrapper {
 
     protected final Object chunk;
+    protected final int worldHeight;
 
-    public ChunkWrapper(Object chunk) {
+    public ChunkWrapper(Object chunk, int worldHeight) {
         this.chunk = chunk;
+        this.worldHeight = worldHeight;
     }
 
     public int getTopSolidBlockY(int x, int z) {
 
-        int y = WorldAccess.get().getWorldHeight() - 1;
+        int y = worldHeight - 1;
         x &= 15;
         int z0 = z & 15;
 
@@ -40,9 +41,6 @@ public abstract class ChunkWrapper {
         return depth;
     }
 
-    public abstract long getLastSaveTime();
-
-    public abstract boolean isDirty();
 
     public abstract int getBlockId(int x, int y, int z);
 
@@ -51,4 +49,5 @@ public abstract class ChunkWrapper {
     public abstract int getBlockLight(int x, int y, int z);
 
     public abstract int getSkyLight(int x, int y, int z);
+
 }

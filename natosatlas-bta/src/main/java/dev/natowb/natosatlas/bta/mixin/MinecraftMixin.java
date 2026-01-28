@@ -1,7 +1,8 @@
 package dev.natowb.natosatlas.bta.mixin;
 
-import dev.natowb.natosatlas.core.NatosAtlasCore;
-import dev.natowb.natosatlas.core.map.MapScreen;
+import dev.natowb.natosatlas.client.NAClient;
+import dev.natowb.natosatlas.core.NACore;
+import dev.natowb.natosatlas.client.map.MapScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.InputDevice;
 import org.lwjgl.input.Keyboard;
@@ -16,14 +17,14 @@ public class MinecraftMixin {
 
     @Inject(method = "runTick", at = @At("TAIL"), remap = false)
     private void onConstructed(CallbackInfo ci) {
-        NatosAtlasCore.get().onTick();
+        NACore.tick();
     }
 
     @Inject(method = "checkBoundInputs", at = @At("TAIL"), remap = false)
     private void checkBoundInputs(InputDevice currentInputDevice, CallbackInfoReturnable<Boolean> cir) {
-        if (NatosAtlasCore.get().isStopped()) return;
+        if (!NACore.isInitialized()) return;
         if (Keyboard.isKeyDown(Keyboard.KEY_M)) {
-            NatosAtlasCore.get().platform.openNacScreen(new MapScreen(null));
+            NAClient.get().getPlatform().screen.openNacScreen(new MapScreen(null));
         }
     }
 }

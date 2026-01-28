@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.bta;
 
-import dev.natowb.natosatlas.core.access.BlockAccess;
+import dev.natowb.natosatlas.client.access.BlockAccess;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.material.MaterialColor;

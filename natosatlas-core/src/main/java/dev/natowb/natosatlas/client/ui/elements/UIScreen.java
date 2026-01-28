@@ -1,0 +1,196 @@
+package dev.natowb.natosatlas.client.ui.elements;
+
+import dev.natowb.natosatlas.client.NAClient;
+import dev.natowb.natosatlas.client.ui.UIScaleInfo;
+import org.lwjgl.input.Keyboard;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class UIScreen {
+
+    protected int width;
+    protected int height;
+    protected UIScreen parent;
+
+    private boolean ignoreNextClick = true;
+    private final boolean[] mouseButtons = new boolean[3];
+    protected final List<UIElementButton> buttons = new ArrayList<>();
+    protected final List<UIElementSlider> sliders = new ArrayList<>();
+    protected final List<UIElementTextField> textFields = new ArrayList<>();
+
+    protected void addButton(UIElementButton btn) {
+        buttons.add(btn);
+    }
+
+    protected void addSlider(UIElementSlider slider) {
+        sliders.add(slider);
+    }
+
+    protected void addTextField(UIElementTextField tf) {
+        textFields.add(tf);
+    }
+
+    protected UIScreen(UIScreen parent) {
+        this.parent = parent;
+    }
+
+    public void init(int width, int height) {
+        this.width = width;
+        this.height = height;
+        ignoreNextClick = true;
+        this.buttons.clear();
+        this.textFields.clear();
+        this.sliders.clear();
+    }
+
+    public void tick() {
+        for (UIElementTextField tf : textFields) {
+            tf.tick();
+        }
+    }
+
+    public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
+        for (UIElementButton btn : buttons) {
+            btn.render(mouseX, mouseY);
+        }
+
+        for (UIElementSlider slider : sliders) {
+            slider.render(mouseX, mouseY);
+        }
+
+        for (UIElementTextField tf : textFields) {
+            tf.render();
+        }
+
+        for (UIElementButton btn : buttons) {
+            if (btn instanceof UIElementIconButton) {
+                ((UIElementIconButton) btn).renderTooltip(mouseX, mouseY, scaleInfo.scaledWidth, scaleInfo.scaledHeight);
+            }
+        }
+
+    }
+
+
+    public void handleRawMouseEvent(int x, int y, int button, boolean pressed, int wheel) {
+        if (wheel != 0) {
+            mouseScroll(wheel);
+            return;
+        }
+
+        if (ignoreNextClick) {
+            if (!pressed) ignoreNextClick = false;
+            return;
+        }
+
+        if (button >= 0 && button <= 2) {
+            if (button == 0 && pressed && handleClickDispatch(x, y)) {
+                return;
+            }
+
+            if (pressed) {
+                mouseButtons[button] = true;
+                mouseDown(x, y, button);
+                return;
+            }
+
+            mouseButtons[button] = false;
+            mouseUp(x, y, button);
+            return;
+        }
+
+        for (int b = 0; b < 3; b++) {
+            if (mouseButtons[b]) {
+                mouseDrag(x, y, b);
+            }
+        }
+    }
+
+
+    private boolean handleClickDispatch(int mouseX, int mouseY) {
+        for (UIElementButton btn : buttons) {
+            if (btn.active && btn.isHovered(mouseX, mouseY)) {
+                NAClient.get().getPlatform().screen.playSound("random.click", 1.0F, 1.0F);
+                if (btn.handler != null) {
+                    btn.handler.onClick(btn);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    protected void onSliderChanged(UIElementSlider slider) {
+
+    }
+
+    public void mouseDown(int mouseX, int mouseY, int button) {
+        if (button != 0) return;
+
+        for (UIElementSlider slider : sliders) {
+            float oldValue = slider.getValue();
+            slider.mouseDown(mouseX, mouseY);
+            if (slider.getValue() != oldValue) {
+                onSliderChanged(slider);
+            }
+        }
+
+        for (UIElementTextField tf : textFields) {
+            tf.mouseClicked(mouseX, mouseY, button);
+        }
+    }
+
+    public void mouseUp(int mouseX, int mouseY, int button) {
+        if (button != 0) return;
+
+        for (UIElementSlider slider : sliders) {
+            slider.mouseUp();
+        }
+
+        for (UIElementTextField tf : textFields) {
+            tf.mouseUp(mouseX, mouseY, button);
+        }
+    }
+
+    public void mouseDrag(int mouseX, int mouseY, int button) {
+        if (button != 0) return;
+
+        for (UIElementSlider slider : sliders) {
+            float oldValue = slider.getValue();
+            slider.mouseDrag(mouseX);
+            if (slider.getValue() != oldValue) {
+                onSliderChanged(slider);
+            }
+        }
+
+        for (UIElementTextField tf : textFields) {
+            tf.mouseDragged(mouseX, mouseY, button);
+        }
+    }
+
+    public void keyPressed(char character, int keyCode) {
+        for (UIElementTextField tf : textFields) {
+            if (tf.focused) {
+                tf.keyPressed(character, keyCode);
+                return;
+            }
+        }
+
+        if (keyCode == Keyboard.KEY_ESCAPE) {
+            NAClient.get().getPlatform().screen.openNacScreen(parent);
+        }
+    }
+
+    public void mouseScroll(int amount) {
+    }
+
+    public void handleTab() {
+
+    }
+
+    public void onClose() {
+    }
+
+}
+

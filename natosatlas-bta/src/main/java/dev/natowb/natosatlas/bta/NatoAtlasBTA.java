@@ -1,12 +1,15 @@
 package dev.natowb.natosatlas.bta;
 
-import dev.natowb.natosatlas.core.NatosAtlasCore;
+import dev.natowb.natosatlas.client.access.BlockAccess;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.core.NACore;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import turniplabs.halplibe.util.GameStartEntrypoint;
 import turniplabs.halplibe.util.RecipeEntrypoint;
 
 public class NatoAtlasBTA implements ModInitializer, RecipeEntrypoint, GameStartEntrypoint {
-    private NatosAtlasCore nac;
+    private NACore nac;
 
     @Override
     public void onInitialize() {
@@ -26,6 +29,8 @@ public class NatoAtlasBTA implements ModInitializer, RecipeEntrypoint, GameStart
 
     @Override
     public void afterGameStart() {
-        nac = new NatosAtlasCore(new PlatformBTA());
+        BlockAccess.set(new BlockAccessBTA());
+        ClientWorldAccess.set(new WorldAccessBTA());
+        NACore.initClient(FabricLoader.getInstance().getGameDir(), new PlatformBTA());
     }
 }
