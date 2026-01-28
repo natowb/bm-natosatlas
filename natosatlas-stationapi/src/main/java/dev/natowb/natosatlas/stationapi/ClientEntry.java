@@ -13,7 +13,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.lang.invoke.MethodHandles;
 
-public class NatosAtlasST {
+public class ClientEntry {
     static {
         EntrypointManager.registerLookup(MethodHandles.lookup());
     }
@@ -30,7 +30,7 @@ public class NatosAtlasST {
     @EventListener
     public void registerKeybinds(KeyBindingRegisterEvent event) {
         KEY_BINDING_MAP = new KeyBinding("key.natosatlas.map_keybind", Keyboard.KEY_M);
-        event.keyBindings.add(NatosAtlasST.KEY_BINDING_MAP);
+        event.keyBindings.add(ClientEntry.KEY_BINDING_MAP);
     }
 
 
@@ -44,7 +44,7 @@ public class NatosAtlasST {
         if (NatosAtlasCore.get().isStopped()) return;
 
         if (Keyboard.getEventKeyState()) {
-            if (Keyboard.isKeyDown(NatosAtlasST.KEY_BINDING_MAP.code)) {
+            if (Keyboard.isKeyDown(ClientEntry.KEY_BINDING_MAP.code)) {
                 if (event.environment == KeyStateChangedEvent.Environment.IN_GAME) {
                     NatosAtlasCore.get().platform.openNacScreen(new MapScreen(null));
                 }
