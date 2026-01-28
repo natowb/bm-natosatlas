@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.map;
 
+import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.settings.Settings;
@@ -35,7 +36,7 @@ public class MapStageSlime implements MapStage {
 
     // FIXME: move this to a global acessor at some point
     private boolean isSlimeChunk(int worldChunkX, int worldChunkZ) {
-        long seed = WorldAccess.get().getSeed();
+        long seed = NACore.getClient().getPlatform().world.getSeed();
         return new Random(seed + (long) (worldChunkX * worldChunkX) * 4987142L + (long) worldChunkX * 5947611L + (long) (worldChunkZ * worldChunkZ) * 4392871L + (long) worldChunkZ * 389711L ^ 987234911L).nextInt(10) == 0;
     }
 
@@ -53,7 +54,7 @@ public class MapStageSlime implements MapStage {
         int x2 = px;
         int y2 = pz;
 
-        PainterAccess.get().drawRect(
+        NACore.getClient().getPlatform().painter.drawRect(
                 x1, y1, x2, y2,
                 0x8000FF00
         );

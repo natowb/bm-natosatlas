@@ -28,7 +28,7 @@ public class NAClient implements NASession {
 
     @Override
     public void tick() {
-        boolean worldExists = WorldAccess.get().exists();
+        boolean worldExists = platform.world.exists();
 
         if (!worldExists && inWorld) {
             inWorld = false;
@@ -38,14 +38,14 @@ public class NAClient implements NASession {
 
         if (worldExists && !inWorld) {
             inWorld = true;
-            dim = WorldAccess.get().getDimensionId();
-            worldSaveName = WorldAccess.get().getSaveName();
+            dim = NACore.getClient().getPlatform().world.getDimensionId();
+            worldSaveName = NACore.getClient().getPlatform().world.getSaveName();
             onWorldJoined(worldSaveName, dim);
         }
 
         if (!inWorld) return;
 
-        int currentDim = WorldAccess.get().getDimensionId();
+        int currentDim = NACore.getClient().getPlatform().world.getDimensionId();
         if (dim != currentDim) {
             dim = currentDim;
             onDimensionChange(dim);

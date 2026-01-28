@@ -10,11 +10,14 @@ import java.nio.file.Path;
 
 public abstract class NAClientPlatform {
 
+    public final PainterAccess painter;
+    public final BlockAccess blocks;
+    public final WorldAccess world;
 
     public NAClientPlatform(PainterAccess painter, BlockAccess blockAccess, WorldAccess worldAccess) {
-        PainterAccess.setInstance(painter);
-        BlockAccess.setInstance(blockAccess);
-        WorldAccess.setInstance(worldAccess);
+        this.painter = painter;
+        this.blocks = blockAccess;
+        this.world = worldAccess;
     }
 
     public abstract void openNacScreen(UIScreen screen);

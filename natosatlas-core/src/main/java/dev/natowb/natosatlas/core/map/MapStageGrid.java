@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.map;
 
+import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.settings.Settings;
 import org.lwjgl.opengl.GL11;
@@ -56,14 +57,14 @@ public class MapStageGrid implements MapStage {
 
 
         for (float x = startX; x <= maxX; x += fCell) {
-            PainterAccess.get().drawLine(
+            NACore.getClient().getPlatform().painter.drawLine(
                     x, top - fCell,
                     x, bottom + fCell
             );
         }
 
         for (float y = startY; y <= maxY; y += fCell) {
-            PainterAccess.get().drawLine(
+            NACore.getClient().getPlatform().painter.drawLine(
                     left - fCell, y,
                     right + fCell, y
             );

@@ -4,17 +4,6 @@ import dev.natowb.natosatlas.core.texture.TextureProvider;
 import org.lwjgl.opengl.GL11;
 
 public abstract class PainterAccess {
-
-    private static PainterAccess instance;
-
-    public static void setInstance(PainterAccess instance) {
-        PainterAccess.instance = instance;
-    }
-
-    public static PainterAccess get() {
-        return instance;
-    }
-
     public void drawRect(int x1, int y1, int x2, int y2, int argbColor) {
         if (x1 < x2) {
             int t = x1;

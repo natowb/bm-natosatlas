@@ -5,21 +5,10 @@ import dev.natowb.natosatlas.core.io.LogUtil;
 import java.util.HashMap;
 
 public abstract class BlockAccess {
-
-    private static BlockAccess instance;
-
     public enum BlockIdentifier {
         GRASS,
         GLASS,
         SNOW
-    }
-
-    public static void setInstance(BlockAccess instance) {
-        BlockAccess.instance = instance;
-    }
-
-    public static BlockAccess get() {
-        return instance;
     }
 
     private final HashMap<BlockIdentifier, Integer> blockIdLookup = new HashMap<>();

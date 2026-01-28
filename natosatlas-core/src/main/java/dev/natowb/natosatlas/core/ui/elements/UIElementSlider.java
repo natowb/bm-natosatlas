@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.ui.elements;
 
+import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.ui.layout.UILayout;
 import dev.natowb.natosatlas.core.ui.layout.UIPoint;
@@ -55,7 +56,7 @@ public class UIElementSlider extends UIElementButton {
 
     @Override
     public void render(int mouseX, int mouseY) {
-        PainterAccess p = PainterAccess.get();
+        PainterAccess p = NACore.getClient().getPlatform().painter;
 
         boolean hovered = isHovered(mouseX, mouseY);
 

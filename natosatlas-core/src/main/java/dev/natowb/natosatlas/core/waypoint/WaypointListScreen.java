@@ -68,7 +68,7 @@ public class WaypointListScreen extends UIScreen {
 
     @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
-        PainterAccess p = PainterAccess.get();
+        PainterAccess p = NACore.getClient().getPlatform().painter;
 
         p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
 

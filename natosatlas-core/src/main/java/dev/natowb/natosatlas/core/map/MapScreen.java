@@ -31,7 +31,7 @@ import static dev.natowb.natosatlas.core.texture.TextureProvider.*;
 public class MapScreen extends UIScreen {
 
     private final MapViewport viewport = new MapViewport();
-    private final PainterAccess painter = PainterAccess.get();
+    private final PainterAccess painter = NACore.getClient().getPlatform().painter;
 
     private final MapStageRegions regionPainter = new MapStageRegions();
     private final MapStageSlime slimePainter = new MapStageSlime();
@@ -52,7 +52,7 @@ public class MapScreen extends UIScreen {
     public void init(int width, int height) {
         super.init(width, height);
         viewport.initViewport(0, 0, width, height);
-        NAEntity player = WorldAccess.get().getPlayer();
+        NAEntity player = NACore.getClient().getPlatform().world.getPlayer();
         if (player != null) {
             viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
         }
@@ -154,7 +154,7 @@ public class MapScreen extends UIScreen {
         addButton(entityButton);
 
 
-        if (!WorldAccess.get().hasCeiling()) {
+        if (!NACore.getClient().getPlatform().world.hasCeiling()) {
             UIElementIconButton modeButton = new UIElementIconButton(105, rightLayout, 20, 20, 5);
             modeButton.setTooltip(String.format("Mode: %s", Settings.mapRenderMode.name()));
 
@@ -174,7 +174,7 @@ public class MapScreen extends UIScreen {
             }
 
             modeButton.setHandler(btn -> {
-                if (!WorldAccess.get().hasCeiling()) {
+                if (!NACore.getClient().getPlatform().world.hasCeiling()) {
                     SettingsOption.MAP_RENDER_MODE.cycle();
                     modeButton.setTooltip(String.format("Mode: %s", Settings.mapRenderMode.name()));
 
@@ -251,7 +251,7 @@ public class MapScreen extends UIScreen {
         NACoord bc = getMouseBlock(ctx);
         String text = "(" + bc.x + ", " + bc.z + ")";
 
-        PainterAccess p = PainterAccess.get();
+        PainterAccess p = NACore.getClient().getPlatform().painter;
 
         int padding = 4;
         int textW = p.getStringWidth(text);
@@ -344,7 +344,7 @@ public class MapScreen extends UIScreen {
 
         if (keyCode == Keyboard.KEY_SPACE) {
             viewport.setRotation(0);
-            NAEntity player = WorldAccess.get().getPlayer();
+            NAEntity player = NACore.getClient().getPlatform().world.getPlayer();
             if (player != null) {
                 viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
             }

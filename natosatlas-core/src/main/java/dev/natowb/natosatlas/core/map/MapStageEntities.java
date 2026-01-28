@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.map;
 
+import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.settings.Settings;
@@ -23,15 +24,15 @@ public class MapStageEntities implements MapStage {
     private void drawEntities(MapContext ctx) {
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.Nothing) return;
 
-        NAEntity player = WorldAccess.get().getPlayer();
+        NAEntity player = NACore.getClient().getPlatform().world.getPlayer();
         double px = player.x;
         double pz = player.z;
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,
-                PainterAccess.get().getMinecraftTextureId("/misc/mapicons.png"));
+                NACore.getClient().getPlatform().painter.getMinecraftTextureId("/misc/mapicons.png"));
 
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.All) {
-            for (NAEntity e : WorldAccess.get().getEntities()) {
+            for (NAEntity e : NACore.getClient().getPlatform().world.getEntities()) {
 
                 double dx = e.x - px;
                 double dz = e.z - pz;
@@ -44,7 +45,7 @@ public class MapStageEntities implements MapStage {
             }
         }
 
-        for (NAEntity p : WorldAccess.get().getPlayers()) {
+        for (NAEntity p : NACore.getClient().getPlatform().world.getPlayers()) {
 
             double dx = p.x - px;
             double dz = p.z - pz;
@@ -59,7 +60,7 @@ public class MapStageEntities implements MapStage {
 
     private void renderEntity(MapContext ctx, NAEntity e) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,
-                PainterAccess.get().getMinecraftTextureId(e.texturePath));
+                NACore.getClient().getPlatform().painter.getMinecraftTextureId(e.texturePath));
 
         double x = e.x * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
         double z = e.z * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
@@ -68,12 +69,12 @@ public class MapStageEntities implements MapStage {
         NAEntity.UV uv = NAEntity.getUV(e.texturePath);
 
         drawUpright(ctx, x, z, s, 180, () ->
-                PainterAccess.get().drawTexturedQuad(uv.u1, uv.v1, uv.u2, uv.v2)
+                NACore.getClient().getPlatform().painter.drawTexturedQuad(uv.u1, uv.v1, uv.u2, uv.v2)
         );
     }
 
     private void renderMapMarker(MapContext ctx, NAEntity e) {
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, PainterAccess.get().getMinecraftTextureId("/misc/mapicons.png"));
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, NACore.getClient().getPlatform().painter.getMinecraftTextureId("/misc/mapicons.png"));
 
         double x = e.x * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
         double z = e.z * NatoAtlasConstants.PIXELS_PER_CANVAS_UNIT;
@@ -105,11 +106,11 @@ public class MapStageEntities implements MapStage {
 
         if (e.type == NAEntity.NAEntityType.Player) {
             drawPlayerMarker(x, z, s, e.yaw, () ->
-                    PainterAccess.get().drawTexturedQuad(u1, v1, u2, v2)
+                    NACore.getClient().getPlatform().painter.drawTexturedQuad(u1, v1, u2, v2)
             );
         } else {
             drawUpright(ctx, x, z, s, e.yaw, () ->
-                    PainterAccess.get().drawTexturedQuad(u1, v1, u2, v2)
+                    NACore.getClient().getPlatform().painter.drawTexturedQuad(u1, v1, u2, v2)
             );
         }
     }

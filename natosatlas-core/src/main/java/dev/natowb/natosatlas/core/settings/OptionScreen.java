@@ -56,7 +56,7 @@ public class OptionScreen extends UIScreen {
         reiButton.setHandler(btn -> reiButton.cycle());
         addButton(reiButton);
 
-        boolean isServer = WorldAccess.get().isServer();
+        boolean isServer = NACore.getClient().getPlatform().world.isServer();
         UIElementButton existingButton = new UIElementButton(102, layout, 150, 20, "Generate Existing", !isServer);
         existingButton.setHandler(btn -> ChunkBuilder.rebuildExistingChunks(MapStorage.get(),  NARegionCache.get()));
         addButton(existingButton);
@@ -77,7 +77,7 @@ public class OptionScreen extends UIScreen {
 
     @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
-        PainterAccess p = PainterAccess.get();
+        PainterAccess p = NACore.getClient().getPlatform().painter;
 
         p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
         p.drawCenteredString("Options", width / 2, headerY + 4, UITheme.TITLE_TEXT);

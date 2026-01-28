@@ -13,7 +13,7 @@ import static dev.natowb.natosatlas.core.texture.TextureProvider.ICON_BACK;
 public class HelpScreen extends UIScreen {
 
     private UIElementIconButton closeButton;
-    private final PainterAccess painter = PainterAccess.get();
+    private final PainterAccess painter = NACore.getClient().getPlatform().painter;
 
     private int headerY;
 

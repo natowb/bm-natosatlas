@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.map;
 
+import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.layers.MapLayer;
@@ -49,7 +50,7 @@ public class MapUpdater {
     }
 
     public void tick() {
-        NAEntity player = WorldAccess.get().getPlayer();
+        NAEntity player = NACore.getClient().getPlatform().world.getPlayer();
         this.activeChunkX = player.chunkX;
         this.activeChunkZ = player.chunkZ;
 
@@ -69,7 +70,7 @@ public class MapUpdater {
         NACoord offset = scanOrder.get(scanIndex++);
         NACoord coord = NACoord.from(activeChunkX + offset.x, activeChunkZ + offset.z);
 
-        ChunkWrapper chunk = WorldAccess.get().getChunk(coord);
+        ChunkWrapper chunk = NACore.getClient().getPlatform().world.getChunk(coord);
         if (chunk == null) {
             LogUtil.warn("MapUpdater: Chunk {} not loaded, skipping", coord);
             return;

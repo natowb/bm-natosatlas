@@ -45,7 +45,7 @@ public class WaypointCreateScreen extends UIScreen {
         super(parent);
         this.editMode = false;
         this.editing = null;
-        NAEntity player = WorldAccess.get().getPlayer();
+        NAEntity player = NACore.getClient().getPlatform().world.getPlayer();
         this.x = (int) player.x;
         this.y = (int) player.y;
         this.z = (int) player.z;
@@ -175,7 +175,7 @@ public class WaypointCreateScreen extends UIScreen {
 
     @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
-        PainterAccess p = PainterAccess.get();
+        PainterAccess p = NACore.getClient().getPlatform().painter;
 
         p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
 
@@ -199,7 +199,7 @@ public class WaypointCreateScreen extends UIScreen {
         int iconX = centerX;
         int iconY = py + panelH - 30;
 
-        PainterAccess.get().drawIcon(ICON_WAYPOINTS, iconX, iconY, 20, argb);
+        NACore.getClient().getPlatform().painter.drawIcon(ICON_WAYPOINTS, iconX, iconY, 20, argb);
 
 
         super.render(mouseX, mouseY, delta, scaleInfo);

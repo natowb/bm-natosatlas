@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.map;
 
+import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.texture.TextureProvider;
@@ -28,6 +29,6 @@ public class MapStageRegions implements MapStage {
         int px = (int) (worldX * PIXELS_PER_CANVAS_UNIT);
         int pz = (int) (worldZ * PIXELS_PER_CANVAS_UNIT);
 
-        PainterAccess.get().drawTexture(texId, px, pz, PIXELS_PER_CANVAS_REGION, PIXELS_PER_CANVAS_REGION);
+        NACore.getClient().getPlatform().painter.drawTexture(texId, px, pz, PIXELS_PER_CANVAS_REGION, PIXELS_PER_CANVAS_REGION);
     }
 }

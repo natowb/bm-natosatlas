@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.ui.elements;
 
+import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.ui.layout.UILayout;
 import dev.natowb.natosatlas.core.ui.themes.UIThemeMinecraft;
@@ -35,7 +36,7 @@ public class UIElementIconButton extends UIElementButton {
     @Override
     public void render(int mouseX, int mouseY) {
         super.render(mouseX, mouseY);
-        PainterAccess p = PainterAccess.get();
+        PainterAccess p = NACore.getClient().getPlatform().painter;
         int size = Math.min(w, h) - 6;
         int ix = x + (w - size) / 2;
         int iy = y + (h - size) / 2 - 1;

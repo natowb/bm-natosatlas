@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.ui.elements;
 
+import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.access.PainterAccess;
 import dev.natowb.natosatlas.core.ui.layout.UILayout;
 import dev.natowb.natosatlas.core.ui.layout.UIPoint;
@@ -205,7 +206,7 @@ public class UIElementTextField extends UIElement {
     }
 
     private int getCharIndexAtPixel(int px) {
-        PainterAccess p = PainterAccess.get();
+        PainterAccess p = NACore.getClient().getPlatform().painter;
         int pos = 0;
         int currentX = 0;
         for (int i = 0; i < text.length(); i++) {
@@ -218,7 +219,7 @@ public class UIElementTextField extends UIElement {
     }
 
     public void render() {
-        PainterAccess p = PainterAccess.get();
+        PainterAccess p = NACore.getClient().getPlatform().painter;
 
         p.drawRect(x - 1, y - 1, x + w + 1, y + h + 1, UIThemeMinecraft.TEXTFIELD_BORDER);
         p.drawRect(x, y, x + w, y + h, UIThemeMinecraft.TEXTFIELD_BG);

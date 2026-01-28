@@ -9,16 +9,6 @@ import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import java.util.List;
 
 public abstract class WorldAccess {
-    private static WorldAccess instance;
-
-    public static void setInstance(WorldAccess instance) {
-        WorldAccess.instance = instance;
-    }
-
-    public static WorldAccess get() {
-        return instance;
-    }
-
     public abstract int getWorldHeight();
 
     public abstract boolean exists();
