@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core.screens;
 
-import dev.natowb.natosatlas.core.NatosAtlasCore;
+import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.ui.UIScaleInfo;
 import dev.natowb.natosatlas.core.ui.UITheme;
 import dev.natowb.natosatlas.core.ui.elements.UIElementIconButton;
@@ -43,7 +43,7 @@ public class HelpScreen extends UIScreen {
         headerY = contentTop;
 
         closeButton = new UIElementIconButton(200, width / 2 - 100, headerY, 20, 20, ICON_BACK);
-        closeButton.setHandler(btn -> NatosAtlasCore.get().platform.openNacScreen(parent));
+        closeButton.setHandler(btn -> NACore.get().platform.openNacScreen(parent));
         addButton(closeButton);
     }
 

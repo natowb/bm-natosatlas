@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core.settings;
 
-import dev.natowb.natosatlas.core.NatosAtlasCore;
+import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.chunk.ChunkBuilder;
 import dev.natowb.natosatlas.core.map.*;
 import dev.natowb.natosatlas.core.access.PainterAccess;
@@ -40,7 +40,7 @@ public class OptionScreen extends UIScreen {
         UIElementIconButton closeButton = new UIElementIconButton(101, width / 2 - 100, headerY, 20, 20, ICON_BACK);
         closeButton.setHandler(btn -> {
             Settings.save();
-            NatosAtlasCore.get().platform.openNacScreen(parent);
+            NACore.get().platform.openNacScreen(parent);
         });
 
         addButton(closeButton);

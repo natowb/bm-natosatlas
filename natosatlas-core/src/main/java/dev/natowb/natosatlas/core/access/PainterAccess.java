@@ -1,6 +1,5 @@
 package dev.natowb.natosatlas.core.access;
 
-import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.texture.TextureProvider;
 import org.lwjgl.opengl.GL11;
 

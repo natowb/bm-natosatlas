@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.core.map;
 
 import dev.natowb.natosatlas.core.NatoAtlasConstants;
-import dev.natowb.natosatlas.core.NatosAtlasCore;
+import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.access.PainterAccess;
@@ -60,18 +60,18 @@ public class MapScreen extends UIScreen {
 
 
         UIElementIconButton closeButton = new UIElementIconButton(101, leftLayout, 20, 20, ICON_CROSS);
-        closeButton.setHandler(btn -> NatosAtlasCore.get().platform.openNacScreen(parent));
+        closeButton.setHandler(btn -> NACore.get().platform.openNacScreen(parent));
         closeButton.setTooltip("Close");
         addButton(closeButton);
 
         UIElementIconButton optionsButton = new UIElementIconButton(102, leftLayout, 20, 20, ICON_COG);
-        optionsButton.setHandler(btn -> NatosAtlasCore.get().platform.openNacScreen(new OptionScreen(this)));
+        optionsButton.setHandler(btn -> NACore.get().platform.openNacScreen(new OptionScreen(this)));
         optionsButton.setTooltip("Options");
 
         addButton(optionsButton);
 
         UIElementIconButton helpButton = new UIElementIconButton(106, leftLayout, 20, 20, ICON_HELP);
-        helpButton.setHandler(btn -> NatosAtlasCore.get().platform.openNacScreen(new HelpScreen(this)));
+        helpButton.setHandler(btn -> NACore.get().platform.openNacScreen(new HelpScreen(this)));
         helpButton.setTooltip("Help");
         addButton(helpButton);
 
@@ -80,7 +80,7 @@ public class MapScreen extends UIScreen {
 
 
         UIElementIconButton waypointsButton = new UIElementIconButton(103, rightLayout, 20, 20, ICON_WAYPOINTS);
-        waypointsButton.setHandler(btn -> NatosAtlasCore.get().platform.openNacScreen(new WaypointListScreen(this)));
+        waypointsButton.setHandler(btn -> NACore.get().platform.openNacScreen(new WaypointListScreen(this)));
         waypointsButton.setTooltip("Waypoints");
         addButton(waypointsButton);
 
@@ -308,7 +308,7 @@ public class MapScreen extends UIScreen {
             if (currentTime - lastClickTime <= DOUBLE_CLICK_TIME_THRESHOLD) {
                 MapContext ctx = viewport.getContext();
                 NACoord blockCoord = getMouseBlock(ctx);
-                NatosAtlasCore.get().platform.openNacScreen(new WaypointCreateScreen(this, blockCoord.x, blockCoord.z));
+                NACore.get().platform.openNacScreen(new WaypointCreateScreen(this, blockCoord.x, blockCoord.z));
                 return;
             }
             lastClickTime = currentTime;

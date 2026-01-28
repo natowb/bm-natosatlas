@@ -1,13 +1,11 @@
 package dev.natowb.natosatlas.core.texture;
 
-import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.layers.MapLayer;
 import dev.natowb.natosatlas.core.layers.MapLayerHandler;
 import dev.natowb.natosatlas.core.map.NARegionCache;
 import dev.natowb.natosatlas.core.map.NARegionPixelData;
-import org.w3c.dom.Text;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
