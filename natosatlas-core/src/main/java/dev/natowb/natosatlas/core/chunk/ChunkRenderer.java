@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.core.chunk;
 
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.map.NARegionPixelData;
+import dev.natowb.natosatlas.client.map.NARegionPixelData;
 
 public interface ChunkRenderer {
     void applyChunkToRegion(NARegionPixelData tile, NACoord chunkCoord, boolean useBlockLight, boolean fromDisk);

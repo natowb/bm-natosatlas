@@ -1,11 +1,9 @@
 package dev.natowb.natosatlas.modloader;
 
-import dev.natowb.natosatlas.core.NAClientPlatform;
-import dev.natowb.natosatlas.core.ui.elements.UIScreen;
+import dev.natowb.natosatlas.client.NAClientPlatform;
+import dev.natowb.natosatlas.client.ui.elements.UIScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.ModLoader;
-
-import java.nio.file.Path;
 
 public class PlatformML extends NAClientPlatform {
     public PlatformML() {

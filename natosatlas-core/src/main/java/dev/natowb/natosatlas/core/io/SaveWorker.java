@@ -2,8 +2,8 @@ package dev.natowb.natosatlas.core.io;
 
 
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.map.NARegionPixelData;
-import dev.natowb.natosatlas.core.map.MapStorage;
+import dev.natowb.natosatlas.client.map.NARegionPixelData;
+import dev.natowb.natosatlas.client.map.MapStorage;
 
 import java.io.File;
 import java.util.HashMap;

@@ -1,8 +1,7 @@
 package dev.natowb.natosatlas.stationapi;
 
 import dev.natowb.natosatlas.core.NACore;
-import dev.natowb.natosatlas.core.NAClientPlatform;
-import dev.natowb.natosatlas.core.map.MapScreen;
+import dev.natowb.natosatlas.client.map.MapScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.client.option.KeyBinding;

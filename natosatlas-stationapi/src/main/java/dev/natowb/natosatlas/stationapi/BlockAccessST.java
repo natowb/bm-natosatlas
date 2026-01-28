@@ -1,10 +1,10 @@
 package dev.natowb.natosatlas.stationapi;
 
 import dev.natowb.natosatlas.core.mapper.ColorMapper;
-import dev.natowb.natosatlas.core.access.BlockAccess;
+import dev.natowb.natosatlas.client.access.ClientBlockAccess;
 import net.minecraft.block.Block;
 
-public class BlockAccessST extends BlockAccess {
+public class BlockAccessST extends ClientBlockAccess {
 
     public BlockAccessST() {
         registerBlockIdentifier(BlockIdentifier.GLASS, Block.GLASS.id);

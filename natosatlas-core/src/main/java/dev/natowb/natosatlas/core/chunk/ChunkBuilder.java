@@ -5,15 +5,14 @@ import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionFile;
-import dev.natowb.natosatlas.core.layers.MapLayerHandler;
-import dev.natowb.natosatlas.core.map.NARegionCache;
-import dev.natowb.natosatlas.core.layers.MapLayer;
-import dev.natowb.natosatlas.core.map.NARegionPixelData;
-import dev.natowb.natosatlas.core.map.MapStorage;
+import dev.natowb.natosatlas.client.layers.MapLayerHandler;
+import dev.natowb.natosatlas.client.map.NARegionCache;
+import dev.natowb.natosatlas.client.layers.MapLayer;
+import dev.natowb.natosatlas.client.map.NARegionPixelData;
+import dev.natowb.natosatlas.client.map.MapStorage;
 import dev.natowb.natosatlas.core.io.SaveScheduler;
 import dev.natowb.natosatlas.core.io.LogUtil;
-import dev.natowb.natosatlas.core.access.BlockAccess;
-import dev.natowb.natosatlas.core.access.WorldAccess;
+import dev.natowb.natosatlas.client.access.ClientBlockAccess;
 
 import java.io.File;
 import java.util.List;
@@ -110,7 +109,7 @@ public class ChunkBuilder {
 
                 int height = chunk.getTopSolidBlockY(x, z) - 1;
                 int aboveId = chunk.getBlockId(x, height + 1, z);
-                if (NACore.getClient().getPlatform().blocks.isBlock(aboveId, BlockAccess.BlockIdentifier.SNOW)) {
+                if (NACore.getClient().getPlatform().blocks.isBlock(aboveId, ClientBlockAccess.BlockIdentifier.SNOW)) {
                     height = height + 1;
                 }
 

@@ -1,10 +1,10 @@
 package dev.natowb.natosatlas.modloader;
 
 import dev.natowb.natosatlas.core.mapper.ColorMapper;
-import dev.natowb.natosatlas.core.access.BlockAccess;
+import dev.natowb.natosatlas.client.access.ClientBlockAccess;
 import net.minecraft.block.Block;
 
-public class BlockAccessML extends BlockAccess {
+public class BlockAccessML extends ClientBlockAccess {
 
     public BlockAccessML() {
         registerBlockIdentifier(BlockIdentifier.GLASS, Block.GLASS.id);

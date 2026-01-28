@@ -2,7 +2,7 @@ package dev.natowb.natosatlas.core.chunk;
 
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.map.NARegionPixelData;
+import dev.natowb.natosatlas.client.map.NARegionPixelData;
 
 import static dev.natowb.natosatlas.core.NatoAtlasConstants.BLOCKS_PER_CANVAS_REGION;
 import static dev.natowb.natosatlas.core.NatoAtlasConstants.BLOCKS_PER_MINECRAFT_CHUNK;

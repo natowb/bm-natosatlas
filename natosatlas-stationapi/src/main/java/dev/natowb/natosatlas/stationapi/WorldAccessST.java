@@ -7,7 +7,7 @@ import dev.natowb.natosatlas.core.data.NARegionFile;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.io.NAPaths;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
-import dev.natowb.natosatlas.core.access.WorldAccess;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
@@ -24,7 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldAccessST extends WorldAccess {
+public class WorldAccessST extends ClientWorldAccess {
     private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
     @Override
@@ -150,16 +150,6 @@ public class WorldAccessST extends WorldAccess {
 
         return new ChunkWrapper(chunk) {
             @Override
-            public long getLastSaveTime() {
-                return ((Chunk) chunk).lastSaveTime;
-            }
-
-            @Override
-            public boolean isDirty() {
-                return ((Chunk) chunk).dirty;
-            }
-
-            @Override
             public int getBlockId(int x, int y, int z) {
                 return ((Chunk) chunk).getBlockId(x, y, z);
             }
@@ -189,15 +179,6 @@ public class WorldAccessST extends WorldAccess {
         if (chunk == null) return null;
 
         return new ChunkWrapper(chunk) {
-            @Override
-            public long getLastSaveTime() {
-                return ((Chunk) chunk).lastSaveTime;
-            }
-
-            @Override
-            public boolean isDirty() {
-                return ((Chunk) chunk).dirty;
-            }
 
             @Override
             public int getBlockId(int x, int y, int z) {

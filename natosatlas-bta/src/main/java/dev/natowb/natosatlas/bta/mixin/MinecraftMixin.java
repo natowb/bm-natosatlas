@@ -1,8 +1,7 @@
 package dev.natowb.natosatlas.bta.mixin;
 
 import dev.natowb.natosatlas.core.NACore;
-import dev.natowb.natosatlas.core.NAClientPlatform;
-import dev.natowb.natosatlas.core.map.MapScreen;
+import dev.natowb.natosatlas.client.map.MapScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.InputDevice;
 import org.lwjgl.input.Keyboard;

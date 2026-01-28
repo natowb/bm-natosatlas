@@ -7,7 +7,7 @@ import dev.natowb.natosatlas.core.data.NARegionFile;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.io.NAPaths;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
-import dev.natowb.natosatlas.core.access.WorldAccess;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.entity.Mob;
@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldAccessBTA extends WorldAccess {
+public class WorldAccessBTA extends ClientWorldAccess {
     private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
     @Override
@@ -147,15 +147,6 @@ public class WorldAccessBTA extends WorldAccess {
 
 
         return new ChunkWrapper(chunk) {
-            @Override
-            public long getLastSaveTime() {
-                return ((Chunk) chunk).lastSaveTime;
-            }
-
-            @Override
-            public boolean isDirty() {
-                return ((Chunk) chunk).isModified;
-            }
 
             @Override
             public int getBlockId(int x, int y, int z) {

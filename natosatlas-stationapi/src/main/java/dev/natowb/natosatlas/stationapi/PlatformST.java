@@ -1,11 +1,9 @@
 package dev.natowb.natosatlas.stationapi;
 
-import dev.natowb.natosatlas.core.NAClientPlatform;
-import dev.natowb.natosatlas.core.ui.elements.UIScreen;
+import dev.natowb.natosatlas.client.NAClientPlatform;
+import dev.natowb.natosatlas.client.ui.elements.UIScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
-
-import java.nio.file.Path;
 
 public class PlatformST extends NAClientPlatform {
 

@@ -1,6 +1,7 @@
 package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.core.settings.Settings;
+import dev.natowb.natosatlas.client.NAClient;
+import dev.natowb.natosatlas.client.NAClientPlatform;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.io.NAPaths;
 
@@ -15,6 +16,7 @@ public final class NACore {
     private NACore() {
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isInitialized() {
         return initialized;
     }
@@ -26,26 +28,25 @@ public final class NACore {
 
 
     public static void initClient(Path minecraftPath, NAClientPlatform platform) {
-        if (initialized) return;
-        initialized = true;
-
-
-        LogUtil.setLoggingLevel(LogUtil.LogLevel.INFO);
-        NAPaths.updateBasePaths(minecraftPath);
-        Settings.load();
+        if (!init(minecraftPath)) return;
 
         session = new NAClient(platform);
         LogUtil.info("Successfully initialized client");
     }
 
     public static void initServer(Path minecraftPath) {
-        if (initialized) return;
+        if (!init(minecraftPath)) return;
+        LogUtil.info("Successfully initialized server");
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private static boolean init(Path minecraftPath) {
+        if (initialized) return false;
         initialized = true;
 
         LogUtil.setLoggingLevel(LogUtil.LogLevel.INFO);
         NAPaths.updateBasePaths(minecraftPath);
-        Settings.load();
-        LogUtil.info("Successfully initialized server");
+        return true;
     }
 
     public static void tick() {

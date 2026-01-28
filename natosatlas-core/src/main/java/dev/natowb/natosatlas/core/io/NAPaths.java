@@ -1,7 +1,6 @@
 package dev.natowb.natosatlas.core.io;
 
 import dev.natowb.natosatlas.core.NACore;
-import dev.natowb.natosatlas.core.access.WorldAccess;
 
 import java.io.IOException;
 import java.nio.file.Files;

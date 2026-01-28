@@ -1,6 +1,5 @@
 import dev.natowb.natosatlas.core.NACore;
-import dev.natowb.natosatlas.core.NAClientPlatform;
-import dev.natowb.natosatlas.core.map.MapScreen;
+import dev.natowb.natosatlas.client.map.MapScreen;
 import dev.natowb.natosatlas.modloader.*;
 
 import net.minecraft.client.Minecraft;

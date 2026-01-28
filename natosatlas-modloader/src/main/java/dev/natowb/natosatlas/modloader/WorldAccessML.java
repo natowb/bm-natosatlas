@@ -7,7 +7,7 @@ import dev.natowb.natosatlas.core.data.NARegionFile;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.io.NAPaths;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
-import dev.natowb.natosatlas.core.access.WorldAccess;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -24,7 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldAccessML extends WorldAccess {
+public class WorldAccessML extends ClientWorldAccess {
 
     private static final Minecraft mc = ModLoader.getMinecraftInstance();
 
@@ -150,15 +150,6 @@ public class WorldAccessML extends WorldAccess {
 
 
         return new ChunkWrapper(chunk) {
-            @Override
-            public long getLastSaveTime() {
-                return ((Chunk) chunk).lastSaveTime;
-            }
-
-            @Override
-            public boolean isDirty() {
-                return ((Chunk) chunk).dirty;
-            }
 
             @Override
             public int getBlockId(int x, int y, int z) {
@@ -190,15 +181,6 @@ public class WorldAccessML extends WorldAccess {
         if (chunk == null) return null;
 
         return new ChunkWrapper(chunk) {
-            @Override
-            public long getLastSaveTime() {
-                return ((Chunk) chunk).lastSaveTime;
-            }
-
-            @Override
-            public boolean isDirty() {
-                return ((Chunk) chunk).dirty;
-            }
 
             @Override
             public int getBlockId(int x, int y, int z) {

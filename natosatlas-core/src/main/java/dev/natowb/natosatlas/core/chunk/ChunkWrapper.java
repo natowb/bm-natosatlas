@@ -1,8 +1,7 @@
 package dev.natowb.natosatlas.core.chunk;
 
 import dev.natowb.natosatlas.core.NACore;
-import dev.natowb.natosatlas.core.access.BlockAccess;
-import dev.natowb.natosatlas.core.access.WorldAccess;
+import dev.natowb.natosatlas.client.access.ClientBlockAccess;
 
 public abstract class ChunkWrapper {
 
@@ -18,11 +17,11 @@ public abstract class ChunkWrapper {
         x &= 15;
         int z0 = z & 15;
 
-        BlockAccess blocks = NACore.getClient().getPlatform().blocks;
+        ClientBlockAccess blocks = NACore.getClient().getPlatform().blocks;
 
         for (; y > 0; --y) {
             int blockId = getBlockId(x, y, z0);
-            if (blocks.isBlock(blockId, BlockAccess.BlockIdentifier.GLASS)) continue;
+            if (blocks.isBlock(blockId, ClientBlockAccess.BlockIdentifier.GLASS)) continue;
             if (blocks.blocksMovement(blockId) || blocks.isFluid(blockId)) return y + 1;
         }
 
@@ -41,9 +40,6 @@ public abstract class ChunkWrapper {
         return depth;
     }
 
-    public abstract long getLastSaveTime();
-
-    public abstract boolean isDirty();
 
     public abstract int getBlockId(int x, int y, int z);
 
