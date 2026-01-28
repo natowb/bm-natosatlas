@@ -1,3 +1,4 @@
+import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.client.map.MapScreen;
 import dev.natowb.natosatlas.modloader.*;
@@ -40,7 +41,7 @@ public class mod_NatosMap extends BaseMod {
         Minecraft mc = ModLoader.getMinecraftInstance();
         if (key.code != KEY_BINDING_MAP.code) return;
         if (mc.currentScreen == null) {
-            NACore.getClient().getPlatform().openNacScreen(new MapScreen(null));
+            NAClient.get().getPlatform().screen.openNacScreen(new MapScreen(null));
         }
     }
 

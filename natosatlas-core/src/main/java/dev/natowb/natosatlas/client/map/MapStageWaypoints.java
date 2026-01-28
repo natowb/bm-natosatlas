@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.client.map;
 
+import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.NAConstants;
 import dev.natowb.natosatlas.core.data.NAEntity;
@@ -19,7 +20,7 @@ public class MapStageWaypoints implements MapStage {
 
     private void drawWaypointIcons(MapContext ctx) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,
-                NACore.getClient().getPlatform().painter.getMinecraftTextureId("/misc/mapicons.png"));
+                NAClient.get().getPlatform().painter.getMinecraftTextureId("/misc/mapicons.png"));
 
         for (Waypoint wp : Waypoints.getAll()) {
             if (!wp.visible) continue;
@@ -44,7 +45,7 @@ public class MapStageWaypoints implements MapStage {
         int argb = 0xFF000000 | (wp.color & 0xFFFFFF);
 
         drawUpright(ctx, x, z, s, 0, () ->
-                NACore.getClient().getPlatform().painter.drawTexturedQuad(argb, u1, v1, u2, v2)
+                NAClient.get().getPlatform().painter.drawTexturedQuad(argb, u1, v1, u2, v2)
         );
     }
 
@@ -58,9 +59,9 @@ public class MapStageWaypoints implements MapStage {
             double s = 1 / ctx.zoom;
 
             drawUpright(ctx, x, z, s, 0, () -> {
-                int w = NACore.getClient().getPlatform().painter.getStringWidth(wp.name);
-                NACore.getClient().getPlatform().painter.drawString(wp.name, -(w / 2) + 1, 11, 0xFF000000);
-                NACore.getClient().getPlatform().painter.drawString(wp.name, -(w / 2), 10, 0xFFFFFFFF);
+                int w = NAClient.get().getPlatform().painter.getStringWidth(wp.name);
+                NAClient.get().getPlatform().painter.drawString(wp.name, -(w / 2) + 1, 11, 0xFF000000);
+                NAClient.get().getPlatform().painter.drawString(wp.name, -(w / 2), 10, 0xFFFFFFFF);
             });
         }
     }

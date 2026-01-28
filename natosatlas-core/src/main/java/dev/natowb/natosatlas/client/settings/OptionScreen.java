@@ -1,9 +1,9 @@
 package dev.natowb.natosatlas.client.settings;
 
+import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.map.MapConfig;
 import dev.natowb.natosatlas.core.io.NARegionStorage;
 import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
-import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.chunk.ChunkBuilderOld;
 import dev.natowb.natosatlas.client.access.PainterAccess;
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
@@ -41,7 +41,7 @@ public class OptionScreen extends UIScreen {
         UIElementIconButton closeButton = new UIElementIconButton(101, width / 2 - 100, headerY, 20, 20, ICON_BACK);
         closeButton.setHandler(btn -> {
             Settings.save();
-            NACore.getClient().getPlatform().openNacScreen(parent);
+            NAClient.get().getPlatform().screen.openNacScreen(parent);
         });
 
         addButton(closeButton);
@@ -56,7 +56,7 @@ public class OptionScreen extends UIScreen {
         reiButton.setHandler(btn -> reiButton.cycle());
         addButton(reiButton);
 
-        boolean isServer = NACore.getClient().getPlatform().world.isServer();
+        boolean isServer = NAClient.get().getPlatform().world.isServer();
         UIElementButton existingButton = new UIElementButton(102, layout, 150, 20, "Generate Existing", !isServer);
         existingButton.setHandler(btn -> ChunkBuilderOld.rebuildExistingChunks(NARegionStorage.get(),  NARegionPixelCache.get()));
         addButton(existingButton);
@@ -77,7 +77,7 @@ public class OptionScreen extends UIScreen {
 
     @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
-        PainterAccess p = NACore.getClient().getPlatform().painter;
+        PainterAccess p = NAClient.get().getPlatform().painter;
 
         p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
         p.drawCenteredString("Options", width / 2, headerY + 4, UITheme.TITLE_TEXT);

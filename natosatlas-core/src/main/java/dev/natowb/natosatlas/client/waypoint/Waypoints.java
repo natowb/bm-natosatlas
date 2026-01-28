@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.client.waypoint;
 
+import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.core.io.LogUtil;
@@ -20,7 +21,7 @@ public final class Waypoints {
     }
 
     private static File getFile() {
-        String fileName = String.format("%s.DIM%d.points", NAPaths.getWorldSaveName(), NACore.getClient().getPlatform().world.getDimensionId());
+        String fileName = String.format("%s.DIM%d.points", NAPaths.getWorldSaveName(), NAClient.get().getPlatform().world.getDimensionId());
         if (!Settings.useReiMinimapWaypointStorage) {
             return new File(NAPaths.getWorldDataPath().toFile(), fileName);
         }

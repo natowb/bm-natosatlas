@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.client.map;
 
+import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.client.texture.TextureProvider;
@@ -14,7 +15,7 @@ public class MapStageRegions implements MapStage {
     public void draw(MapContext ctx, Set<Long> visibleRegions) {
         for (long key : visibleRegions) {
             NACoord coord = NACoord.fromKey(key);
-            int texId = TextureProvider.getTexture(coord, NACore.getClient().getLayerController().getActiveLayer());
+            int texId = TextureProvider.getTexture(coord, NAClient.get().getLayerController().getActiveLayer());
             if (texId != -1) {
                 drawRegionTexture(coord.x, coord.z, texId);
             }
@@ -28,6 +29,6 @@ public class MapStageRegions implements MapStage {
         int px = (int) (worldX * PIXELS_PER_CANVAS_UNIT);
         int pz = (int) (worldZ * PIXELS_PER_CANVAS_UNIT);
 
-        NACore.getClient().getPlatform().painter.drawTexture(texId, px, pz, PIXELS_PER_CANVAS_REGION, PIXELS_PER_CANVAS_REGION);
+        NAClient.get().getPlatform().painter.drawTexture(texId, px, pz, PIXELS_PER_CANVAS_REGION, PIXELS_PER_CANVAS_REGION);
     }
 }

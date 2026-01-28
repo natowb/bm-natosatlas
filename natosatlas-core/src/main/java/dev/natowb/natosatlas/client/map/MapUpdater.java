@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.client.map;
 
+import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
@@ -49,7 +50,7 @@ public class MapUpdater {
     }
 
     public void tick() {
-        NAEntity player = NACore.getClient().getPlatform().world.getPlayer();
+        NAEntity player = NAClient.get().getPlatform().world.getPlayer();
         this.activeChunkX = player.chunkX;
         this.activeChunkZ = player.chunkZ;
 
@@ -69,7 +70,7 @@ public class MapUpdater {
         NACoord offset = scanOrder.get(scanIndex++);
         NACoord coord = NACoord.from(activeChunkX + offset.x, activeChunkZ + offset.z);
 
-        ChunkWrapper chunk = NACore.getClient().getPlatform().world.getChunk(coord);
+        ChunkWrapper chunk = NAClient.get().getPlatform().world.getChunk(coord);
         if (chunk == null) {
             LogUtil.warn("MapUpdater: Chunk {} not loaded, skipping", coord);
             return;
@@ -116,7 +117,7 @@ public class MapUpdater {
             }
         }
 
-        NAChunk chunk = layer.builder.build(chunkCoord, NACore.getClient().getPlatform().world.getChunk(chunkCoord));
+        NAChunk chunk = layer.builder.build(chunkCoord, NAClient.get().getPlatform().world.getChunk(chunkCoord));
         ChunkRenderer.render(region, chunkCoord, chunk, layer.usesBlockLight);
     }
 }

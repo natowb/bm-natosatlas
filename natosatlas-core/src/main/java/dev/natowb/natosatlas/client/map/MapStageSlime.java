@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.client.map;
 
+import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.client.settings.Settings;
@@ -18,7 +19,7 @@ public class MapStageSlime implements MapStage {
         if (!Settings.showSlimeChunks) return;
         for (long key : visibleRegions) {
             NACoord coord = NACoord.fromKey(key);
-            int texId = TextureProvider.getTexture(coord, NACore.getClient().getLayerController().getActiveLayer());
+            int texId = TextureProvider.getTexture(coord, NAClient.get().getLayerController().getActiveLayer());
             if (texId != -1) {
                 for (int x = 0; x < CHUNKS_PER_MINECRAFT_REGION; x++) {
                     for (int z = 0; z < CHUNKS_PER_MINECRAFT_REGION; z++) {
@@ -34,7 +35,7 @@ public class MapStageSlime implements MapStage {
 
     // FIXME: move this to a global acessor at some point
     private boolean isSlimeChunk(int worldChunkX, int worldChunkZ) {
-        long seed = NACore.getClient().getPlatform().world.getSeed();
+        long seed = NAClient.get().getPlatform().world.getSeed();
         return new Random(seed + (long) (worldChunkX * worldChunkX) * 4987142L + (long) worldChunkX * 5947611L + (long) (worldChunkZ * worldChunkZ) * 4392871L + (long) worldChunkZ * 389711L ^ 987234911L).nextInt(10) == 0;
     }
 
@@ -52,7 +53,7 @@ public class MapStageSlime implements MapStage {
         int x2 = px;
         int y2 = pz;
 
-        NACore.getClient().getPlatform().painter.drawRect(
+        NAClient.get().getPlatform().painter.drawRect(
                 x1, y1, x2, y2,
                 0x8000FF00
         );

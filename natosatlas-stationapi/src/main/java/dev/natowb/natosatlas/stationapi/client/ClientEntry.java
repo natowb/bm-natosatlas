@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.stationapi.client;
 
+import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.client.map.MapScreen;
 import net.fabricmc.loader.api.FabricLoader;
@@ -46,7 +47,7 @@ public class ClientEntry {
         if (Keyboard.getEventKeyState()) {
             if (Keyboard.isKeyDown(ClientEntry.KEY_BINDING_MAP.code)) {
                 if (event.environment == KeyStateChangedEvent.Environment.IN_GAME) {
-                    NACore.getClient().getPlatform().openNacScreen(new MapScreen(null));
+                    NAClient.get().getPlatform().screen.openNacScreen(new MapScreen(null));
                 }
             }
         }

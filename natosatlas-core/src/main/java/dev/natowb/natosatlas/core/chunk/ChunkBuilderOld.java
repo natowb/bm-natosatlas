@@ -10,7 +10,7 @@ public class ChunkBuilderOld {
     public static void rebuildExistingChunks(NARegionStorage storage, NARegionPixelCache cache) {
         LogUtil.error("Nato has disabled this functionality and forgot to bring it back..... hes an idiot");
 
-//        List<NARegionFile> regions = NACore.getClient().getPlatform().world.getRegionFiles();
+//        List<NARegionFile> regions = NAClient.get().getPlatform().world.getRegionFiles();
 //
 //        if (regions.isEmpty()) {
 //            LogUtil.info("No region metadata found.");

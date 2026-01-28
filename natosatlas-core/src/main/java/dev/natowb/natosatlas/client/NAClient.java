@@ -4,9 +4,7 @@ import dev.natowb.natosatlas.client.cache.NARegionTextureCache;
 import dev.natowb.natosatlas.client.map.MapLayerController;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.core.LayerRegistry;
-import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.NASession;
-import dev.natowb.natosatlas.core.chunk.NAChunkBuilderCave;
 import dev.natowb.natosatlas.core.data.NALayer;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.io.NAPaths;
@@ -17,14 +15,29 @@ import dev.natowb.natosatlas.client.waypoint.Waypoints;
 
 public class NAClient implements NASession {
 
+    private static NAClient instance;
+
+    public static NAClient get() {
+        return instance;
+    }
+
+
     private boolean inWorld;
     private String worldSaveName;
     private int dim;
     private final NAClientPlatform platform;
     private final MapLayerController layerController = new MapLayerController();
 
+
     public NAClient(NAClientPlatform platform) {
+
+        if (instance != null) {
+            LogUtil.error("tried to create NAClient when one already exists");
+            throw new RuntimeException();
+        }
+
         this.platform = platform;
+        NAClient.instance = this;
         LayerRegistry.getLayers().add(new NALayer(2, "Cave", new NAChunkBuilderCave(), true));
 
         Settings.load();
@@ -51,14 +64,14 @@ public class NAClient implements NASession {
 
         if (worldExists && !inWorld) {
             inWorld = true;
-            dim = NACore.getClient().getPlatform().world.getDimensionId();
-            worldSaveName = NACore.getClient().getPlatform().world.getSaveName();
+            dim = platform.world.getDimensionId();
+            worldSaveName = platform.world.getSaveName();
             onWorldJoined(worldSaveName, dim);
         }
 
         if (!inWorld) return;
 
-        int currentDim = NACore.getClient().getPlatform().world.getDimensionId();
+        int currentDim = platform.world.getDimensionId();
         if (dim != currentDim) {
             dim = currentDim;
             onDimensionChange(dim);

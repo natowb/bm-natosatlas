@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.client.waypoint;
 
-import dev.natowb.natosatlas.core.NACore;
+import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.access.PainterAccess;
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.elements.UIElementButton;
@@ -43,7 +43,7 @@ public class WaypointCreateScreen extends UIScreen {
         super(parent);
         this.editMode = false;
         this.editing = null;
-        NAEntity player = NACore.getClient().getPlatform().world.getPlayer();
+        NAEntity player = NAClient.get().getPlatform().world.getPlayer();
         this.x = (int) player.x;
         this.y = (int) player.y;
         this.z = (int) player.z;
@@ -120,7 +120,7 @@ public class WaypointCreateScreen extends UIScreen {
 
         UIElementIconButton back = new UIElementIconButton(3000, px + 20, py + panelH - 30, 20, 20, ICON_BACK);
         back.setTooltip("Back");
-        back.setHandler(btn -> NACore.getClient().getPlatform().openNacScreen(parent));
+        back.setHandler(btn -> NAClient.get().getPlatform().screen.openNacScreen(parent));
         addButton(back);
 
         UIElementIconButton confirm = new UIElementIconButton(3001, px + panelW - 40, py + panelH - 30, 20, 20, ICON_CHECK);
@@ -173,7 +173,7 @@ public class WaypointCreateScreen extends UIScreen {
 
     @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
-        PainterAccess p = NACore.getClient().getPlatform().painter;
+        PainterAccess p = NAClient.get().getPlatform().painter;
 
         p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
 
@@ -197,7 +197,7 @@ public class WaypointCreateScreen extends UIScreen {
         int iconX = centerX;
         int iconY = py + panelH - 30;
 
-        NACore.getClient().getPlatform().painter.drawIcon(ICON_WAYPOINTS, iconX, iconY, 20, argb);
+        NAClient.get().getPlatform().painter.drawIcon(ICON_WAYPOINTS, iconX, iconY, 20, argb);
 
 
         super.render(mouseX, mouseY, delta, scaleInfo);
@@ -249,7 +249,7 @@ public class WaypointCreateScreen extends UIScreen {
             Waypoints.add(wp);
         }
 
-        NACore.getClient().getPlatform().openNacScreen(parent);
+        NAClient.get().getPlatform().screen.openNacScreen(parent);
     }
 
     @Override

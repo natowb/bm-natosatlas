@@ -23,11 +23,6 @@ public final class NACore {
         return initialized;
     }
 
-
-    public static NAClient getClient() {
-        return (NAClient) session;
-    }
-
     public static void initClient(Path minecraftPath, NAClientPlatform platform) {
         if (!init(minecraftPath)) return;
 

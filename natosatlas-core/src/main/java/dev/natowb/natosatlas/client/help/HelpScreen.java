@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.client.help;
 
-import dev.natowb.natosatlas.core.NACore;
+import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.UITheme;
 import dev.natowb.natosatlas.client.ui.elements.UIElementIconButton;
@@ -12,7 +12,7 @@ import static dev.natowb.natosatlas.client.texture.TextureProvider.ICON_BACK;
 public class HelpScreen extends UIScreen {
 
     private UIElementIconButton closeButton;
-    private final PainterAccess painter = NACore.getClient().getPlatform().painter;
+    private final PainterAccess painter = NAClient.get().getPlatform().painter;
 
     private int headerY;
 
@@ -43,7 +43,7 @@ public class HelpScreen extends UIScreen {
         headerY = contentTop;
 
         closeButton = new UIElementIconButton(200, width / 2 - 100, headerY, 20, 20, ICON_BACK);
-        closeButton.setHandler(btn -> NACore.getClient().getPlatform().openNacScreen(parent));
+        closeButton.setHandler(btn -> NAClient.get().getPlatform().screen.openNacScreen(parent));
         addButton(closeButton);
     }
 

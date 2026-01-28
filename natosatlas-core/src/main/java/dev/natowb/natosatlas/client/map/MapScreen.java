@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.client.map;
 
-import dev.natowb.natosatlas.core.NACore;
+import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.core.NAConstants;
 import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.core.data.NACoord;
@@ -31,7 +31,7 @@ import static dev.natowb.natosatlas.client.texture.TextureProvider.*;
 public class MapScreen extends UIScreen {
 
     private final MapViewport viewport = new MapViewport();
-    private final PainterAccess painter = NACore.getClient().getPlatform().painter;
+    private final PainterAccess painter = NAClient.get().getPlatform().painter;
     private final MapStageRegions regionPainter = new MapStageRegions();
     private final MapStageSlime slimePainter = new MapStageSlime();
     private final MapStageGrid gridPainter = new MapStageGrid();
@@ -51,7 +51,7 @@ public class MapScreen extends UIScreen {
     public void init(int width, int height) {
         super.init(width, height);
         viewport.initViewport(0, 0, width, height);
-        NAEntity player = NACore.getClient().getPlatform().world.getPlayer();
+        NAEntity player = NAClient.get().getPlatform().world.getPlayer();
         if (player != null) {
             viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
         }
@@ -60,18 +60,18 @@ public class MapScreen extends UIScreen {
 
 
         UIElementIconButton closeButton = new UIElementIconButton(101, leftLayout, 20, 20, ICON_CROSS);
-        closeButton.setHandler(btn -> NACore.getClient().getPlatform().openNacScreen(parent));
+        closeButton.setHandler(btn -> NAClient.get().getPlatform().screen.openNacScreen(parent));
         closeButton.setTooltip("Close");
         addButton(closeButton);
 
         UIElementIconButton optionsButton = new UIElementIconButton(102, leftLayout, 20, 20, ICON_COG);
-        optionsButton.setHandler(btn -> NACore.getClient().getPlatform().openNacScreen(new OptionScreen(this)));
+        optionsButton.setHandler(btn -> NAClient.get().getPlatform().screen.openNacScreen(new OptionScreen(this)));
         optionsButton.setTooltip("Options");
 
         addButton(optionsButton);
 
         UIElementIconButton helpButton = new UIElementIconButton(106, leftLayout, 20, 20, ICON_HELP);
-        helpButton.setHandler(btn -> NACore.getClient().getPlatform().openNacScreen(new HelpScreen(this)));
+        helpButton.setHandler(btn -> NAClient.get().getPlatform().screen.openNacScreen(new HelpScreen(this)));
         helpButton.setTooltip("Help");
         addButton(helpButton);
 
@@ -80,7 +80,7 @@ public class MapScreen extends UIScreen {
 
 
         UIElementIconButton waypointsButton = new UIElementIconButton(103, rightLayout, 20, 20, ICON_WAYPOINTS);
-        waypointsButton.setHandler(btn -> NACore.getClient().getPlatform().openNacScreen(new WaypointListScreen(this)));
+        waypointsButton.setHandler(btn -> NAClient.get().getPlatform().screen.openNacScreen(new WaypointListScreen(this)));
         waypointsButton.setTooltip("Waypoints");
         addButton(waypointsButton);
 
@@ -153,7 +153,7 @@ public class MapScreen extends UIScreen {
         addButton(entityButton);
 
 
-        if (!NACore.getClient().getPlatform().world.hasCeiling()) {
+        if (!NAClient.get().getPlatform().world.hasCeiling()) {
             UIElementIconButton modeButton = new UIElementIconButton(105, rightLayout, 20, 20, 5);
             modeButton.setTooltip(String.format("Mode: %s", Settings.mapRenderMode.name()));
 
@@ -173,7 +173,7 @@ public class MapScreen extends UIScreen {
             }
 
             modeButton.setHandler(btn -> {
-                if (!NACore.getClient().getPlatform().world.hasCeiling()) {
+                if (!NAClient.get().getPlatform().world.hasCeiling()) {
                     SettingsOption.MAP_RENDER_MODE.cycle();
                     modeButton.setTooltip(String.format("Mode: %s", Settings.mapRenderMode.name()));
 
@@ -250,7 +250,7 @@ public class MapScreen extends UIScreen {
         NACoord bc = getMouseBlock(ctx);
         String text = "(" + bc.x + ", " + bc.z + ")";
 
-        PainterAccess p = NACore.getClient().getPlatform().painter;
+        PainterAccess p = NAClient.get().getPlatform().painter;
 
         int padding = 4;
         int textW = p.getStringWidth(text);
@@ -308,7 +308,7 @@ public class MapScreen extends UIScreen {
             if (currentTime - lastClickTime <= DOUBLE_CLICK_TIME_THRESHOLD) {
                 MapContext ctx = viewport.getContext();
                 NACoord blockCoord = getMouseBlock(ctx);
-                NACore.getClient().getPlatform().openNacScreen(new WaypointCreateScreen(this, blockCoord.x, blockCoord.z));
+                NAClient.get().getPlatform().screen.openNacScreen(new WaypointCreateScreen(this, blockCoord.x, blockCoord.z));
                 return;
             }
             lastClickTime = currentTime;
@@ -343,7 +343,7 @@ public class MapScreen extends UIScreen {
 
         if (keyCode == Keyboard.KEY_SPACE) {
             viewport.setRotation(0);
-            NAEntity player = NACore.getClient().getPlatform().world.getPlayer();
+            NAEntity player = NAClient.get().getPlatform().world.getPlayer();
             if (player != null) {
                 viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
             }

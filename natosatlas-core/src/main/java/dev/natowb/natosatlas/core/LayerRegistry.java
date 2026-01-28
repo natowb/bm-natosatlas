@@ -1,6 +1,5 @@
 package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.core.chunk.NAChunkBuilderCave;
 import dev.natowb.natosatlas.core.chunk.NAChunkBuilderSurface;
 import dev.natowb.natosatlas.core.data.NALayer;
 

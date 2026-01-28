@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.client.waypoint;
 
+import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.client.access.PainterAccess;
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
@@ -43,7 +44,7 @@ public class WaypointListElement {
 
     public void render(int mouseX, int mouseY, UIScaleInfo scaleInfo) {
         List<Waypoint> items = Waypoints.getAll();
-        PainterAccess p = NACore.getClient().getPlatform().painter;
+        PainterAccess p = NAClient.get().getPlatform().painter;
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor(

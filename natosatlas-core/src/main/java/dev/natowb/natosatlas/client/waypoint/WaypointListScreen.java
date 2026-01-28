@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.client.waypoint;
 
+import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.client.access.PainterAccess;
 import dev.natowb.natosatlas.client.settings.Settings;
@@ -43,11 +44,11 @@ public class WaypointListScreen extends UIScreen {
         int listY = headerY + headerHeight + headerGap;
 
         backButton = new UIElementIconButton(1000, listX, headerY, 20, 20, ICON_BACK);
-        backButton.setHandler(btn -> NACore.getClient().getPlatform().openNacScreen(parent));
+        backButton.setHandler(btn -> NAClient.get().getPlatform().screen.openNacScreen(parent));
         addButton(backButton);
 
         createButton = new UIElementIconButton(1001, listX + listWidth - 20, headerY, 20, 20, ICON_PLUS);
-        createButton.setHandler(btn -> NACore.getClient().getPlatform().openNacScreen(new WaypointCreateScreen(this)));
+        createButton.setHandler(btn -> NAClient.get().getPlatform().screen.openNacScreen(new WaypointCreateScreen(this)));
         addButton(createButton);
 
 
@@ -55,7 +56,7 @@ public class WaypointListScreen extends UIScreen {
         list.setHandler(new WaypointListElement.ClickHandler() {
             @Override
             public void onEdit(Waypoint wp) {
-                NACore.getClient().getPlatform().openNacScreen(new WaypointCreateScreen(WaypointListScreen.this, wp));
+                NAClient.get().getPlatform().screen.openNacScreen(new WaypointCreateScreen(WaypointListScreen.this, wp));
             }
 
             @Override
@@ -67,7 +68,7 @@ public class WaypointListScreen extends UIScreen {
 
     @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
-        PainterAccess p = NACore.getClient().getPlatform().painter;
+        PainterAccess p = NAClient.get().getPlatform().painter;
 
         p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
 

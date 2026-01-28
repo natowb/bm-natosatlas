@@ -1,6 +1,7 @@
-package dev.natowb.natosatlas.core.chunk;
+package dev.natowb.natosatlas.client;
 
-import dev.natowb.natosatlas.core.NACore;
+import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
+import dev.natowb.natosatlas.core.chunk.NAChunkBuilder;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
@@ -8,7 +9,7 @@ import dev.natowb.natosatlas.core.data.NACoord;
 public class NAChunkBuilderCave implements NAChunkBuilder {
     @Override
     public NAChunk build(NACoord chunkCoord, ChunkWrapper wrapper) {
-        int playerY = (int) NACore.getClient().getPlatform().world.getPlayer().y;
+        int playerY = (int) NAClient.get().getPlatform().world.getPlayer().y;
         NAChunk chunk = new NAChunk();
 
         for (int z = 0; z < 16; z++) {
@@ -27,7 +28,7 @@ public class NAChunkBuilderCave implements NAChunkBuilder {
 
                 int worldX = chunkCoord.x * 16 + x;
                 int worldZ = chunkCoord.z * 16 + z;
-                NABiome biome = NACore.getClient().getPlatform().world.getBiome(NACoord.from(worldX, worldZ));
+                NABiome biome = NAClient.get().getPlatform().world.getBiome(NACoord.from(worldX, worldZ));
 
                 chunk.set(x, z, floorY, blockId, 0, blockLight, meta, biome);
             }
@@ -38,7 +39,7 @@ public class NAChunkBuilderCave implements NAChunkBuilder {
 
     private static int findTopmostCaveFloor(ChunkWrapper chunk, int x, int z, int playerY) {
 
-        int startY = Math.min(playerY, NACore.getClient().getPlatform().world.getWorldHeight() - 1);
+        int startY = Math.min(playerY, NAClient.get().getPlatform().world.getWorldHeight() - 1);
 
         for (int y = startY; y > 1; y--) {
 
