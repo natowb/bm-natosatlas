@@ -53,7 +53,7 @@ public class OptionScreen extends UIScreen {
         addButton(reiButton);
 
         // FIXME: add this again but better
-//        boolean isServer = NAClient.get().getPlatform().world.isServer();
+//        boolean isServer = WorldAccess.get().isServer();
 //        UIElementButton existingButton = new UIElementButton(102, layout, 150, 20, "Generate Existing", !isServer);
 //        existingButton.setHandler(btn -> ChunkBuilderOld.rebuildExistingChunks(NARegionStorage.get(),  NARegionPixelCache.get()));
 //        addButton(existingButton);

@@ -1,6 +1,7 @@
 package dev.natowb.natosatlas.client.map;
 
 import dev.natowb.natosatlas.client.NAClient;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.NAConstants;
 import dev.natowb.natosatlas.client.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.core.data.NACoord;
@@ -50,7 +51,7 @@ public class MapScreen extends UIScreen {
     public void init(int width, int height) {
         super.init(width, height);
         viewport.initViewport(0, 0, width, height);
-        NAEntity player = NAClient.get().getPlatform().world.getPlayer();
+        NAEntity player = ClientWorldAccess.get().getPlayer();
         if (player != null) {
             viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
         }
@@ -152,7 +153,7 @@ public class MapScreen extends UIScreen {
         addButton(entityButton);
 
 
-        if (!NAClient.get().getPlatform().world.hasCeiling()) {
+        if (!ClientWorldAccess.get().getWorldInfo().hasCeiling()) {
             UIElementIconButton modeButton = new UIElementIconButton(105, rightLayout, 20, 20, 5);
             modeButton.setTooltip(String.format("Mode: %s", Settings.mapRenderMode.name()));
 
@@ -172,7 +173,7 @@ public class MapScreen extends UIScreen {
             }
 
             modeButton.setHandler(btn -> {
-                if (!NAClient.get().getPlatform().world.hasCeiling()) {
+                if (!ClientWorldAccess.get().getWorldInfo().hasCeiling()) {
                     SettingsOption.MAP_RENDER_MODE.cycle();
                     modeButton.setTooltip(String.format("Mode: %s", Settings.mapRenderMode.name()));
 
@@ -342,7 +343,7 @@ public class MapScreen extends UIScreen {
 
         if (keyCode == Keyboard.KEY_SPACE) {
             viewport.setRotation(0);
-            NAEntity player = NAClient.get().getPlatform().world.getPlayer();
+            NAEntity player = ClientWorldAccess.get().getPlayer();
             if (player != null) {
                 viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
             }

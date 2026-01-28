@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.client;
 
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.client.cache.NARegionTextureCache;
 import dev.natowb.natosatlas.client.map.MapLayerController;
 import dev.natowb.natosatlas.client.saving.SaveScheduler;
@@ -30,16 +31,16 @@ public class NAClient implements NASession {
 
 
     public NAClient(Path minecraftPath, NAClientPlatform platform) {
-
         if (instance != null) {
             LogUtil.error("tried to create NAClient when one already exists");
             throw new RuntimeException();
         }
-        NAClientPaths.updateBasePaths(minecraftPath);
-        this.platform = platform;
-        NAClient.instance = this;
-        LayerRegistry.getLayers().add(new NALayer(2, "Cave", new NAChunkBuilderCave(), true));
 
+        NAClient.instance = this;
+        this.platform = platform;
+
+        NAClientPaths.updateBasePaths(minecraftPath);
+        LayerRegistry.getLayers().add(new NALayer(2, "Cave", new NAChunkBuilderCave(), true));
         Settings.load();
     }
 
@@ -51,10 +52,9 @@ public class NAClient implements NASession {
         return platform;
     }
 
-
     @Override
     public void tick() {
-        boolean worldExists = platform.world.exists();
+        boolean worldExists = ClientWorldAccess.get().getWorldInfo() != null;
 
         if (!worldExists && inWorld) {
             inWorld = false;
@@ -63,15 +63,19 @@ public class NAClient implements NASession {
         }
 
         if (worldExists && !inWorld) {
+            worldSaveName = ClientWorldAccess.get().getSaveName();
+            if (worldSaveName == null) {
+                return;
+            }
+
             inWorld = true;
-            dim = platform.world.getDimensionId();
-            worldSaveName = platform.world.getSaveName();
+            dim = ClientWorldAccess.get().getWorldInfo().getDimensionId();
             onWorldJoined(worldSaveName, dim);
         }
 
         if (!inWorld) return;
 
-        int currentDim = platform.world.getDimensionId();
+        int currentDim = ClientWorldAccess.get().getWorldInfo().getDimensionId();
         if (dim != currentDim) {
             dim = currentDim;
             onDimensionChange(dim);

@@ -1,9 +1,8 @@
 package dev.natowb.natosatlas.client.map;
 
-import dev.natowb.natosatlas.client.NAClient;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.core.LayerRegistry;
-import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
@@ -28,7 +27,7 @@ public class MapLayerController {
     }
 
     public void tick() {
-        if (NAClient.get().getPlatform().world.hasCeiling()) {
+        if (ClientWorldAccess.get().getWorldInfo().hasCeiling()) {
             setActiveLayer(2);
             return;
         }
@@ -52,11 +51,11 @@ public class MapLayerController {
     }
 
     private void autoSelectLayer() {
-        long time = NAClient.get().getPlatform().world.getTime() % 24000L;
+        long time = ClientWorldAccess.get().getWorldInfo().getTime() % 24000L;
         boolean day = time < 12000L;
 
-        NAEntity player = NAClient.get().getPlatform().world.getPlayer();
-        ChunkWrapper chunk = NAClient.get().getPlatform().world.getChunk(
+        NAEntity player = ClientWorldAccess.get().getPlayer();
+        ChunkWrapper chunk = ClientWorldAccess.get().getChunk(
                 NACoord.from(player.chunkX, player.chunkZ)
         );
 

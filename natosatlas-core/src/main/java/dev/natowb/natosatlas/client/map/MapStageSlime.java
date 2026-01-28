@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.client.map;
 
 import dev.natowb.natosatlas.client.NAClient;
-import dev.natowb.natosatlas.core.NACore;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.core.NAConstants;
@@ -35,7 +35,7 @@ public class MapStageSlime implements MapStage {
 
     // FIXME: move this to a global acessor at some point
     private boolean isSlimeChunk(int worldChunkX, int worldChunkZ) {
-        long seed = NAClient.get().getPlatform().world.getSeed();
+        long seed = ClientWorldAccess.get().getWorldInfo().getSeed();
         return new Random(seed + (long) (worldChunkX * worldChunkX) * 4987142L + (long) worldChunkX * 5947611L + (long) (worldChunkZ * worldChunkZ) * 4392871L + (long) worldChunkZ * 389711L ^ 987234911L).nextInt(10) == 0;
     }
 

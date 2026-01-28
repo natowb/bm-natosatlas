@@ -8,7 +8,7 @@ import net.minecraft.src.ModLoader;
 
 public class PlatformML extends NAClientPlatform {
     public PlatformML() {
-        super(new PlatformPainterML(), new BlockAccessML(), new WorldAccessML(), new ScreenAccess() {
+        super(new PlatformPainterML(),  new ScreenAccess() {
             @Override
             public void openNacScreen(UIScreen screen) {
                 Minecraft mc = ModLoader.getMinecraftInstance();

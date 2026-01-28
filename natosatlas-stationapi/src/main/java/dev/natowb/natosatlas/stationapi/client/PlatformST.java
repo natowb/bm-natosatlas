@@ -9,7 +9,7 @@ import net.minecraft.client.Minecraft;
 public class PlatformST extends NAClientPlatform {
 
     public PlatformST() {
-        super(new PlatformPainterST(), new BlockAccessST(), new WorldAccessST(), new ScreenAccess() {
+        super(new PlatformPainterST(),  new ScreenAccess() {
             @Override
             public void openNacScreen(UIScreen screen) {
                 Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();

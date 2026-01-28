@@ -1,6 +1,8 @@
 package dev.natowb.natosatlas.stationapi.client;
 
 import dev.natowb.natosatlas.client.NAClient;
+import dev.natowb.natosatlas.client.access.BlockAccess;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.client.map.MapScreen;
 import net.fabricmc.loader.api.FabricLoader;
@@ -24,6 +26,8 @@ public class ClientEntry {
 
     @EventListener
     public void init(InitFinishedEvent event) {
+        BlockAccess.set(new BlockAccessST());
+        ClientWorldAccess.set(new WorldAccessST());
         NACore.initClient(FabricLoader.getInstance().getGameDir(),new PlatformST());
     }
 

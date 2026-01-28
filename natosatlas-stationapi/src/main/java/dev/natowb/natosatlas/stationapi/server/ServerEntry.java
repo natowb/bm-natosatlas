@@ -18,7 +18,7 @@ public class ServerEntry {
 
     @EventListener
     public void init(InitFinishedEvent event) {
-        BlockAccess.setInstance(new BlockAccessST());
+        BlockAccess.set(new BlockAccessST());
         NACore.initServer(FabricLoader.getInstance().getGameDir(), new ServerPlatformST());
     }
 

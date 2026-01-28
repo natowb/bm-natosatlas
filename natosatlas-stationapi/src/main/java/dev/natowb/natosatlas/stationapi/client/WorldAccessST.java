@@ -1,10 +1,9 @@
 package dev.natowb.natosatlas.stationapi.client;
 
-import dev.natowb.natosatlas.core.data.NABiome;
-import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.data.NAEntity;
+import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
-import dev.natowb.natosatlas.client.access.WorldAccess;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.core.util.LogUtil;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
@@ -13,27 +12,28 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.RegionFile;
 import net.minecraft.world.storage.WorldSaveInfo;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldAccessST extends WorldAccess {
+public class WorldAccessST extends ClientWorldAccess {
     private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
     @Override
-    public boolean exists() {
-        return mc.world != null;
-    }
+    public NAWorldInfo getWorldInfo() {
+        if (mc.world == null) return null;
+        int worldHeight = 128;
+        String name = mc.world.getProperties().getName();
+        long time = mc.world.getTime();
+        long seed = mc.world.getSeed();
+        int dimensionId = mc.world.dimension.id;
+        boolean hasCeiling = mc.world.dimension.hasCeiling;
+        boolean multiplayer = mc.world.isRemote;
 
-    @Override
-    public String getName() {
-        return mc.world.getProperties().getName();
-    }
-
-    @Override
-    public int getWorldHeight() {
-        return mc.world.getHeight();
+        return new NAWorldInfo(worldHeight, name, time, seed, dimensionId, hasCeiling, multiplayer);
     }
 
     @Override
@@ -45,9 +45,11 @@ public class WorldAccessST extends WorldAccess {
         mc.world.attemptSaving(0);
         List<WorldSaveInfo> saves = mc.getWorldStorageSource().getAll();
         if (saves == null || saves.isEmpty()) return null;
+
         String currentName = mc.world.getProperties().getName();
         WorldSaveInfo best = null;
         long bestTime = Long.MIN_VALUE;
+
         for (WorldSaveInfo info : saves) {
             if (info.getName().equals(currentName)) {
                 long t = info.getLastPlayed();
@@ -58,35 +60,7 @@ public class WorldAccessST extends WorldAccess {
             }
         }
 
-        if (best != null) {
-            return best.getSaveName();
-        }
-        return null;
-    }
-
-    @Override
-    public long getTime() {
-        return mc.world.getTime();
-    }
-
-    @Override
-    public long getSeed() {
-        return mc.world.getSeed();
-    }
-
-    @Override
-    public int getDimensionId() {
-        return mc.world.dimension.id;
-    }
-
-    @Override
-    public boolean hasCeiling() {
-        return mc.world.dimension.hasCeiling;
-    }
-
-    @Override
-    public boolean isServer() {
-        return mc.world.isRemote;
+        return best != null ? best.getSaveName() : null;
     }
 
     @Override
@@ -141,7 +115,7 @@ public class WorldAccessST extends WorldAccess {
         Chunk chunk = mc.world.getChunk(chunkCoord.x, chunkCoord.z);
         if (chunk == null) return null;
 
-        return new ChunkWrapper(chunk, getWorldHeight()) {
+        return new ChunkWrapper(chunk, mc.world.getHeight()) {
             @Override
             public int getBlockId(int x, int y, int z) {
                 return ((Chunk) chunk).getBlockId(x, y, z);
@@ -162,5 +136,59 @@ public class WorldAccessST extends WorldAccess {
                 return ((Chunk) chunk).getLight(LightType.SKY, x, y, z);
             }
         };
+    }
+
+    @Override
+    public List<NARegionFile> getRegionFiles(File dimDir) {
+        List<NARegionFile> result = new ArrayList<>();
+        File regionDir = new File(dimDir, "region");
+
+        File[] regionFiles = regionDir.listFiles((dir, name) ->
+                name.endsWith(".mcr") || name.endsWith(".mca")
+        );
+
+        if (regionFiles == null) return result;
+
+        int index = 0;
+
+        for (File regionFile : regionFiles) {
+            index++;
+
+            boolean success = false;
+
+            try {
+                String name = regionFile.getName();
+                String[] parts = name.substring(2, name.length() - 4).split("\\.");
+                if (parts.length != 2) continue;
+
+                int rx = Integer.parseInt(parts[0]);
+                int rz = Integer.parseInt(parts[1]);
+                NACoord regionCoord = new NACoord(rx, rz);
+
+                NARegionFile naRegion = new NARegionFile(regionFile, regionCoord);
+
+                RegionFile rf = new RegionFile(regionFile);
+                for (int x = 0; x < NARegionFile.CHUNKS_PER_REGION; x++) {
+                    for (int z = 0; z < NARegionFile.CHUNKS_PER_REGION; z++) {
+                        if (rf.hasChunkData(x, z)) {
+                            naRegion.chunkExists[x][z] = true;
+                        }
+                    }
+                }
+                rf.close();
+
+                result.add(naRegion);
+                success = true;
+
+            } catch (Exception ignored) {
+            }
+
+            if (success) {
+                LogUtil.info("[{}/{}] Successfully processed region file: {}", index, regionFiles.length, regionFile.getName());
+            } else {
+                LogUtil.info("[{}/{}] Failed to process region file: {}", index, regionFiles.length, regionFile.getName());
+            }
+        }
+        return result;
     }
 }

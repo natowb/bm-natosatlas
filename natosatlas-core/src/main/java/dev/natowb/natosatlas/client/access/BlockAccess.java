@@ -8,7 +8,7 @@ public abstract class BlockAccess {
 
     private static BlockAccess instance;
 
-    public static void setInstance(BlockAccess instance) {
+    public static void set(BlockAccess instance) {
         BlockAccess.instance = instance;
     }
 

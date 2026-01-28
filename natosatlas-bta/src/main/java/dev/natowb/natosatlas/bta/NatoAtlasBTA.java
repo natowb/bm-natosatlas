@@ -1,5 +1,7 @@
 package dev.natowb.natosatlas.bta;
 
+import dev.natowb.natosatlas.client.access.BlockAccess;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.NACore;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -27,6 +29,8 @@ public class NatoAtlasBTA implements ModInitializer, RecipeEntrypoint, GameStart
 
     @Override
     public void afterGameStart() {
-        NACore.initClient(FabricLoader.getInstance().getGameDir(),new PlatformBTA());
+        BlockAccess.set(new BlockAccessBTA());
+        ClientWorldAccess.set(new WorldAccessBTA());
+        NACore.initClient(FabricLoader.getInstance().getGameDir(), new PlatformBTA());
     }
 }

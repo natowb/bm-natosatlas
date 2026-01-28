@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.client;
 
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.util.LogUtil;
 
 import java.io.IOException;
@@ -62,7 +63,7 @@ public final class NAClientPaths {
     }
 
     public static Path getWorldSavePath() {
-        boolean isMultiplayer = NAClient.get().getPlatform().world.isServer();
+        boolean isMultiplayer = ClientWorldAccess.get().getWorldInfo().isMultiplayer();
         if (isMultiplayer) {
             return worldDataPath;
         } else {
@@ -71,7 +72,7 @@ public final class NAClientPaths {
     }
 
     public static Path getWorldMapStoragePath(int layerId) {
-        int dim = NAClient.get().getPlatform().world.getDimensionId();
+        int dim = ClientWorldAccess.get().getWorldInfo().getDimensionId();
         return ensurePathExists(getWorldSavePath().resolve(String.format("regions/DIM%d/layer_%d", dim, layerId)));
     }
 }

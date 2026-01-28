@@ -4,6 +4,7 @@ import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionFile;
 
+import java.io.File;
 import java.util.List;
 
 public interface NAServerPlatform {

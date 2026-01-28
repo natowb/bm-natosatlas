@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.client.map;
 
 import dev.natowb.natosatlas.client.NAClient;
-import dev.natowb.natosatlas.core.NACore;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.core.NAConstants;
@@ -21,7 +21,7 @@ public class MapStageEntities implements MapStage {
     private void drawEntities(MapContext ctx) {
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.Nothing) return;
 
-        NAEntity player = NAClient.get().getPlatform().world.getPlayer();
+        NAEntity player = ClientWorldAccess.get().getPlayer();
         double px = player.x;
         double pz = player.z;
 
@@ -29,7 +29,7 @@ public class MapStageEntities implements MapStage {
                 NAClient.get().getPlatform().painter.getMinecraftTextureId("/misc/mapicons.png"));
 
         if (Settings.entityDisplayMode == Settings.EntityDisplayMode.All) {
-            for (NAEntity e : NAClient.get().getPlatform().world.getEntities()) {
+            for (NAEntity e : ClientWorldAccess.get().getEntities()) {
 
                 double dx = e.x - px;
                 double dz = e.z - pz;
@@ -42,7 +42,7 @@ public class MapStageEntities implements MapStage {
             }
         }
 
-        for (NAEntity p : NAClient.get().getPlatform().world.getPlayers()) {
+        for (NAEntity p : ClientWorldAccess.get().getPlayers()) {
 
             double dx = p.x - px;
             double dz = p.z - pz;

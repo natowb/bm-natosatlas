@@ -2,6 +2,7 @@ package dev.natowb.natosatlas.client.waypoint;
 
 import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.access.PainterAccess;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.client.ui.elements.UIElementIconButton;
@@ -43,7 +44,7 @@ public class WaypointCreateScreen extends UIScreen {
         super(parent);
         this.editMode = false;
         this.editing = null;
-        NAEntity player = NAClient.get().getPlatform().world.getPlayer();
+        NAEntity player = ClientWorldAccess.get().getPlayer();
         this.x = (int) player.x;
         this.y = (int) player.y;
         this.z = (int) player.z;

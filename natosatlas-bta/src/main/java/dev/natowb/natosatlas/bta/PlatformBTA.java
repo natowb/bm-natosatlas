@@ -9,7 +9,7 @@ import net.minecraft.core.sound.SoundCategory;
 
 public class PlatformBTA extends NAClientPlatform {
     public PlatformBTA() {
-        super(new PlatformPainterBTA(), new BlockAccessBTA(), new WorldAccessBTA(), new ScreenAccess() {
+        super(new PlatformPainterBTA(), new ScreenAccess() {
             @Override
             public void openNacScreen(UIScreen screen) {
                 Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();

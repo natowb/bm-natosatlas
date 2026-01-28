@@ -1,10 +1,8 @@
 package dev.natowb.natosatlas.bta;
 
-import dev.natowb.natosatlas.core.data.NABiome;
-import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.data.NAEntity;
+import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
-import dev.natowb.natosatlas.client.access.WorldAccess;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.entity.Mob;
@@ -15,20 +13,25 @@ import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.save.SaveFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldAccessBTA extends WorldAccess {
+public class WorldAccessBTA extends ClientWorldAccess {
     private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
     @Override
-    public int getWorldHeight() {
-        return mc.currentWorld.getHeightBlocks();
-    }
+    public NAWorldInfo getWorldInfo() {
+        if (mc.currentWorld == null) return null;
+        int worldHeight = 128;
+        String name = mc.currentWorld.getLevelData().getWorldName();
+        long time = mc.currentWorld.getWorldTime();
+        long seed = mc.currentWorld.getRandomSeed();
+        int dimensionId = mc.currentWorld.dimension.id;
+        boolean hasCeiling = mc.currentWorld.getWorldType().hasCeiling();
+        boolean multiplayer = mc.isMultiplayerWorld();
 
-    @Override
-    public boolean exists() {
-        return mc.currentWorld != null;
+        return new NAWorldInfo(worldHeight, name, time, seed, dimensionId, hasCeiling, multiplayer);
     }
 
     @Override
@@ -40,9 +43,11 @@ public class WorldAccessBTA extends WorldAccess {
         mc.currentWorld.pauseScreenSave(0);
         List<SaveFile> saves = mc.getSaveFormat().getSaveFileList();
         if (saves == null || saves.isEmpty()) return null;
+
         String currentName = mc.currentWorld.getLevelData().getWorldName();
         SaveFile best = null;
         long bestTime = Long.MIN_VALUE;
+
         for (SaveFile info : saves) {
             if (info.getDisplayName().equals(currentName)) {
                 long t = info.getLastTimePlayed();
@@ -53,40 +58,7 @@ public class WorldAccessBTA extends WorldAccess {
             }
         }
 
-        if (best != null) {
-            return best.getFileName();
-        }
-        return null;
-    }
-
-    @Override
-    public String getName() {
-        return mc.currentWorld.getLevelData().getWorldName();
-    }
-
-    @Override
-    public long getTime() {
-        return mc.currentWorld.getWorldTime();
-    }
-
-    @Override
-    public long getSeed() {
-        return mc.currentWorld.getRandomSeed();
-    }
-
-    @Override
-    public int getDimensionId() {
-        return mc.currentWorld.dimension.id;
-    }
-
-    @Override
-    public boolean hasCeiling() {
-        return mc.currentWorld.getWorldType().hasCeiling();
-    }
-
-    @Override
-    public boolean isServer() {
-        return mc.currentWorld.isClientSide;
+        return best != null ? best.getFileName() : null;
     }
 
     @Override
@@ -140,9 +112,7 @@ public class WorldAccessBTA extends WorldAccess {
         Chunk chunk = mc.currentWorld.getChunkFromChunkCoords(chunkCoord.x, chunkCoord.z);
         if (chunk == null) return null;
 
-
-        return new ChunkWrapper(chunk, getWorldHeight()) {
-
+        return new ChunkWrapper(chunk, mc.currentWorld.getHeightBlocks()) {
             @Override
             public int getBlockId(int x, int y, int z) {
                 return ((Chunk) chunk).getBlockID(x, y, z);
@@ -163,5 +133,10 @@ public class WorldAccessBTA extends WorldAccess {
                 return ((Chunk) chunk).getBrightness(LightLayer.Sky, x, y, z);
             }
         };
+    }
+
+    @Override
+    public List<NARegionFile> getRegionFiles(File dimDir) {
+        return new ArrayList<>();
     }
 }
