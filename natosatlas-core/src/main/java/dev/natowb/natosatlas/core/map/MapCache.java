@@ -11,18 +11,23 @@ public class MapCache {
     private final Queue<Long> dirtyQueue = new ArrayDeque<>();
     private final Set<Long> dirtySet = new HashSet<>();
 
-    private static final int PNG_CACHE_SIZE = 256;
+    private static final int CACHE_SIZE = 256;
 
-    private final Map<Long, MapRegion[]> regions = new LinkedHashMap<>();
-
-    private final Map<Long, int[][]> pngCache =
-            new LinkedHashMap<Long, int[][]>(PNG_CACHE_SIZE, 0.75f, true) {
+    private final Map<Long, MapRegion[]> regions =
+            new LinkedHashMap<Long, MapRegion[]>(CACHE_SIZE, 0.75f, true) {
                 @Override
-                protected boolean removeEldestEntry(Map.Entry<Long, int[][]> eldest) {
-                    return size() > PNG_CACHE_SIZE;
+                protected boolean removeEldestEntry(Map.Entry<Long, MapRegion[]> eldest) {
+                    return size() > CACHE_SIZE;
                 }
             };
 
+    private final Map<Long, int[][]> pngCache =
+            new LinkedHashMap<Long, int[][]>(CACHE_SIZE, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<Long, int[][]> eldest) {
+                    return size() > CACHE_SIZE;
+                }
+            };
 
     public MapRegion getRegion(int layerId, NACoord coord) {
         long key = coord.toKey();
