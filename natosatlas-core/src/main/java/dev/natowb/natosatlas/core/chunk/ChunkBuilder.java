@@ -1,18 +1,18 @@
 package dev.natowb.natosatlas.core.chunk;
 
-import dev.natowb.natosatlas.core.NatosAtlasCore;
+import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionFile;
-import dev.natowb.natosatlas.core.map.MapCache;
-import dev.natowb.natosatlas.core.layers.MapLayer;
-import dev.natowb.natosatlas.core.map.MapRegion;
-import dev.natowb.natosatlas.core.map.MapStorage;
+import dev.natowb.natosatlas.client.layers.MapLayerHandler;
+import dev.natowb.natosatlas.client.map.NARegionCache;
+import dev.natowb.natosatlas.client.layers.MapLayer;
+import dev.natowb.natosatlas.client.map.NARegionPixelData;
+import dev.natowb.natosatlas.client.map.MapStorage;
 import dev.natowb.natosatlas.core.io.SaveScheduler;
 import dev.natowb.natosatlas.core.io.LogUtil;
-import dev.natowb.natosatlas.core.access.BlockAccess;
-import dev.natowb.natosatlas.core.access.WorldAccess;
+import dev.natowb.natosatlas.client.access.ClientBlockAccess;
 
 import java.io.File;
 import java.util.List;
@@ -23,7 +23,7 @@ public class ChunkBuilder {
 
 
     public static NAChunk buildChunkSurface(NACoord chunkCoord) {
-        ChunkWrapper chunk = WorldAccess.get().getChunk(chunkCoord);
+        ChunkWrapper chunk = NACore.getClient().getPlatform().world.getChunk(chunkCoord);
         if (chunk == null) {
             return null;
         }
@@ -32,7 +32,7 @@ public class ChunkBuilder {
 
 
     public static NAChunk buildChunkSurfaceFromDisk(NACoord chunkCoord) {
-        ChunkWrapper chunk = WorldAccess.get().getChunkFromDisk(chunkCoord);
+        ChunkWrapper chunk = NACore.getClient().getPlatform().world.getChunkFromDisk(chunkCoord);
         if (chunk == null) {
             return null;
         }
@@ -40,8 +40,8 @@ public class ChunkBuilder {
     }
 
 
-    public static void rebuildExistingChunks(MapStorage storage, MapCache cache) {
-        List<NARegionFile> regions = WorldAccess.get().getRegionFiles();
+    public static void rebuildExistingChunks(MapStorage storage, NARegionCache cache) {
+        List<NARegionFile> regions = NACore.getClient().getPlatform().world.getRegionFiles();
 
         if (regions.isEmpty()) {
             LogUtil.info("No region metadata found.");
@@ -62,14 +62,14 @@ public class ChunkBuilder {
             boolean success = false;
 
             try {
-                MapRegion[] layers = new MapRegion[NatosAtlasCore.get().layers.getLayers().size()];
+                NARegionPixelData[] layers = new NARegionPixelData[MapLayerHandler.get().getLayers().size()];
                 for (int i = 0; i < layers.length; i++) {
-                    layers[i] = new MapRegion();
+                    layers[i] = new NARegionPixelData();
                 }
 
                 for (NACoord chunkCoord : naRegion.iterateExistingChunks()) {
                     int layerIndex = 0;
-                    for (MapLayer layer : NatosAtlasCore.get().layers.getLayers()) {
+                    for (MapLayer layer : MapLayerHandler.get().getLayers()) {
                         layer.renderer.applyChunkToRegion(layers[layerIndex], chunkCoord, layer.usesBlockLight, true);
                         layerIndex++;
                     }
@@ -109,7 +109,7 @@ public class ChunkBuilder {
 
                 int height = chunk.getTopSolidBlockY(x, z) - 1;
                 int aboveId = chunk.getBlockId(x, height + 1, z);
-                if (BlockAccess.get().isBlock(aboveId, BlockAccess.BlockIdentifier.SNOW)) {
+                if (NACore.getClient().getPlatform().blocks.isBlock(aboveId, ClientBlockAccess.BlockIdentifier.SNOW)) {
                     height = height + 1;
                 }
 
@@ -117,7 +117,7 @@ public class ChunkBuilder {
                 int depth = chunk.computeFluidDepth(x, height, z);
                 int blockLight = chunk.getBlockLight(x, height + 1, z);
                 int meta = chunk.getBlockMeta(x, height, z);
-                NABiome biome = WorldAccess.get().getBiome(NACoord.from(worldBlockX, worldBlockZ));
+                NABiome biome = NACore.getClient().getPlatform().world.getBiome(NACoord.from(worldBlockX, worldBlockZ));
                 nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
             }
         }
@@ -125,19 +125,19 @@ public class ChunkBuilder {
     }
 
     public static NAChunk buildCaveChunk(NACoord chunkCoord) {
-        ChunkWrapper chunk = WorldAccess.get().getChunk(chunkCoord);
+        ChunkWrapper chunk = NACore.getClient().getPlatform().world.getChunk(chunkCoord);
         if (chunk == null) return null;
         return buildCave(chunkCoord, chunk);
     }
 
     public static NAChunk buildCaveChunkFromDisk(NACoord chunkCoord) {
-        ChunkWrapper chunk = WorldAccess.get().getChunkFromDisk(chunkCoord);
+        ChunkWrapper chunk = NACore.getClient().getPlatform().world.getChunkFromDisk(chunkCoord);
         if (chunk == null) return null;
         return buildCave(chunkCoord, chunk);
     }
 
     private static NAChunk buildCave(NACoord chunkCoord, ChunkWrapper chunk) {
-        int playerY = (int) WorldAccess.get().getPlayer().y;
+        int playerY = (int) NACore.getClient().getPlatform().world.getPlayer().y;
         NAChunk caveChunk = new NAChunk();
 
         for (int z = 0; z < 16; z++) {
@@ -156,7 +156,7 @@ public class ChunkBuilder {
 
                 int worldX = chunkCoord.x * 16 + x;
                 int worldZ = chunkCoord.z * 16 + z;
-                NABiome biome = WorldAccess.get().getBiome(NACoord.from(worldX, worldZ));
+                NABiome biome = NACore.getClient().getPlatform().world.getBiome(NACoord.from(worldX, worldZ));
 
                 caveChunk.set(x, z, floorY, blockId, 0, blockLight, meta, biome);
             }
@@ -169,7 +169,7 @@ public class ChunkBuilder {
     private static int findTopmostCaveFloor(ChunkWrapper chunk, int x, int z, int playerY) {
 
 
-        int startY = Math.min(playerY, WorldAccess.get().getWorldHeight() - 1);
+        int startY = Math.min(playerY, NACore.getClient().getPlatform().world.getWorldHeight() - 1);
 
         for (int y = startY; y > 1; y--) {
 

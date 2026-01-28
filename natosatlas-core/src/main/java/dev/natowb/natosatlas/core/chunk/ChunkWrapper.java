@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.core.chunk;
 
-import dev.natowb.natosatlas.core.access.BlockAccess;
-import dev.natowb.natosatlas.core.access.WorldAccess;
+import dev.natowb.natosatlas.core.NACore;
+import dev.natowb.natosatlas.client.access.ClientBlockAccess;
 
 public abstract class ChunkWrapper {
 
@@ -13,15 +13,15 @@ public abstract class ChunkWrapper {
 
     public int getTopSolidBlockY(int x, int z) {
 
-        int y = WorldAccess.get().getWorldHeight() - 1;
+        int y = NACore.getClient().getPlatform().world.getWorldHeight() - 1;
         x &= 15;
         int z0 = z & 15;
 
-        BlockAccess blocks = BlockAccess.get();
+        ClientBlockAccess blocks = NACore.getClient().getPlatform().blocks;
 
         for (; y > 0; --y) {
             int blockId = getBlockId(x, y, z0);
-            if (blocks.isBlock(blockId, BlockAccess.BlockIdentifier.GLASS)) continue;
+            if (blocks.isBlock(blockId, ClientBlockAccess.BlockIdentifier.GLASS)) continue;
             if (blocks.blocksMovement(blockId) || blocks.isFluid(blockId)) return y + 1;
         }
 
@@ -33,16 +33,13 @@ public abstract class ChunkWrapper {
         int depth = 0;
         while (y > 0) {
             int id = getBlockId(x, y, z);
-            if (!BlockAccess.get().isFluid(id)) break;
+            if (!NACore.getClient().getPlatform().blocks.isFluid(id)) break;
             depth++;
             y--;
         }
         return depth;
     }
 
-    public abstract long getLastSaveTime();
-
-    public abstract boolean isDirty();
 
     public abstract int getBlockId(int x, int y, int z);
 

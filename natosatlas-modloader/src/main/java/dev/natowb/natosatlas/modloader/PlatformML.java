@@ -1,22 +1,16 @@
 package dev.natowb.natosatlas.modloader;
 
-import dev.natowb.natosatlas.core.NatosAtlasPlatform;
-import dev.natowb.natosatlas.core.ui.elements.UIScreen;
+import dev.natowb.natosatlas.client.NAClientPlatform;
+import dev.natowb.natosatlas.client.ui.elements.UIScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.ModLoader;
 
-import java.nio.file.Path;
-
-public class PlatformML extends NatosAtlasPlatform {
+public class PlatformML extends NAClientPlatform {
     public PlatformML() {
         super(new PlatformPainterML(), new BlockAccessML(), new WorldAccessML());
     }
 
 
-    @Override
-    public Path getMinecraftDirectory() {
-        return Minecraft.getRunDirectory().toPath();
-    }
 
     @Override
     public void openNacScreen(UIScreen screen) {
