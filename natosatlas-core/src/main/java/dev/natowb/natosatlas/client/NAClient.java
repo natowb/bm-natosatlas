@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.client;
 
+import dev.natowb.natosatlas.client.cache.NARegionTextureCache;
 import dev.natowb.natosatlas.client.map.MapLayerController;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.core.NACore;
@@ -72,6 +73,7 @@ public class NAClient implements NASession {
     private void onWorldLeft() {
         SaveScheduler.stop();
         NARegionPixelCache.get().clear();
+        NARegionTextureCache.clear();
         LogUtil.info("Client left world {}", worldSaveName);
     }
 

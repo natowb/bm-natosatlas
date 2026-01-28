@@ -23,6 +23,7 @@ public class NARegionTextureCache {
             arr[layerId] = new NARegionTexture(data);
         }
 
+        arr[layerId].update();
         return arr[layerId];
     }
 
