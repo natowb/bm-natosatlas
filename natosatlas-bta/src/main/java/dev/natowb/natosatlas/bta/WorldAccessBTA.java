@@ -3,11 +3,8 @@ package dev.natowb.natosatlas.bta;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
-import dev.natowb.natosatlas.core.data.NARegionFile;
-import dev.natowb.natosatlas.core.util.LogUtil;
-import dev.natowb.natosatlas.client.NAClientPaths;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
-import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.client.access.WorldAccess;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.entity.Mob;
@@ -17,13 +14,11 @@ import net.minecraft.core.enums.LightLayer;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.save.SaveFile;
-import net.minecraft.core.world.save.mcregion.RegionFile;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldAccessBTA extends ClientWorldAccess {
+public class WorldAccessBTA extends WorldAccess {
     private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
     @Override

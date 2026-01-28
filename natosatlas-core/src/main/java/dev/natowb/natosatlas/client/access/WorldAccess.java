@@ -3,13 +3,11 @@ package dev.natowb.natosatlas.client.access;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
-import dev.natowb.natosatlas.core.data.NARegionFile;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 
-import java.io.File;
 import java.util.List;
 
-public abstract class ClientWorldAccess {
+public abstract class WorldAccess {
     public abstract boolean exists();
 
     public abstract int getWorldHeight();

@@ -3,11 +3,8 @@ package dev.natowb.natosatlas.stationapi.client;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
-import dev.natowb.natosatlas.core.data.NARegionFile;
-import dev.natowb.natosatlas.core.util.LogUtil;
-import dev.natowb.natosatlas.client.NAClientPaths;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
-import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.client.access.WorldAccess;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
@@ -16,15 +13,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.RegionChunkStorage;
-import net.minecraft.world.chunk.storage.RegionFile;
 import net.minecraft.world.storage.WorldSaveInfo;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldAccessST extends ClientWorldAccess {
+public class WorldAccessST extends WorldAccess {
     private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
     @Override
