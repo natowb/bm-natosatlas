@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.core.chunk.ChunkCaveRenderer;
-import dev.natowb.natosatlas.core.chunk.ChunkSurfaceRenderer;
+import dev.natowb.natosatlas.core.chunk.NAChunkBuilderCave;
+import dev.natowb.natosatlas.core.chunk.NAChunkBuilderSurface;
 import dev.natowb.natosatlas.core.data.NALayer;
 
 import java.util.ArrayList;
@@ -12,10 +12,8 @@ public class LayerRegistry {
     private static final List<NALayer> LAYERS = new ArrayList<>();
 
     static {
-        ChunkSurfaceRenderer surface = new ChunkSurfaceRenderer();
-        LAYERS.add(new NALayer(0, "Day", surface, false));
-        LAYERS.add(new NALayer(1, "Night", surface, true));
-        LAYERS.add(new NALayer(2, "Cave", new ChunkCaveRenderer(), true));
+        LAYERS.add(new NALayer(0, "Day", new NAChunkBuilderSurface(), false));
+        LAYERS.add(new NALayer(1, "Night", new NAChunkBuilderSurface(), true));
     }
 
     public static List<NALayer> getLayers() {

@@ -3,7 +3,7 @@ package dev.natowb.natosatlas.core.chunk;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
-import dev.natowb.natosatlas.client.access.ClientBlockAccess;
+import dev.natowb.natosatlas.client.access.BlockAccess;
 
 
 public final class ChunkColorEngine {
@@ -22,11 +22,11 @@ public final class ChunkColorEngine {
         int meta = chunk.meta[index];
         NABiome biome = chunk.biome[index];
 
-        int baseColor = NACore.getClient().getPlatform().blocks.getColor(blockId, meta);
+        int baseColor = BlockAccess.get().getColor(blockId, meta);
 
         baseColor = applyBiomeTint(blockId, baseColor, biome);
 
-        if (NACore.getClient().getPlatform().blocks.isFluid(blockId)) {
+        if (BlockAccess.get().isFluid(blockId)) {
             baseColor = applyWaterTint(localX, localZ, chunk, baseColor);
         }
 
@@ -41,7 +41,7 @@ public final class ChunkColorEngine {
     }
 
     private int applyBiomeTint(int blockId, int baseColor, NABiome biome) {
-        if (NACore.getClient().getPlatform().blocks.isBlock(blockId, ClientBlockAccess.BlockIdentifier.GRASS)) {
+        if (BlockAccess.get().isBlock(blockId, BlockAccess.BlockIdentifier.GRASS)) {
             return mixColors(baseColor, biome.grassColor, 0.1f);
         }
         return baseColor;

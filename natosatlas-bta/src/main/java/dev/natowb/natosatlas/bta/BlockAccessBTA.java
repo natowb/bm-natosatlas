@@ -1,11 +1,11 @@
 package dev.natowb.natosatlas.bta;
 
-import dev.natowb.natosatlas.client.access.ClientBlockAccess;
+import dev.natowb.natosatlas.client.access.BlockAccess;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.material.MaterialColor;
 
-public class BlockAccessBTA extends ClientBlockAccess {
+public class BlockAccessBTA extends BlockAccess {
 
 
     public BlockAccessBTA() {

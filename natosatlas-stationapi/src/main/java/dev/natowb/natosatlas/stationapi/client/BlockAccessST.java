@@ -1,10 +1,11 @@
-package dev.natowb.natosatlas.stationapi;
+package dev.natowb.natosatlas.stationapi.client;
 
 import dev.natowb.natosatlas.core.mapper.ColorMapper;
-import dev.natowb.natosatlas.client.access.ClientBlockAccess;
+import dev.natowb.natosatlas.client.access.BlockAccess;
 import net.minecraft.block.Block;
 
-public class BlockAccessST extends ClientBlockAccess {
+public class BlockAccessST extends BlockAccess {
+
 
     public BlockAccessST() {
         registerBlockIdentifier(BlockIdentifier.GLASS, Block.GLASS.id);
@@ -23,10 +24,6 @@ public class BlockAccessST extends ClientBlockAccess {
 
         if (blockId == Block.WOOL.id) {
             return ColorMapper.getWoolColor(blockMeta);
-        }
-
-        if (blockId == Block.LEAVES.id) {
-            return Block.LEAVES.getColor(blockMeta);
         }
 
         if (Block.BLOCKS[blockId].material == null) {

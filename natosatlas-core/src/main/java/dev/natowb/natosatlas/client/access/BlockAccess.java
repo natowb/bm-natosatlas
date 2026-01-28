@@ -1,10 +1,23 @@
 package dev.natowb.natosatlas.client.access;
 
 import dev.natowb.natosatlas.core.io.LogUtil;
+import sun.jvm.hotspot.opto.Block;
 
 import java.util.HashMap;
 
-public abstract class ClientBlockAccess {
+public abstract class BlockAccess {
+
+    private static BlockAccess instance;
+
+    public static void setInstance(BlockAccess instance) {
+        BlockAccess.instance = instance;
+    }
+
+    public static BlockAccess get() {
+        return instance;
+    }
+
+
     public enum BlockIdentifier {
         GRASS,
         GLASS,

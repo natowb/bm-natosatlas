@@ -3,8 +3,11 @@ package dev.natowb.natosatlas.client;
 import dev.natowb.natosatlas.client.cache.NARegionTextureCache;
 import dev.natowb.natosatlas.client.map.MapLayerController;
 import dev.natowb.natosatlas.client.settings.Settings;
+import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.NASession;
+import dev.natowb.natosatlas.core.chunk.NAChunkBuilderCave;
+import dev.natowb.natosatlas.core.data.NALayer;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.io.NAPaths;
 import dev.natowb.natosatlas.core.io.SaveScheduler;
@@ -22,6 +25,8 @@ public class NAClient implements NASession {
 
     public NAClient(NAClientPlatform platform) {
         this.platform = platform;
+        LayerRegistry.getLayers().add(new NALayer(2, "Cave", new NAChunkBuilderCave(), true));
+
         Settings.load();
     }
 

@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.stationapi;
+package dev.natowb.natosatlas.stationapi.client;
 
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.elements.UIScreen;

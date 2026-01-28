@@ -3,10 +3,8 @@ package dev.natowb.natosatlas.client.map;
 import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
-import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.data.NAEntity;
-import dev.natowb.natosatlas.core.data.NALayer;
-import dev.natowb.natosatlas.core.data.NARegionPixelData;
+import dev.natowb.natosatlas.core.chunk.ChunkRenderer;
+import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 
@@ -118,6 +116,7 @@ public class MapUpdater {
             }
         }
 
-        layer.renderer.applyChunkToRegion(region, chunkCoord, layer.usesBlockLight, false);
+        NAChunk chunk = layer.builder.build(chunkCoord, NACore.getClient().getPlatform().world.getChunk(chunkCoord));
+        ChunkRenderer.render(region, chunkCoord, chunk, layer.usesBlockLight);
     }
 }

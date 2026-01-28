@@ -1,27 +1,29 @@
 package dev.natowb.natosatlas.core.chunk;
 
 import dev.natowb.natosatlas.core.NACore;
-import dev.natowb.natosatlas.client.access.ClientBlockAccess;
+import dev.natowb.natosatlas.client.access.BlockAccess;
 
 public abstract class ChunkWrapper {
 
     protected final Object chunk;
+    protected final int worldHeight;
 
-    public ChunkWrapper(Object chunk) {
+    public ChunkWrapper(Object chunk, int worldHeight) {
         this.chunk = chunk;
+        this.worldHeight = worldHeight;
     }
 
     public int getTopSolidBlockY(int x, int z) {
 
-        int y = NACore.getClient().getPlatform().world.getWorldHeight() - 1;
+        int y = worldHeight - 1;
         x &= 15;
         int z0 = z & 15;
 
-        ClientBlockAccess blocks = NACore.getClient().getPlatform().blocks;
+        BlockAccess blocks = BlockAccess.get();
 
         for (; y > 0; --y) {
             int blockId = getBlockId(x, y, z0);
-            if (blocks.isBlock(blockId, ClientBlockAccess.BlockIdentifier.GLASS)) continue;
+            if (blocks.isBlock(blockId, BlockAccess.BlockIdentifier.GLASS)) continue;
             if (blocks.blocksMovement(blockId) || blocks.isFluid(blockId)) return y + 1;
         }
 
@@ -33,7 +35,7 @@ public abstract class ChunkWrapper {
         int depth = 0;
         while (y > 0) {
             int id = getBlockId(x, y, z);
-            if (!NACore.getClient().getPlatform().blocks.isFluid(id)) break;
+            if (!BlockAccess.get().isFluid(id)) break;
             depth++;
             y--;
         }
@@ -48,4 +50,5 @@ public abstract class ChunkWrapper {
     public abstract int getBlockLight(int x, int y, int z);
 
     public abstract int getSkyLight(int x, int y, int z);
+
 }

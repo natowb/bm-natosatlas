@@ -146,7 +146,7 @@ public class WorldAccessBTA extends ClientWorldAccess {
         if (chunk == null) return null;
 
 
-        return new ChunkWrapper(chunk) {
+        return new ChunkWrapper(chunk, getWorldHeight()) {
 
             @Override
             public int getBlockId(int x, int y, int z) {
