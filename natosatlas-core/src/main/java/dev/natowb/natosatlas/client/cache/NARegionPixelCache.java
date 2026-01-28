@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core.cache;
+package dev.natowb.natosatlas.client.cache;
 
 import dev.natowb.natosatlas.client.NAClientPaths;
 import dev.natowb.natosatlas.core.LayerRegistry;

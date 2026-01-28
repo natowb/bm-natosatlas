@@ -2,7 +2,6 @@ package dev.natowb.natosatlas.client.cache;
 
 import dev.natowb.natosatlas.client.texture.NARegionTexture;
 import dev.natowb.natosatlas.core.LayerRegistry;
-import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionPixelData;
 
@@ -35,5 +34,6 @@ public class NARegionTextureCache {
             }
         }
         textures.clear();
+        NARegionPixelCache.get().clear();
     }
 }

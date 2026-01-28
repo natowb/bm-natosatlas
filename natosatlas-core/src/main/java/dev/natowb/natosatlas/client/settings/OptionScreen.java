@@ -2,11 +2,8 @@ package dev.natowb.natosatlas.client.settings;
 
 import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.map.MapConfig;
-import dev.natowb.natosatlas.core.storage.NARegionStorage;
-import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.client.access.PainterAccess;
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
-import dev.natowb.natosatlas.client.ui.elements.UIElementButton;
 import dev.natowb.natosatlas.client.ui.elements.UIElementIconButton;
 import dev.natowb.natosatlas.client.ui.elements.UIElementOptionButton;
 import dev.natowb.natosatlas.client.ui.elements.UIElementSlider;

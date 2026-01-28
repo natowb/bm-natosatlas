@@ -4,7 +4,7 @@ package dev.natowb.natosatlas.client.saving;
 import dev.natowb.natosatlas.client.NAClientPaths;
 import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
+import dev.natowb.natosatlas.client.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.core.data.NALayer;
 import dev.natowb.natosatlas.core.data.NARegionPixelData;
 import dev.natowb.natosatlas.core.storage.NARegionStorage;

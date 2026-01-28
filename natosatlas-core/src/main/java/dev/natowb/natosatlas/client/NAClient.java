@@ -9,7 +9,6 @@ import dev.natowb.natosatlas.core.NASession;
 import dev.natowb.natosatlas.core.data.NALayer;
 import dev.natowb.natosatlas.core.util.LogUtil;
 import dev.natowb.natosatlas.client.map.MapUpdater;
-import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.client.waypoint.Waypoints;
 
 import java.nio.file.Path;
@@ -91,14 +90,13 @@ public class NAClient implements NASession {
 
     private void onWorldLeft() {
         SaveScheduler.stop();
-        NARegionPixelCache.get().clear();
         NARegionTextureCache.clear();
         LogUtil.info("Client left world {}", worldSaveName);
     }
 
     private void onDimensionChange(int newDim) {
         LogUtil.info("Client dimension changed to {}", newDim);
-        NARegionPixelCache.get().clear();
+        NARegionTextureCache.clear();
     }
 
     private void onWorldTick() {
