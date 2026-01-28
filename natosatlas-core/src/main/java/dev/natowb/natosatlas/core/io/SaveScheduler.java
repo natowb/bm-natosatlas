@@ -3,7 +3,7 @@ package dev.natowb.natosatlas.core.io;
 
 import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.client.map.NARegionPixelCache;
+import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.core.data.NALayer;
 import dev.natowb.natosatlas.core.data.NARegionPixelData;
 

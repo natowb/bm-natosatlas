@@ -2,6 +2,7 @@ package dev.natowb.natosatlas.client.map;
 
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.NAConstants;
+import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.client.access.PainterAccess;
@@ -9,6 +10,7 @@ import dev.natowb.natosatlas.client.help.HelpScreen;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.client.settings.SettingsOption;
 import dev.natowb.natosatlas.client.settings.OptionScreen;
+import dev.natowb.natosatlas.core.io.MapExporter;
 import dev.natowb.natosatlas.core.io.SaveWorker;
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.UITheme;

@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.client.map;
+package dev.natowb.natosatlas.core.cache;
 
 import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.data.NACoord;
@@ -77,13 +77,9 @@ public class NARegionPixelCache {
     public void clear() {
         for (NARegionPixelData[] arr : regions.values()) {
             if (arr == null) continue;
-            for (int i = 0; i < arr.length; i++) {
-                if (arr[i] != null) {
-                    arr[i].deleteTexture();
-                    arr[i] = null;
-                }
-            }
+            Arrays.fill(arr, null);
         }
+
         regions.clear();
         dirtyQueue.clear();
         dirtySet.clear();

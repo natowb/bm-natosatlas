@@ -2,7 +2,7 @@ package dev.natowb.natosatlas.client.settings;
 
 import dev.natowb.natosatlas.client.map.MapConfig;
 import dev.natowb.natosatlas.core.io.NARegionStorage;
-import dev.natowb.natosatlas.client.map.NARegionPixelCache;
+import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.chunk.ChunkBuilder;
 import dev.natowb.natosatlas.client.access.PainterAccess;
