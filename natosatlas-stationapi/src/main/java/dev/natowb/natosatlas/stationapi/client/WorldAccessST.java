@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.stationapi.client;
 
+import dev.natowb.natosatlas.client.NAClientPaths;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
@@ -9,11 +10,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.RegionFile;
 import net.minecraft.world.storage.WorldSaveInfo;
+import net.modificationstation.stationapi.impl.world.chunk.FlattenedWorldChunkLoader;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -136,6 +139,50 @@ public class WorldAccessST extends ClientWorldAccess {
                 return ((Chunk) chunk).getLight(LightType.SKY, x, y, z);
             }
         };
+    }
+
+    @Override
+    public ChunkWrapper getChunkFromDisk(NACoord chunkCoord) {
+        try {
+
+            FlattenedWorldChunkLoader loader = new FlattenedWorldChunkLoader(NAClientPaths.getWorldSavePath().toFile());
+
+            int cx = chunkCoord.x;
+            int cz = chunkCoord.z;
+
+            Chunk mcChunk = loader.loadChunk(mc.world, cx, cz);
+            if (mcChunk == null) {
+                LogUtil.warn("Chunk {} {} does not exist on disk", cx, cz);
+                return null;
+            }
+
+            return new ChunkWrapper(mcChunk, mc.world.getHeight()) {
+
+                @Override
+                public int getBlockId(int x, int y, int z) {
+                    return mcChunk.getBlockId(x, y, z);
+                }
+
+                @Override
+                public int getBlockMeta(int x, int y, int z) {
+                    return mcChunk.getBlockMeta(x, y, z);
+                }
+
+                @Override
+                public int getBlockLight(int x, int y, int z) {
+                    return mcChunk.getLight(LightType.BLOCK, x, y, z);
+                }
+
+                @Override
+                public int getSkyLight(int x, int y, int z) {
+                    return mcChunk.getLight(LightType.SKY, x, y, z);
+                }
+            };
+
+        } catch (Exception e) {
+            LogUtil.error("Failed to load chunk {}: {}", chunkCoord, e);
+            return null;
+        }
     }
 
     @Override

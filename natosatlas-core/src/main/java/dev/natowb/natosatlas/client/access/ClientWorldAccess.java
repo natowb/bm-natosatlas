@@ -33,5 +33,7 @@ public abstract class ClientWorldAccess {
 
     public abstract ChunkWrapper getChunk(NACoord chunkCoord);
 
+    public abstract ChunkWrapper getChunkFromDisk(NACoord chunkCoord);
+
     public abstract List<NARegionFile> getRegionFiles(File dimDir);
 }

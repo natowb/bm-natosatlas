@@ -53,7 +53,6 @@ public final class NAClientPaths {
         return path;
     }
 
-
     public static Path getDataPath() {
         return dataPath;
     }
@@ -63,16 +62,18 @@ public final class NAClientPaths {
     }
 
     public static Path getWorldSavePath() {
-        boolean isMultiplayer = ClientWorldAccess.get().getWorldInfo().isMultiplayer();
-        if (isMultiplayer) {
-            return worldDataPath;
-        } else {
-            return worldSavePath.resolve("natosatlas");
-        }
+        return worldSavePath;
     }
 
     public static Path getWorldMapStoragePath(int layerId) {
         int dim = ClientWorldAccess.get().getWorldInfo().getDimensionId();
-        return ensurePathExists(getWorldSavePath().resolve(String.format("regions/DIM%d/layer_%d", dim, layerId)));
+        boolean isMultiplayer = ClientWorldAccess.get().getWorldInfo().isMultiplayer();
+        Path basePath;
+        if (isMultiplayer) {
+            basePath = worldDataPath;
+        } else {
+            basePath = worldSavePath.resolve("natosatlas");
+        }
+        return ensurePathExists(basePath.resolve(String.format("regions/DIM%d/layer_%d", dim, layerId)));
     }
 }

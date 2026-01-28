@@ -136,6 +136,11 @@ public class WorldAccessBTA extends ClientWorldAccess {
     }
 
     @Override
+    public ChunkWrapper getChunkFromDisk(NACoord chunkCoord) {
+        return null;
+    }
+
+    @Override
     public List<NARegionFile> getRegionFiles(File dimDir) {
         return new ArrayList<>();
     }

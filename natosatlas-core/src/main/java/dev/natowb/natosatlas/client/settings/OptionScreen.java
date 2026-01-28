@@ -1,14 +1,16 @@
 package dev.natowb.natosatlas.client.settings;
 
+import dev.natowb.natosatlas.client.ClientMapGenerator;
 import dev.natowb.natosatlas.client.NAClient;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.client.cache.NARegionTextureCache;
 import dev.natowb.natosatlas.client.map.MapConfig;
 import dev.natowb.natosatlas.client.access.PainterAccess;
+import dev.natowb.natosatlas.client.map.MapUpdater;
+import dev.natowb.natosatlas.client.saving.SaveScheduler;
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
-import dev.natowb.natosatlas.client.ui.elements.UIElementIconButton;
-import dev.natowb.natosatlas.client.ui.elements.UIElementOptionButton;
-import dev.natowb.natosatlas.client.ui.elements.UIElementSlider;
+import dev.natowb.natosatlas.client.ui.elements.*;
 import dev.natowb.natosatlas.client.ui.UITheme;
-import dev.natowb.natosatlas.client.ui.elements.UIScreen;
 import dev.natowb.natosatlas.client.ui.layout.UILayout;
 import dev.natowb.natosatlas.client.ui.layout.UIVerticalLayout;
 
@@ -52,11 +54,15 @@ public class OptionScreen extends UIScreen {
         reiButton.setHandler(btn -> reiButton.cycle());
         addButton(reiButton);
 
-        // FIXME: add this again but better
-//        boolean isServer = WorldAccess.get().isServer();
-//        UIElementButton existingButton = new UIElementButton(102, layout, 150, 20, "Generate Existing", !isServer);
-//        existingButton.setHandler(btn -> ChunkBuilderOld.rebuildExistingChunks(NARegionStorage.get(),  NARegionPixelCache.get()));
-//        addButton(existingButton);
+        boolean isMultiplayer = ClientWorldAccess.get().getWorldInfo().isMultiplayer();
+        UIElementButton existingButton = new UIElementButton(102, layout, 150, 20, "Generate Existing", !isMultiplayer);
+        existingButton.setHandler(btn -> {
+            SaveScheduler.stop();
+            ClientMapGenerator.generateClientRegions();
+            NARegionTextureCache.clear();
+            SaveScheduler.start();
+        });
+        addButton(existingButton);
 
         UIElementSlider zoomSlider = new UIElementSlider(103, layout, 150, 20, Settings.defaultZoom, "Default Zoom");
         zoomSlider.setRange(MapConfig.MIN_ZOOM, MapConfig.MAX_ZOOM);

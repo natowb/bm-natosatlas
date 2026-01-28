@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.modloader;
 
+import dev.natowb.natosatlas.client.NAClientPaths;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
@@ -12,6 +13,7 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.RegionChunkStorage;
 import net.minecraft.world.chunk.storage.RegionFile;
 import net.minecraft.world.storage.WorldSaveInfo;
 
@@ -119,6 +121,37 @@ public class WorldAccessML extends ClientWorldAccess {
         if (chunk == null) return null;
 
         return new ChunkWrapper(chunk, worldHeight) {
+            @Override
+            public int getBlockId(int x, int y, int z) {
+                return ((Chunk) chunk).getBlockId(x, y, z);
+            }
+
+            @Override
+            public int getBlockMeta(int x, int y, int z) {
+                return ((Chunk) chunk).getBlockMeta(x, y, z);
+            }
+
+            @Override
+            public int getBlockLight(int x, int y, int z) {
+                return ((Chunk) chunk).getLight(LightType.BLOCK, x, y, z);
+            }
+
+            @Override
+            public int getSkyLight(int x, int y, int z) {
+                return ((Chunk) chunk).getLight(LightType.SKY, x, y, z);
+            }
+        };
+    }
+
+    @Override
+    public ChunkWrapper getChunkFromDisk(NACoord chunkCoord) {
+        RegionChunkStorage chunkLoader = new RegionChunkStorage(NAClientPaths.getWorldSavePath().toFile());
+        Chunk chunk = chunkLoader.loadChunk(mc.world, chunkCoord.x, chunkCoord.z);
+
+        if (chunk == null) return null;
+
+        return new ChunkWrapper(chunk, getWorldInfo().getWorldHeight()) {
+
             @Override
             public int getBlockId(int x, int y, int z) {
                 return ((Chunk) chunk).getBlockId(x, y, z);

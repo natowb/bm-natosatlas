@@ -99,7 +99,7 @@ public class ServerPlatformST implements NAServerPlatform {
                 return null;
             }
 
-            return new ChunkWrapper(mcChunk, 128) {
+            return new ChunkWrapper(mcChunk, server.getWorld(0).getHeight()) {
 
                 @Override
                 public int getBlockId(int x, int y, int z) {
