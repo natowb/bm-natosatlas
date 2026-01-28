@@ -5,6 +5,7 @@ import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionFile;
+import dev.natowb.natosatlas.core.layers.MapLayerHandler;
 import dev.natowb.natosatlas.core.map.NARegionCache;
 import dev.natowb.natosatlas.core.layers.MapLayer;
 import dev.natowb.natosatlas.core.map.NARegionPixelData;
@@ -62,14 +63,14 @@ public class ChunkBuilder {
             boolean success = false;
 
             try {
-                NARegionPixelData[] layers = new NARegionPixelData[NatosAtlasCore.get().layers.getLayers().size()];
+                NARegionPixelData[] layers = new NARegionPixelData[MapLayerHandler.get().getLayers().size()];
                 for (int i = 0; i < layers.length; i++) {
                     layers[i] = new NARegionPixelData();
                 }
 
                 for (NACoord chunkCoord : naRegion.iterateExistingChunks()) {
                     int layerIndex = 0;
-                    for (MapLayer layer : NatosAtlasCore.get().layers.getLayers()) {
+                    for (MapLayer layer : MapLayerHandler.get().getLayers()) {
                         layer.renderer.applyChunkToRegion(layers[layerIndex], chunkCoord, layer.usesBlockLight, true);
                         layerIndex++;
                     }

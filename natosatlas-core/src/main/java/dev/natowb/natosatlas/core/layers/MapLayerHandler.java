@@ -11,12 +11,22 @@ import dev.natowb.natosatlas.core.settings.Settings;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapLayerManager {
+public class MapLayerHandler {
+
+
+    private static MapLayerHandler instance;
+
+    public static MapLayerHandler get() {
+        if (instance == null) {
+            instance = new MapLayerHandler();
+        }
+        return instance;
+    }
 
     private final List<MapLayer> layers = new ArrayList<>();
     private int activeLayer = 0;
 
-    public MapLayerManager() {
+    private MapLayerHandler() {
         ChunkSurfaceRenderer surface = new ChunkSurfaceRenderer();
         layers.add(new MapLayer(0, "Day", surface, false));
         layers.add(new MapLayer(1, "Night", surface, true));

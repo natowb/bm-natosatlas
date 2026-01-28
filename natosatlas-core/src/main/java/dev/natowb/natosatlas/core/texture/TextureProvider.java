@@ -4,6 +4,7 @@ import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.layers.MapLayer;
+import dev.natowb.natosatlas.core.layers.MapLayerHandler;
 import dev.natowb.natosatlas.core.map.NARegionCache;
 import dev.natowb.natosatlas.core.map.NARegionPixelData;
 import org.w3c.dom.Text;
@@ -65,7 +66,7 @@ public final class TextureProvider {
     }
 
     public static int getTexture(NACoord coord) {
-        MapLayer layer = NatosAtlasCore.get().layers.getActiveLayer();
+        MapLayer layer = MapLayerHandler.get().getActiveLayer();
         NARegionPixelData region = NARegionCache.get().getRegion(layer.id, coord);
         if (region == null) return -1;
         region.updateTexture();

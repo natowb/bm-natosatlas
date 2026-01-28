@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.core.layers.MapLayerManager;
+import dev.natowb.natosatlas.core.layers.MapLayerHandler;
 import dev.natowb.natosatlas.core.map.*;
 import dev.natowb.natosatlas.core.map.MapUpdater;
 import dev.natowb.natosatlas.core.io.SaveScheduler;
@@ -23,8 +23,6 @@ public class NatosAtlasCore {
 
 
     private MapUpdater mapUpdater;
-    public final MapLayerManager layers = new MapLayerManager();
-
 
     private String worldSaveName;
     private int dim;
@@ -68,7 +66,7 @@ public class NatosAtlasCore {
 
         mapUpdater.tick();
         SaveScheduler.tick();
-        layers.tick();
+        MapLayerHandler.get().tick();
     }
 
     private void onJoin() {
@@ -81,7 +79,7 @@ public class NatosAtlasCore {
         LogUtil.info("Joined world saveName={}", worldSaveName);
 
         running = true;
-        mapUpdater = new MapUpdater(layers,  NARegionCache.get());
+        mapUpdater = new MapUpdater(MapLayerHandler.get(), NARegionCache.get());
         NAPaths.updateWorldPath(worldSaveName);
         Waypoints.load();
         SaveScheduler.start();

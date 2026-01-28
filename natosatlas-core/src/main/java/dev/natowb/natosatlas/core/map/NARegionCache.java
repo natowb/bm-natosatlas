@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.core.map;
 
-import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.data.NACoord;
+import dev.natowb.natosatlas.core.layers.MapLayerHandler;
 
 import java.util.*;
 
@@ -42,7 +42,7 @@ public class NARegionCache {
         Optional<NARegionPixelData> loaded = MapStorage.get().loadRegion(layerId, coord);
         if (loaded.isPresent()) {
             if (arr == null) {
-                arr = new NARegionPixelData[NatosAtlasCore.get().layers.getLayers().size()];
+                arr = new NARegionPixelData[MapLayerHandler.get().getLayers().size()];
                 regions.put(key, arr);
             }
 
@@ -55,7 +55,7 @@ public class NARegionCache {
 
     public void put(int layerId, NACoord coord, NARegionPixelData region) {
         long key = coord.toKey();
-        NARegionPixelData[] arr = regions.computeIfAbsent(key, k -> new NARegionPixelData[NatosAtlasCore.get().layers.getLayers().size()]);
+        NARegionPixelData[] arr = regions.computeIfAbsent(key, k -> new NARegionPixelData[MapLayerHandler.get().getLayers().size()]);
         arr[layerId] = region;
     }
 

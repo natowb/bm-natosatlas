@@ -1,9 +1,9 @@
 package dev.natowb.natosatlas.core.map;
 
-import dev.natowb.natosatlas.core.NatosAtlasCore;
 import dev.natowb.natosatlas.core.io.SaveWorker;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.io.NAPaths;
+import dev.natowb.natosatlas.core.layers.MapLayerHandler;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -18,7 +18,7 @@ public class MapExporter {
 
 
     public static void exportAllLayers() {
-        for (int i = 0; i < NatosAtlasCore.get().layers.getLayers().size(); i++) {
+        for (int i = 0; i < MapLayerHandler.get().getLayers().size(); i++) {
             MapExporter.exportMapLayer(i);
         }
     }

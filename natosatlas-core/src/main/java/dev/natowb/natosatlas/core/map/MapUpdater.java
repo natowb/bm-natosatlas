@@ -3,7 +3,7 @@ package dev.natowb.natosatlas.core.map;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.layers.MapLayer;
-import dev.natowb.natosatlas.core.layers.MapLayerManager;
+import dev.natowb.natosatlas.core.layers.MapLayerHandler;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.core.access.WorldAccess;
@@ -19,7 +19,7 @@ public class MapUpdater {
     private int activeChunkX;
     private int activeChunkZ;
 
-    private final MapLayerManager layerManager;
+    private final MapLayerHandler layerManager;
     private final NARegionCache cache;
 
     private final HashMap<NACoord, Long> chunkUpdateTimes = new HashMap<>();
@@ -27,7 +27,7 @@ public class MapUpdater {
     private final java.util.List<NACoord> scanOrder = new java.util.ArrayList<>();
     private int scanIndex = 0;
 
-    public MapUpdater(MapLayerManager layerManager, NARegionCache cache) {
+    public MapUpdater(MapLayerHandler layerManager, NARegionCache cache) {
         this.layerManager = layerManager;
         this.cache = cache;
         buildScanOrder();
