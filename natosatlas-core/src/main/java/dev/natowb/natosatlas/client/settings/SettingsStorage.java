@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.client.settings;
 
-import dev.natowb.natosatlas.core.io.TextStorage;
+import dev.natowb.natosatlas.core.storage.TextStorage;
 
 
 public final class SettingsStorage extends TextStorage {

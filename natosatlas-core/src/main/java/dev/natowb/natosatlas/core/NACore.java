@@ -4,7 +4,7 @@ import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.NAClientPlatform;
 import dev.natowb.natosatlas.server.NAServer;
 import dev.natowb.natosatlas.server.NAServerPlatform;
-import dev.natowb.natosatlas.core.io.LogUtil;
+import dev.natowb.natosatlas.core.util.LogUtil;
 
 import java.nio.file.Path;
 

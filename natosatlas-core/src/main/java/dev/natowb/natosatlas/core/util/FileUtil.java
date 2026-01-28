@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core.io;
+package dev.natowb.natosatlas.core.util;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

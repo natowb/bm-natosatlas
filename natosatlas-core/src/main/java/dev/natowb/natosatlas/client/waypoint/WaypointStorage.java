@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.client.waypoint;
 
-import dev.natowb.natosatlas.core.io.FileUtil;
+import dev.natowb.natosatlas.core.util.FileUtil;
 
 import java.io.File;
 import java.util.ArrayList;

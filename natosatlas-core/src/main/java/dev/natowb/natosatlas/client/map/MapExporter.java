@@ -2,8 +2,8 @@ package dev.natowb.natosatlas.client.map;
 
 import dev.natowb.natosatlas.client.NAClientPaths;
 import dev.natowb.natosatlas.core.LayerRegistry;
-import dev.natowb.natosatlas.core.io.LogUtil;
-import dev.natowb.natosatlas.core.io.SaveWorker;
+import dev.natowb.natosatlas.core.util.LogUtil;
+import dev.natowb.natosatlas.core.storage.SaveWorker;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

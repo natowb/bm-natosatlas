@@ -4,7 +4,7 @@ import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.data.NARegionFile;
-import dev.natowb.natosatlas.core.io.LogUtil;
+import dev.natowb.natosatlas.core.util.LogUtil;
 import dev.natowb.natosatlas.client.NAClientPaths;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;

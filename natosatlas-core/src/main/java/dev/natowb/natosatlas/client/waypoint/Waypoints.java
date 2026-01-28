@@ -2,7 +2,7 @@ package dev.natowb.natosatlas.client.waypoint;
 
 import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.settings.Settings;
-import dev.natowb.natosatlas.core.io.LogUtil;
+import dev.natowb.natosatlas.core.util.LogUtil;
 import dev.natowb.natosatlas.client.NAClientPaths;
 
 import java.io.File;

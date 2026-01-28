@@ -2,9 +2,7 @@ package dev.natowb.natosatlas.client.texture;
 
 import dev.natowb.natosatlas.client.cache.NARegionTextureCache;
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.core.io.LogUtil;
-import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
-import dev.natowb.natosatlas.core.data.NARegionPixelData;
+import dev.natowb.natosatlas.core.util.LogUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

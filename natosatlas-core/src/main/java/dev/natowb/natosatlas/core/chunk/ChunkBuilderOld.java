@@ -1,8 +1,8 @@
 package dev.natowb.natosatlas.core.chunk;
 
 import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
-import dev.natowb.natosatlas.core.io.NARegionStorage;
-import dev.natowb.natosatlas.core.io.LogUtil;
+import dev.natowb.natosatlas.core.storage.NARegionStorage;
+import dev.natowb.natosatlas.core.util.LogUtil;
 
 public class ChunkBuilderOld {
 

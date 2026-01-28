@@ -1,8 +1,9 @@
-package dev.natowb.natosatlas.core.io;
+package dev.natowb.natosatlas.core.storage;
 
 import dev.natowb.natosatlas.client.NAClientPaths;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionPixelData;
+import dev.natowb.natosatlas.core.util.LogUtil;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;

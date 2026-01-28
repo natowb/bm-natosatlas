@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.core.io;
+package dev.natowb.natosatlas.core.storage;
 
 
 import dev.natowb.natosatlas.core.LayerRegistry;

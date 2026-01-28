@@ -5,8 +5,8 @@ import dev.natowb.natosatlas.core.NASession;
 import dev.natowb.natosatlas.core.chunk.ChunkRenderer;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.core.data.*;
-import dev.natowb.natosatlas.core.io.LogUtil;
-import dev.natowb.natosatlas.core.io.NARegionStorage;
+import dev.natowb.natosatlas.core.util.LogUtil;
+import dev.natowb.natosatlas.core.storage.NARegionStorage;
 
 import java.io.File;
 import java.nio.file.Path;

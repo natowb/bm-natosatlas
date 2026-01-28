@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.client;
 
-import dev.natowb.natosatlas.core.io.LogUtil;
+import dev.natowb.natosatlas.core.util.LogUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;

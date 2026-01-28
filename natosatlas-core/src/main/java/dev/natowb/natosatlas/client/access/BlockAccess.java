@@ -1,7 +1,6 @@
 package dev.natowb.natosatlas.client.access;
 
-import dev.natowb.natosatlas.core.io.LogUtil;
-import sun.jvm.hotspot.opto.Block;
+import dev.natowb.natosatlas.core.util.LogUtil;
 
 import java.util.HashMap;
 
