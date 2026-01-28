@@ -20,7 +20,6 @@ public class NACore {
 
     public final NatosAtlasPlatform platform;
 
-    private MapUpdater mapUpdater;
     private boolean running;
     private String worldSaveName;
     private int dim;
@@ -64,7 +63,6 @@ public class NACore {
             onDimensionChange(dim);
             return;
         }
-
         onWorldTick();
     }
 
@@ -72,30 +70,22 @@ public class NACore {
         NAPaths.updateWorldPath(worldSaveName);
         Waypoints.load();
         SaveScheduler.start();
-
-        mapUpdater = new MapUpdater(MapLayerHandler.get(), NARegionCache.get());
-
         LogUtil.info("Joined world={} dim={}", worldSaveName, dim);
     }
 
     private void onWorldLeft() {
         SaveScheduler.stop();
         NARegionCache.get().clear();
-
-        mapUpdater = null;
-
         LogUtil.info("Left world {}", worldSaveName);
     }
 
     private void onDimensionChange(int newDim) {
         LogUtil.info("Dimension changed to {}", newDim);
-
         NARegionCache.get().clear();
-        mapUpdater = new MapUpdater(MapLayerHandler.get(), NARegionCache.get());
     }
 
     private void onWorldTick() {
-        mapUpdater.tick();
+        MapUpdater.get().tick();
         SaveScheduler.tick();
         MapLayerHandler.get().tick();
     }

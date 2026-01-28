@@ -9,6 +9,7 @@ import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.core.access.WorldAccess;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class MapUpdater {
 
@@ -19,18 +20,22 @@ public class MapUpdater {
     private int activeChunkX;
     private int activeChunkZ;
 
-    private final MapLayerHandler layerManager;
-    private final NARegionCache cache;
-
     private final HashMap<NACoord, Long> chunkUpdateTimes = new HashMap<>();
-
-    private final java.util.List<NACoord> scanOrder = new java.util.ArrayList<>();
+    private final List<NACoord> scanOrder = new java.util.ArrayList<>();
     private int scanIndex = 0;
 
-    public MapUpdater(MapLayerHandler layerManager, NARegionCache cache) {
-        this.layerManager = layerManager;
-        this.cache = cache;
+    private MapUpdater() {
         buildScanOrder();
+    }
+
+    private static MapUpdater instance;
+
+    public static MapUpdater get() {
+        if (instance == null) {
+            instance = new MapUpdater();
+        }
+
+        return instance;
     }
 
     private void buildScanOrder() {
@@ -90,22 +95,22 @@ public class MapUpdater {
     private void updateChunk(NACoord chunkCoord) {
         NACoord regionCoord = new NACoord(chunkCoord.x >> 5, chunkCoord.z >> 5);
 
-        for (MapLayer layer : layerManager.getLayers()) {
+        for (MapLayer layer : MapLayerHandler.get().getLayers()) {
             updateChunkForLayer(regionCoord, chunkCoord, layer);
         }
 
-        cache.markDirty(regionCoord);
+        NARegionCache.get().markDirty(regionCoord);
     }
 
     private void updateChunkForLayer(NACoord regionCoord, NACoord chunkCoord, MapLayer layer) {
-        NARegionPixelData region = cache.getRegion(layer.id, regionCoord);
+        NARegionPixelData region = NARegionCache.get().getRegion(layer.id, regionCoord);
 
         if (region == null) {
             LogUtil.debug("MapUpdater: Creating new MapRegion for layer {} at {}", layer.id, regionCoord);
             region = new NARegionPixelData();
-            cache.put(layer.id, regionCoord, region);
+            NARegionCache.get().put(layer.id, regionCoord, region);
 
-            NARegionPixelData diskLoaded = cache.getRegion(layer.id, regionCoord);
+            NARegionPixelData diskLoaded = NARegionCache.get().getRegion(layer.id, regionCoord);
             if (diskLoaded != null) {
                 region = diskLoaded;
             }
