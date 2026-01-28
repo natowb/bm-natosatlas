@@ -25,7 +25,6 @@ public final class Waypoints {
             return new File(NAPaths.getWorldDataPath().toFile(), fileName);
         }
 
-
         Path minimapPath = NAPaths.getMinecraftPath().resolve("mods/rei_minimap");
 
         try {
@@ -38,12 +37,12 @@ public final class Waypoints {
 
     public static void load() {
         STORAGE.load(getFile());
-        LogUtil.info("Loaded {} waypoints", STORAGE.getAll().size());
+        LogUtil.debug("Loaded {} waypoints", STORAGE.getAll().size());
     }
 
     public static void save() {
         STORAGE.save(getFile());
-        LogUtil.info("Saved {} waypoints", STORAGE.getAll().size());
+        LogUtil.debug("Saved {} waypoints", STORAGE.getAll().size());
     }
 
     public static List<Waypoint> getAll() {
@@ -54,11 +53,6 @@ public final class Waypoints {
         STORAGE.getAll().add(wp);
         LogUtil.debug("Added waypoint {}", wp.name);
         save();
-    }
-
-    public static void toggle(Waypoint wp) {
-        wp.visible = !wp.visible;
-        update(wp, wp);
     }
 
     public static void remove(Waypoint wp) {

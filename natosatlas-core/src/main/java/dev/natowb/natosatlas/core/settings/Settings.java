@@ -27,11 +27,11 @@ public final class Settings {
 
     public static void load() {
         STORAGE.load(new File(NAPaths.getDataPath().toFile(), "settings.txt"));
-        LogUtil.info("Loaded settings");
+        LogUtil.debug("Loaded settings");
     }
 
     public static void save() {
         STORAGE.save(new File(NAPaths.getDataPath().toFile(), "settings.txt"));
-        LogUtil.info("Saved settings");
+        LogUtil.debug("Saved settings");
     }
 }
