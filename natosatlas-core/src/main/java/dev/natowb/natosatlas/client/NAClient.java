@@ -1,12 +1,12 @@
 package dev.natowb.natosatlas.client;
 
+import dev.natowb.natosatlas.client.map.MapLayerController;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.NASession;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.io.NAPaths;
 import dev.natowb.natosatlas.core.io.SaveScheduler;
-import dev.natowb.natosatlas.client.map.MapLayerHandler;
 import dev.natowb.natosatlas.client.map.MapUpdater;
 import dev.natowb.natosatlas.client.map.NARegionPixelCache;
 import dev.natowb.natosatlas.client.waypoint.Waypoints;
@@ -17,10 +17,15 @@ public class NAClient implements NASession {
     private String worldSaveName;
     private int dim;
     private final NAClientPlatform platform;
+    private final MapLayerController layerController = new MapLayerController();
 
     public NAClient(NAClientPlatform platform) {
         this.platform = platform;
         Settings.load();
+    }
+
+    public MapLayerController getLayerController() {
+        return layerController;
     }
 
     public NAClientPlatform getPlatform() {
@@ -76,8 +81,8 @@ public class NAClient implements NASession {
     }
 
     private void onWorldTick() {
-        MapLayerHandler.get().tick();
         MapUpdater.get().tick();
         SaveScheduler.tick();
+        layerController.tick();
     }
 }

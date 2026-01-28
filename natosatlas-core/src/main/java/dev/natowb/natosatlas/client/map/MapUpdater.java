@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.client.map;
 
+import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
@@ -95,7 +96,7 @@ public class MapUpdater {
     private void updateChunk(NACoord chunkCoord) {
         NACoord regionCoord = new NACoord(chunkCoord.x >> 5, chunkCoord.z >> 5);
 
-        for (NALayer layer : MapLayerHandler.get().getLayers()) {
+        for (NALayer layer : LayerRegistry.getLayers()) {
             updateChunkForLayer(regionCoord, chunkCoord, layer);
         }
 

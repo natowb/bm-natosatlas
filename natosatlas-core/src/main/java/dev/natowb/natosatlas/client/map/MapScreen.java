@@ -30,7 +30,6 @@ public class MapScreen extends UIScreen {
 
     private final MapViewport viewport = new MapViewport();
     private final PainterAccess painter = NACore.getClient().getPlatform().painter;
-
     private final MapStageRegions regionPainter = new MapStageRegions();
     private final MapStageSlime slimePainter = new MapStageSlime();
     private final MapStageGrid gridPainter = new MapStageGrid();

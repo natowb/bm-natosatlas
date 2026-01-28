@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.client.map;
 
+import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.io.SaveWorker;
 import dev.natowb.natosatlas.core.io.LogUtil;
 import dev.natowb.natosatlas.core.io.NAPaths;
@@ -17,7 +18,7 @@ public class MapExporter {
 
 
     public static void exportAllLayers() {
-        for (int i = 0; i < MapLayerHandler.get().getLayers().size(); i++) {
+        for (int i = 0; i < LayerRegistry.getLayers().size(); i++) {
             MapExporter.exportMapLayer(i);
         }
     }

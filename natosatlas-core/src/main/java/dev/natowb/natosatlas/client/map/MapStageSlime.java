@@ -18,7 +18,7 @@ public class MapStageSlime implements MapStage {
         if (!Settings.showSlimeChunks) return;
         for (long key : visibleRegions) {
             NACoord coord = NACoord.fromKey(key);
-            int texId = TextureProvider.getTexture(coord);
+            int texId = TextureProvider.getTexture(coord, NACore.getClient().getLayerController().getActiveLayer());
             if (texId != -1) {
                 for (int x = 0; x < CHUNKS_PER_MINECRAFT_REGION; x++) {
                     for (int z = 0; z < CHUNKS_PER_MINECRAFT_REGION; z++) {

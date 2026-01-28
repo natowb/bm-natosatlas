@@ -1,11 +1,11 @@
 package dev.natowb.natosatlas.core.chunk;
 
+import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionFile;
-import dev.natowb.natosatlas.client.map.MapLayerHandler;
 import dev.natowb.natosatlas.client.map.NARegionPixelCache;
 import dev.natowb.natosatlas.core.data.NALayer;
 import dev.natowb.natosatlas.core.data.NARegionPixelData;
@@ -62,14 +62,14 @@ public class ChunkBuilder {
             boolean success = false;
 
             try {
-                NARegionPixelData[] layers = new NARegionPixelData[MapLayerHandler.get().getLayers().size()];
+                NARegionPixelData[] layers = new NARegionPixelData[LayerRegistry.getLayers().size()];
                 for (int i = 0; i < layers.length; i++) {
                     layers[i] = new NARegionPixelData();
                 }
 
                 for (NACoord chunkCoord : naRegion.iterateExistingChunks()) {
                     int layerIndex = 0;
-                    for (NALayer layer : MapLayerHandler.get().getLayers()) {
+                    for (NALayer layer : LayerRegistry.getLayers()) {
                         layer.renderer.applyChunkToRegion(layers[layerIndex], chunkCoord, layer.usesBlockLight, true);
                         layerIndex++;
                     }
@@ -167,7 +167,6 @@ public class ChunkBuilder {
 
 
     private static int findTopmostCaveFloor(ChunkWrapper chunk, int x, int z, int playerY) {
-
 
         int startY = Math.min(playerY, NACore.getClient().getPlatform().world.getWorldHeight() - 1);
 

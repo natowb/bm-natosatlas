@@ -1,8 +1,8 @@
 package dev.natowb.natosatlas.core.io;
 
 
+import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.data.NACoord;
-import dev.natowb.natosatlas.client.map.MapLayerHandler;
 import dev.natowb.natosatlas.client.map.NARegionPixelCache;
 import dev.natowb.natosatlas.core.data.NALayer;
 import dev.natowb.natosatlas.core.data.NARegionPixelData;
@@ -33,7 +33,7 @@ public class SaveScheduler {
             NACoord coord = NACoord.fromKey(key);
             NARegionStorage storage = NARegionStorage.get();
 
-            for (NALayer layer : MapLayerHandler.get().getLayers()) {
+            for (NALayer layer : LayerRegistry.getLayers()) {
                 NARegionPixelData region = cache.getRegion(layer.id, coord);
                 if (region != null) {
                     SaveWorker.enqueue(storage, coord, region, storage.getRegionPngFile(layer.id, coord));
