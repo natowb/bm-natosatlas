@@ -1,17 +1,15 @@
 package dev.natowb.natosatlas.server;
 
 import dev.natowb.natosatlas.core.LayerRegistry;
-import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.NASession;
 import dev.natowb.natosatlas.core.chunk.ChunkRenderer;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.io.LogUtil;
-import dev.natowb.natosatlas.core.io.NAPaths;
 import dev.natowb.natosatlas.core.io.NARegionStorage;
 
 import java.io.File;
-import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
@@ -22,7 +20,10 @@ public class NAServer implements NASession {
     private final NAServerPlatform platform;
     private final Queue<NARegionFile> regionQueue = new ArrayDeque<>();
 
-    public NAServer(NAServerPlatform platform) {
+    private final Path minecraftPath;
+
+    public NAServer(Path minecraftPath, NAServerPlatform platform) {
+        this.minecraftPath = minecraftPath;
         this.platform = platform;
     }
 
@@ -108,8 +109,8 @@ public class NAServer implements NASession {
     private File buildOutputFile(int layerId, NACoord regionCoord) {
         String levelName = platform.getLevelName();
 
-        File baseDir = NAPaths.getDataPath()
-                .resolve("maps")
+        File baseDir = minecraftPath
+                .resolve("natosatlas")
                 .resolve(levelName)
                 .resolve(String.valueOf(layerId))
                 .toFile();
@@ -121,7 +122,5 @@ public class NAServer implements NASession {
         String fileName = "region_" + regionCoord.x + "_" + regionCoord.z + ".png";
         return new File(baseDir, fileName);
     }
-
-
 }
 

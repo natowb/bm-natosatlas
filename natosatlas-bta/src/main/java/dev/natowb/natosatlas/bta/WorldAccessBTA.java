@@ -5,7 +5,7 @@ import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.data.NARegionFile;
 import dev.natowb.natosatlas.core.io.LogUtil;
-import dev.natowb.natosatlas.core.io.NAPaths;
+import dev.natowb.natosatlas.client.NAClientPaths;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import net.fabricmc.loader.api.FabricLoader;
@@ -179,7 +179,7 @@ public class WorldAccessBTA extends ClientWorldAccess {
     public List<NARegionFile> getRegionFiles() {
         List<NARegionFile> result = new ArrayList<>();
 
-        File regionDir = new File(NAPaths.getWorldSavePath().toFile(), String.format("dimensions/%d/region", mc.currentWorld.dimension.id));
+        File regionDir = new File(NAClientPaths.getWorldSavePath().toFile(), String.format("dimensions/%d/region", mc.currentWorld.dimension.id));
         File[] regionFiles = regionDir.listFiles((dir, name) -> name.endsWith(".mcr") || name.endsWith(".mca"));
         if (regionFiles == null || regionFiles.length == 0) {
             return result;

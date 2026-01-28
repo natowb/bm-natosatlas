@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.io;
 
+import dev.natowb.natosatlas.client.NAClientPaths;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionPixelData;
 
@@ -48,7 +49,7 @@ public class NARegionStorage {
 
 
     public File getRegionPngFile(int layerId, NACoord regionCoord) {
-        return NAPaths.getWorldMapStoragePath(layerId).resolve("region_" + regionCoord.x + "_" + regionCoord.z + ".png").toFile();
+        return NAClientPaths.getWorldMapStoragePath(layerId).resolve("region_" + regionCoord.x + "_" + regionCoord.z + ".png").toFile();
     }
 
     public void saveRegion(int layerId, NACoord coord, NARegionPixelData region) {

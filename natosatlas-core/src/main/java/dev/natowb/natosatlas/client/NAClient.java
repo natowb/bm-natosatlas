@@ -7,11 +7,12 @@ import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.NASession;
 import dev.natowb.natosatlas.core.data.NALayer;
 import dev.natowb.natosatlas.core.io.LogUtil;
-import dev.natowb.natosatlas.core.io.NAPaths;
 import dev.natowb.natosatlas.core.io.SaveScheduler;
 import dev.natowb.natosatlas.client.map.MapUpdater;
 import dev.natowb.natosatlas.core.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.client.waypoint.Waypoints;
+
+import java.nio.file.Path;
 
 public class NAClient implements NASession {
 
@@ -29,13 +30,13 @@ public class NAClient implements NASession {
     private final MapLayerController layerController = new MapLayerController();
 
 
-    public NAClient(NAClientPlatform platform) {
+    public NAClient(Path minecraftPath, NAClientPlatform platform) {
 
         if (instance != null) {
             LogUtil.error("tried to create NAClient when one already exists");
             throw new RuntimeException();
         }
-
+        NAClientPaths.updateBasePaths(minecraftPath);
         this.platform = platform;
         NAClient.instance = this;
         LayerRegistry.getLayers().add(new NALayer(2, "Cave", new NAChunkBuilderCave(), true));
@@ -81,7 +82,7 @@ public class NAClient implements NASession {
     }
 
     private void onWorldJoined(String worldSaveName, int dim) {
-        NAPaths.updateWorldPath(worldSaveName);
+        NAClientPaths.updateWorldPath(worldSaveName);
         Waypoints.load();
         SaveScheduler.start();
 

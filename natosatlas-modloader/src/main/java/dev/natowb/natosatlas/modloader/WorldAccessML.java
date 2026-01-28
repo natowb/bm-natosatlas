@@ -5,7 +5,7 @@ import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.data.NARegionFile;
 import dev.natowb.natosatlas.core.io.LogUtil;
-import dev.natowb.natosatlas.core.io.NAPaths;
+import dev.natowb.natosatlas.client.NAClientPaths;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import net.minecraft.client.Minecraft;
@@ -175,7 +175,7 @@ public class WorldAccessML extends ClientWorldAccess {
 
     @Override
     public ChunkWrapper getChunkFromDisk(NACoord chunkCoord) {
-        RegionChunkStorage chunkLoader = new RegionChunkStorage(NAPaths.getWorldSavePath().toFile());
+        RegionChunkStorage chunkLoader = new RegionChunkStorage(NAClientPaths.getWorldSavePath().toFile());
         Chunk chunk = chunkLoader.loadChunk(mc.world, chunkCoord.x, chunkCoord.z);
 
         if (chunk == null) return null;
@@ -208,7 +208,7 @@ public class WorldAccessML extends ClientWorldAccess {
     public List<NARegionFile> getRegionFiles() {
         List<NARegionFile> result = new ArrayList<>();
 
-        File regionDir = new File(NAPaths.getWorldSavePath().toFile(), "region");
+        File regionDir = new File(NAClientPaths.getWorldSavePath().toFile(), "region");
         File[] regionFiles = regionDir.listFiles((dir, name) -> name.endsWith(".mcr") || name.endsWith(".mca"));
         if (regionFiles == null || regionFiles.length == 0) {
             return result;

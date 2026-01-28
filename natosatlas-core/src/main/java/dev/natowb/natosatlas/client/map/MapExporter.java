@@ -1,6 +1,9 @@
-package dev.natowb.natosatlas.core.io;
+package dev.natowb.natosatlas.client.map;
 
+import dev.natowb.natosatlas.client.NAClientPaths;
 import dev.natowb.natosatlas.core.LayerRegistry;
+import dev.natowb.natosatlas.core.io.LogUtil;
+import dev.natowb.natosatlas.core.io.SaveWorker;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -22,11 +25,11 @@ public class MapExporter {
 
     public static void exportMapLayer(int layerId) {
 
-        File outputFile = new File(NAPaths.getWorldDataPath().toFile(), String.format("exported_map_layer_%d.png", layerId));
+        File outputFile = new File(NAClientPaths.getWorldDataPath().toFile(), String.format("exported_map_layer_%d.png", layerId));
 
         SaveWorker.stop();
 
-        Path dir = NAPaths.getWorldMapStoragePath(layerId);
+        Path dir = NAClientPaths.getWorldMapStoragePath(layerId);
 
         if (!Files.exists(dir)) {
             LogUtil.error("Region directory does not exist: {}", dir);

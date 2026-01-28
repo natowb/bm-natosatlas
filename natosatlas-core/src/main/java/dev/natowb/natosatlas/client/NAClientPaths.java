@@ -1,13 +1,12 @@
-package dev.natowb.natosatlas.core.io;
+package dev.natowb.natosatlas.client;
 
-import dev.natowb.natosatlas.client.NAClient;
-import dev.natowb.natosatlas.core.NACore;
+import dev.natowb.natosatlas.core.io.LogUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class NAPaths {
+public final class NAClientPaths {
     private static Path mcPath;
     private static Path dataPath;
     private static Path worldDataPath;
