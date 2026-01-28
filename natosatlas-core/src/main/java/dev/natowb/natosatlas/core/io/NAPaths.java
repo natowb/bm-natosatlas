@@ -61,12 +61,17 @@ public final class NAPaths {
         return worldDataPath;
     }
 
-    public static Path getWorldMapStoragePath(int layerId) {
-        return ensurePathExists(worldSavePath.resolve(String.format("natosatlas/regions/DIM%d/layer_%d",
-                NACore.getClient().getPlatform().world.getDimensionId(), layerId)));
+    public static Path getWorldSavePath() {
+        boolean isMultiplayer = NACore.getClient().getPlatform().world.isServer();
+        if (isMultiplayer) {
+            return worldDataPath;
+        } else {
+            return worldSavePath.resolve("natosatlas");
+        }
     }
 
-    public static Path getWorldSavePath() {
-        return worldSavePath;
+    public static Path getWorldMapStoragePath(int layerId) {
+        int dim = NACore.getClient().getPlatform().world.getDimensionId();
+        return ensurePathExists(getWorldSavePath().resolve(String.format("regions/DIM%d/layer_%d", dim, layerId)));
     }
 }
