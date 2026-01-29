@@ -1,13 +1,12 @@
-package dev.natowb.natosatlas.client;
+package dev.natowb.natosatlas.core;
 
-import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.util.LogUtil;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class NAClientPaths {
+public final class NAPaths {
     private static Path mcPath;
     private static Path dataPath;
     private static Path worldDataPath;
@@ -23,17 +22,22 @@ public final class NAClientPaths {
         return mcPath;
     }
 
-    public static void updateBasePaths(Path _mcPath) {
+    public static void setBasePaths(Path _mcPath) {
         mcPath = _mcPath;
         dataPath = ensurePathExists(mcPath.resolve("natosatlas"));
         LogUtil.info("Set mcPath to {}", mcPath);
         LogUtil.info("Set dataPath to {}", dataPath);
     }
 
-    public static void updateWorldPath(String saveName) {
+    public static void setWorldPaths(String saveName, boolean isServer) {
         worldSaveName = saveName;
         worldDataPath = ensurePathExists(dataPath.resolve(String.format("worlds/%s/", saveName)));
-        worldSavePath = ensurePathExists(mcPath.resolve("saves/" + saveName));
+
+        if (isServer) {
+            worldSavePath = ensurePathExists(mcPath.resolve(saveName));
+        } else {
+            worldSavePath = ensurePathExists(mcPath.resolve("saves/" + saveName));
+        }
         LogUtil.info("Set worldDataPath to {}", worldDataPath);
         LogUtil.info("Set worldSavePath to {}", worldSavePath);
     }
@@ -65,14 +69,12 @@ public final class NAClientPaths {
         return worldSavePath;
     }
 
-    public static Path getWorldMapStoragePath(int layerId) {
-        int dim = ClientWorldAccess.get().getWorldInfo().getDimensionId();
-        boolean isMultiplayer = ClientWorldAccess.get().getWorldInfo().isMultiplayer();
+    public static Path getWorldMapStoragePath(int layerId, int dim, boolean useSaveFolder) {
         Path basePath;
-        if (isMultiplayer) {
-            basePath = worldDataPath;
-        } else {
+        if (useSaveFolder) {
             basePath = worldSavePath.resolve("natosatlas");
+        } else {
+            basePath = worldDataPath;
         }
         return ensurePathExists(basePath.resolve(String.format("regions/DIM%d/layer_%d", dim, layerId)));
     }

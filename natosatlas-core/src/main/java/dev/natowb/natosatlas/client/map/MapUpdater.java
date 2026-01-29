@@ -15,7 +15,7 @@ public class MapUpdater {
 
     private static final int RADIUS = 8;
     private static final int CHUNKS_PER_TICK = 5;
-    private static final long REFRESH_INTERVAL_MS = 10_000;
+    private static final long REFRESH_INTERVAL_MS = 5_000;
 
     private int activeChunkX;
     private int activeChunkZ;
@@ -95,14 +95,18 @@ public class MapUpdater {
     private void updateChunk(NACoord chunkCoord) {
         NACoord regionCoord = new NACoord(chunkCoord.x >> 5, chunkCoord.z >> 5);
 
+        boolean didUpdate = false;
+
         for (NALayer layer : LayerRegistry.getLayers()) {
-            updateChunkForLayer(regionCoord, chunkCoord, layer);
+            didUpdate = updateChunkForLayer(regionCoord, chunkCoord, layer);
         }
 
-        NARegionPixelCache.get().markDirty(regionCoord);
+        if(didUpdate) {
+            NARegionPixelCache.get().markDirty(regionCoord);
+        }
     }
 
-    private void updateChunkForLayer(NACoord regionCoord, NACoord chunkCoord, NALayer layer) {
+    private boolean updateChunkForLayer(NACoord regionCoord, NACoord chunkCoord, NALayer layer) {
         NARegionPixelData region = NARegionPixelCache.get().getRegion(layer.id, regionCoord);
 
         if (region == null) {
@@ -117,6 +121,10 @@ public class MapUpdater {
         }
 
         NAChunk chunk = layer.builder.build(chunkCoord, ClientWorldAccess.get().getChunk(chunkCoord));
+        if(chunk.isEmpty) {
+            return false;
+        }
         ChunkRenderer.render(region, chunkCoord, chunk, layer.usesBlockLight);
+        return true;
     }
 }

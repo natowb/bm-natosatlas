@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.core;
 
-public interface NASession {
+public interface NAClientSession {
     void tick();
 
 }

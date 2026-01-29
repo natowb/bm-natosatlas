@@ -3,7 +3,7 @@ package dev.natowb.natosatlas.client.waypoint;
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.core.util.LogUtil;
-import dev.natowb.natosatlas.client.NAClientPaths;
+import dev.natowb.natosatlas.core.NAPaths;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,12 +20,12 @@ public final class Waypoints {
     }
 
     private static File getFile() {
-        String fileName = String.format("%s.DIM%d.points", NAClientPaths.getWorldSaveName(), ClientWorldAccess.get().getWorldInfo().getDimensionId());
+        String fileName = String.format("%s.DIM%d.points", NAPaths.getWorldSaveName(), ClientWorldAccess.get().getWorldInfo().getDimensionId());
         if (!Settings.useReiMinimapWaypointStorage) {
-            return new File(NAClientPaths.getWorldDataPath().toFile(), fileName);
+            return new File(NAPaths.getWorldDataPath().toFile(), fileName);
         }
 
-        Path minimapPath = NAClientPaths.getMinecraftPath().resolve("mods/rei_minimap");
+        Path minimapPath = NAPaths.getMinecraftPath().resolve("mods/rei_minimap");
 
         try {
             Files.createDirectories(minimapPath);

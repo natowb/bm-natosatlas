@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.stationapi.client;
 
-import dev.natowb.natosatlas.client.NAClientPaths;
+import dev.natowb.natosatlas.core.NAPaths;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
@@ -145,7 +144,7 @@ public class WorldAccessST extends ClientWorldAccess {
     public ChunkWrapper getChunkFromDisk(NACoord chunkCoord) {
         try {
 
-            FlattenedWorldChunkLoader loader = new FlattenedWorldChunkLoader(NAClientPaths.getWorldSavePath().toFile());
+            FlattenedWorldChunkLoader loader = new FlattenedWorldChunkLoader(NAPaths.getWorldSavePath().toFile());
 
             int cx = chunkCoord.x;
             int cz = chunkCoord.z;

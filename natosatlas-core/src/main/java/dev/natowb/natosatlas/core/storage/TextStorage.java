@@ -65,6 +65,10 @@ public abstract class TextStorage {
         catch (Exception e) { return def; }
     }
 
+    protected String getString(String key, String def) {
+        return values.getOrDefault(key, def);
+    }
+
     protected void put(String key, Object value) {
         values.put(key, String.valueOf(value));
     }

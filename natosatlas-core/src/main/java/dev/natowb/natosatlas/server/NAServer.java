@@ -1,95 +1,53 @@
 package dev.natowb.natosatlas.server;
 
-import dev.natowb.natosatlas.core.LayerRegistry;
-import dev.natowb.natosatlas.core.NARegionGenerator;
-import dev.natowb.natosatlas.core.NASession;
-import dev.natowb.natosatlas.core.chunk.ChunkRenderer;
-import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
-import dev.natowb.natosatlas.core.data.*;
+import dev.natowb.natosatlas.core.NAPaths;
 import dev.natowb.natosatlas.core.util.LogUtil;
-import dev.natowb.natosatlas.core.storage.NARegionStorage;
+import dev.natowb.natosatlas.server.web.WebServer;
 
-import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayDeque;
-import java.util.List;
-import java.util.Queue;
 
-public class NAServer implements NASession {
+public class NAServer {
 
     private boolean started;
     private final NAServerPlatform platform;
-    private final Queue<NARegionFile> regionQueue = new ArrayDeque<>();
+    private RegionFileWatcher overworldWatcher;
+    private RegionFileWatcher netherWatcher;
 
-    private final Path minecraftPath;
 
-    public NAServer(Path minecraftPath, NAServerPlatform platform) {
-        this.minecraftPath = minecraftPath;
+    public NAServer(NAServerPlatform platform) {
+        NAPaths.setWorldPaths(platform.getLevelName(), true);
         this.platform = platform;
+        this.overworldWatcher = new RegionFileWatcher(platform);
+        this.netherWatcher = new RegionFileWatcher(platform);
     }
 
-    @Override
-    public void tick() {
+    public synchronized void startServer() {
         if (!started) {
-            start();
             started = true;
+            Thread t = new Thread(this::start, "NAServer-Main");
+            t.setDaemon(true);
+            t.start();
         }
     }
 
     private void start() {
-        LogUtil.info("Server Started");
-
-        List<NARegionFile> regions = platform.getRegionFiles();
-        regionQueue.addAll(regions);
-        LogUtil.info("Queued {} regions for processing", regions.size());
-
-        Thread worker = new Thread(new RegionWorker(), "NAServer-RegionWorker");
-        worker.setDaemon(true);
-        worker.start();
+        ServerConfig.loadConfig(NAPaths.getDataPath().resolve("config.txt").toFile());
+        LogUtil.setLoggingLevel(ServerConfig.logLevel);
+        startWebServer();
+        startRegionFileWatcher();
     }
 
-    private class RegionWorker implements Runnable {
-
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    processNextBatch();
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    return;
-                }
-            }
-        }
-
-        private void processNextBatch() {
-            List<NARegionFile> regions = platform.getRegionFiles();
-            if (regions.isEmpty()) {
-                LogUtil.info("No regions to process");
-                return;
-            }
-
-            NARegionGenerator generator = new NARegionGenerator(regions, platform::getChunk, NAServer.this::buildOutputFile);
-            generator.generateAll();
-        }
+    private void startWebServer() {
+        WebServer webServer = new WebServer();
+        Thread t = new Thread(() -> webServer.start(platform), "NAServer-Web");
+        t.setDaemon(true);
+        t.start();
     }
 
 
-    private File buildOutputFile(int layerId, NACoord regionCoord) {
-        String levelName = platform.getLevelName();
-
-        File baseDir = minecraftPath
-                .resolve("natosatlas")
-                .resolve(levelName)
-                .resolve(String.valueOf(layerId))
-                .toFile();
-
-        if (!baseDir.exists()) {
-            baseDir.mkdirs();
-        }
-
-        String fileName = "region_" + regionCoord.x + "_" + regionCoord.z + ".png";
-        return new File(baseDir, fileName);
+    private void startRegionFileWatcher() {
+        overworldWatcher.start(0);
+        netherWatcher.start(-1);
     }
+
 }
-

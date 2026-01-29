@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.modloader;
 
-import dev.natowb.natosatlas.client.NAClientPaths;
+import dev.natowb.natosatlas.core.NAPaths;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
@@ -145,7 +145,7 @@ public class WorldAccessML extends ClientWorldAccess {
 
     @Override
     public ChunkWrapper getChunkFromDisk(NACoord chunkCoord) {
-        RegionChunkStorage chunkLoader = new RegionChunkStorage(NAClientPaths.getWorldSavePath().toFile());
+        RegionChunkStorage chunkLoader = new RegionChunkStorage(NAPaths.getWorldSavePath().toFile());
         Chunk chunk = chunkLoader.loadChunk(mc.world, chunkCoord.x, chunkCoord.z);
 
         if (chunk == null) return null;

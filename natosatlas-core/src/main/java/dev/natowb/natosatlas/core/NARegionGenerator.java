@@ -34,7 +34,6 @@ public class NARegionGenerator {
     }
 
     private void generateRegion(NARegionFile regionFile) {
-        LogUtil.info("Processing region {}", regionFile.regionCoord);
 
         for (NALayer layer : LayerRegistry.getLayers()) {
             NARegionPixelData regionPixels = buildRegionPixels(regionFile, layer.id);

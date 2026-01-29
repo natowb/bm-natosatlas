@@ -1,6 +1,7 @@
 package dev.natowb.natosatlas.client;
 
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.core.NAPaths;
 import dev.natowb.natosatlas.core.NARegionGenerator;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.util.LogUtil;
@@ -18,7 +19,7 @@ public class ClientMapGenerator {
             return;
         }
 
-        File dimDir = NAClientPaths.getWorldSavePath().toFile();
+        File dimDir = NAPaths.getWorldSavePath().toFile();
         List<NARegionFile> regions = access.getRegionFiles(dimDir);
 
         if (regions.isEmpty()) {
@@ -34,9 +35,9 @@ public class ClientMapGenerator {
     }
 
     private static File buildOutputFile(int layerId, NACoord regionCoord) {
-        File baseDir = NAClientPaths
-                .getWorldMapStoragePath(layerId)
-                .toFile();
+        int dim = ClientWorldAccess.get().getWorldInfo().getDimensionId();
+        boolean isMultiplayer = ClientWorldAccess.get().getWorldInfo().isMultiplayer();
+        File baseDir = NAPaths.getWorldMapStoragePath(layerId, dim, !isMultiplayer).toFile();
 
         if (!baseDir.exists()) {
             baseDir.mkdirs();

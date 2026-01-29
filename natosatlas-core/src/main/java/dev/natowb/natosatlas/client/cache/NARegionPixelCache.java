@@ -1,12 +1,14 @@
 package dev.natowb.natosatlas.client.cache;
 
-import dev.natowb.natosatlas.client.NAClientPaths;
+import dev.natowb.natosatlas.core.NAPaths;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionPixelData;
 import dev.natowb.natosatlas.core.storage.NARegionStorage;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.*;
 
 public class NARegionPixelCache {
@@ -42,8 +44,10 @@ public class NARegionPixelCache {
         NARegionPixelData[] arr = regions.get(key);
         if (arr != null && arr[layerId] != null)
             return arr[layerId];
-
-        File rFile = NAClientPaths.getWorldMapStoragePath(layerId).resolve("region_" + coord.x + "_" + coord.z + ".png").toFile();
+        int dim = ClientWorldAccess.get().getWorldInfo().getDimensionId();
+        boolean isMultiplayer = ClientWorldAccess.get().getWorldInfo().isMultiplayer();
+        Path dir = NAPaths.getWorldMapStoragePath(layerId, dim, !isMultiplayer);
+        File rFile = dir.resolve("region_" + coord.x + "_" + coord.z + ".png").toFile();
         Optional<NARegionPixelData> loaded = NARegionStorage.get().loadRegion(layerId, coord, rFile);
         if (loaded.isPresent()) {
             if (arr == null) {

@@ -13,10 +13,13 @@ public final class LogUtil {
         TRACE(4);
 
         final int priority;
-        LogLevel(int p) { this.priority = p; }
+
+        LogLevel(int p) {
+            this.priority = p;
+        }
     }
 
-    private static LogLevel currentLevel = LogLevel.DEBUG;
+    private static LogLevel currentLevel = LogLevel.INFO;
 
     public static void setLoggingLevel(LogLevel level) {
         currentLevel = level;
@@ -30,19 +33,20 @@ public final class LogUtil {
     private static final String MOD = "NatosAtlas";
     private static final SimpleDateFormat TIME = new SimpleDateFormat("HH:mm:ss");
 
-    private static final String ANSI_BLUE  = "\u001B[34m";
+    private static final String ANSI_BLUE = "\u001B[34m";
     private static final String ANSI_GREEN = "\u001B[32m";
-    private static final String ANSI_CYAN  = "\u001B[36m";
+    private static final String ANSI_CYAN = "\u001B[36m";
     private static final String ANSI_RESET = "\u001B[0m";
 
     private static final boolean SUPPORTS_ANSI = detectAnsiSupport();
 
-    private static final String BLUE  = SUPPORTS_ANSI ? ANSI_BLUE  : "";
+    private static final String BLUE = SUPPORTS_ANSI ? ANSI_BLUE : "";
     private static final String GREEN = SUPPORTS_ANSI ? ANSI_GREEN : "";
-    private static final String CYAN  = SUPPORTS_ANSI ? ANSI_CYAN  : "";
+    private static final String CYAN = SUPPORTS_ANSI ? ANSI_CYAN : "";
     private static final String RESET = SUPPORTS_ANSI ? ANSI_RESET : "";
 
-    private LogUtil() {}
+    private LogUtil() {
+    }
 
     private static boolean detectAnsiSupport() {
         String os = System.getProperty("os.name").toLowerCase();
@@ -84,12 +88,12 @@ public final class LogUtil {
     }
 
     private static String prefix(String level) {
-        String time   = TIME.format(new Date());
+        String time = TIME.format(new Date());
         String thread = Thread.currentThread().getName();
 
-        String timePart   = BLUE  + "[" + time   + "]" + RESET;
+        String timePart = BLUE + "[" + time + "]" + RESET;
         String threadPart = GREEN + "[" + thread + "/" + level + "]" + RESET;
-        String modPart    = CYAN  + "[" + MOD    + "]" + RESET;
+        String modPart = CYAN + "[" + MOD + "]" + RESET;
 
         return timePart + " " + threadPart + " " + modPart + " ";
     }

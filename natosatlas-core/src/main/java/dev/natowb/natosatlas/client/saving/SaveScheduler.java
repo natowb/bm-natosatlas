@@ -1,7 +1,8 @@
 package dev.natowb.natosatlas.client.saving;
 
 
-import dev.natowb.natosatlas.client.NAClientPaths;
+import dev.natowb.natosatlas.core.NAPaths;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.client.cache.NARegionPixelCache;
@@ -10,6 +11,7 @@ import dev.natowb.natosatlas.core.data.NARegionPixelData;
 import dev.natowb.natosatlas.core.storage.NARegionStorage;
 
 import java.io.File;
+import java.nio.file.Path;
 
 
 public class SaveScheduler {
@@ -40,7 +42,10 @@ public class SaveScheduler {
             for (NALayer layer : LayerRegistry.getLayers()) {
                 NARegionPixelData region = cache.getRegion(layer.id, coord);
                 if (region != null) {
-                    File rFile = NAClientPaths.getWorldMapStoragePath(layer.id).resolve("region_" + coord.x + "_" + coord.z + ".png").toFile();
+                    int dim = ClientWorldAccess.get().getWorldInfo().getDimensionId();
+                    boolean isMultiplayer = ClientWorldAccess.get().getWorldInfo().isMultiplayer();
+                    Path baseDir = NAPaths.getWorldMapStoragePath(layer.id, dim, !isMultiplayer);
+                    File rFile = baseDir.resolve("region_" + coord.x + "_" + coord.z + ".png").toFile();
                     SaveWorker.enqueue(storage, coord, region, rFile);
                 }
             }
