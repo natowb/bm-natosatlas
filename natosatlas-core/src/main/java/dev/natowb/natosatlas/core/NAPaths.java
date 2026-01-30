@@ -31,11 +31,11 @@ public final class NAPaths {
 
     public static void setWorldPaths(String saveName, boolean isServer) {
         worldSaveName = saveName;
-        worldDataPath = ensurePathExists(dataPath.resolve(String.format("worlds/%s/", saveName)));
-
         if (isServer) {
             worldSavePath = ensurePathExists(mcPath.resolve(saveName));
+            worldDataPath = ensurePathExists(dataPath.resolve(String.format("servers/%s/", saveName)));
         } else {
+            worldDataPath = ensurePathExists(dataPath.resolve(String.format("worlds/%s/", saveName)));
             worldSavePath = ensurePathExists(mcPath.resolve("saves/" + saveName));
         }
         LogUtil.info("Set worldDataPath to {}", worldDataPath);
