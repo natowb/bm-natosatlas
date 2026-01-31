@@ -2,7 +2,7 @@ package dev.natowb.natosatlas.server.web;
 
 import com.sun.net.httpserver.HttpServer;
 import dev.natowb.natosatlas.core.util.LogUtil;
-import dev.natowb.natosatlas.server.NAServerPlatform;
+import dev.natowb.natosatlas.server.ServerPlatform;
 import dev.natowb.natosatlas.server.ServerConfig;
 import dev.natowb.natosatlas.server.web.routes.AssetsRoute;
 import dev.natowb.natosatlas.server.web.routes.IndexRoute;
@@ -11,13 +11,12 @@ import dev.natowb.natosatlas.server.web.routes.TileRoute;
 
 import java.io.*;
 import java.net.InetSocketAddress;
-import java.nio.file.*;
 import java.util.concurrent.ThreadFactory;
 
 public class WebServer {
 
 
-    public void start(NAServerPlatform platform) {
+    public void start(ServerPlatform platform) {
         try {
             HttpServer server = HttpServer.create(new InetSocketAddress(ServerConfig.webHost, ServerConfig.webPort), 0);
             server.setExecutor(java.util.concurrent.Executors.newFixedThreadPool(

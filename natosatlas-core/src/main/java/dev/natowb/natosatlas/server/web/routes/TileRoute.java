@@ -70,7 +70,6 @@ public class TileRoute {
                 exchange.getResponseBody().write(bytes);
 
             } catch (Exception e) {
-                LogUtil.error("Error serving tile request: {}", path, e);
                 exchange.sendResponseHeaders(500, -1);
             } finally {
                 exchange.close();

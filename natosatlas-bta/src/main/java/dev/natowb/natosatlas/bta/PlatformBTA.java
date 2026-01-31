@@ -1,13 +1,13 @@
 package dev.natowb.natosatlas.bta;
 
-import dev.natowb.natosatlas.client.NAClientPlatform;
+import dev.natowb.natosatlas.client.ClientPlatform;
 import dev.natowb.natosatlas.client.access.ScreenAccess;
 import dev.natowb.natosatlas.client.ui.elements.UIScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.sound.SoundCategory;
 
-public class PlatformBTA extends NAClientPlatform {
+public class PlatformBTA extends ClientPlatform {
     public PlatformBTA() {
         super(new PlatformPainterBTA(), new ScreenAccess() {
             @Override

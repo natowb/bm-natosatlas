@@ -1,11 +1,11 @@
 package dev.natowb.natosatlas.modloader;
 
-import dev.natowb.natosatlas.client.access.PainterAccess;
+import dev.natowb.natosatlas.client.access.NAPainter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.ModLoader;
 import org.lwjgl.opengl.GL11;
 
-public class PlatformPainterML extends PainterAccess {
+public class PlatformPainterML extends NAPainter {
 
     @Override
     public void drawString(String text, int x, int y, int color, boolean shadow) {

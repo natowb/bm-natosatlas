@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RegionFileWatcher implements Runnable {
 
-    private final NAServerPlatform platform;
+    private final ServerPlatform platform;
     private volatile boolean running;
     private Thread thread;
     private WatchService watcher;
@@ -24,7 +24,7 @@ public class RegionFileWatcher implements Runnable {
     private final Queue<NARegionFile> changedQueue = new ArrayDeque<>();
     private final Map<Path, Long> debounce = new HashMap<>();
 
-    public RegionFileWatcher(NAServerPlatform platform) {
+    public RegionFileWatcher(ServerPlatform platform) {
         this.platform = platform;
     }
 

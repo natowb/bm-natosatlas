@@ -6,7 +6,7 @@ import dev.natowb.natosatlas.core.NAConstants;
 import dev.natowb.natosatlas.client.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
-import dev.natowb.natosatlas.client.access.PainterAccess;
+import dev.natowb.natosatlas.client.access.NAPainter;
 import dev.natowb.natosatlas.client.help.HelpScreen;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.client.settings.SettingsOption;
@@ -31,7 +31,7 @@ import static dev.natowb.natosatlas.client.texture.TextureProvider.*;
 public class MapScreen extends UIScreen {
 
     private final MapViewport viewport = new MapViewport();
-    private final PainterAccess painter = NAClient.get().getPlatform().painter;
+    private final NAPainter painter = NAClient.get().getPlatform().painter;
     private final MapStageRegions regionPainter = new MapStageRegions();
     private final MapStageSlime slimePainter = new MapStageSlime();
     private final MapStageGrid gridPainter = new MapStageGrid();
@@ -250,7 +250,7 @@ public class MapScreen extends UIScreen {
         NACoord bc = getMouseBlock(ctx);
         String text = "(" + bc.x + ", " + bc.z + ")";
 
-        PainterAccess p = NAClient.get().getPlatform().painter;
+        NAPainter p = NAClient.get().getPlatform().painter;
 
         int padding = 4;
         int textW = p.getStringWidth(text);

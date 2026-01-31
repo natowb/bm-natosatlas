@@ -1,8 +1,7 @@
 package dev.natowb.natosatlas.client.waypoint;
 
 import dev.natowb.natosatlas.client.NAClient;
-import dev.natowb.natosatlas.core.NACore;
-import dev.natowb.natosatlas.client.access.PainterAccess;
+import dev.natowb.natosatlas.client.access.NAPainter;
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.UITheme;
 import org.lwjgl.opengl.GL11;
@@ -44,7 +43,7 @@ public class WaypointListElement {
 
     public void render(int mouseX, int mouseY, UIScaleInfo scaleInfo) {
         List<Waypoint> items = Waypoints.getAll();
-        PainterAccess p = NAClient.get().getPlatform().painter;
+        NAPainter p = NAClient.get().getPlatform().painter;
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor(
@@ -71,7 +70,7 @@ public class WaypointListElement {
     }
 
 
-    private void renderEntry(PainterAccess p, Waypoint wp, int yPos, int mouseX, int mouseY) {
+    private void renderEntry(NAPainter p, Waypoint wp, int yPos, int mouseX, int mouseY) {
         boolean hovered = isMouseOver(x, yPos, width, entryHeight, mouseX, mouseY);
 
         int bgColor = hovered ? UITheme.LIST_BG_HOVER : UITheme.LIST_BG;
@@ -98,7 +97,7 @@ public class WaypointListElement {
         renderButton(p, buttonX, buttonY, visibilityIcon, mouseX, mouseY);
     }
 
-    private int renderButton(PainterAccess p, int x, int y, int icon, int mouseX, int mouseY) {
+    private int renderButton(NAPainter p, int x, int y, int icon, int mouseX, int mouseY) {
         boolean hover = isMouseOver(x, y, BTN_SIZE, BTN_SIZE, mouseX, mouseY);
         if (hover) {
             p.drawRect(x - 2, y - 2, x + BTN_SIZE + 2, y + BTN_SIZE + 2, UITheme.BUTTON_BG_HOVER);
@@ -108,7 +107,7 @@ public class WaypointListElement {
         return x - BTN_SIZE - BTN_GAP;
     }
 
-    private void renderScrollbar(PainterAccess p, int itemCount) {
+    private void renderScrollbar(NAPainter p, int itemCount) {
         int contentHeight = itemCount * entryHeight;
         if (contentHeight <= height) return;
 

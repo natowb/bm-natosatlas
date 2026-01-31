@@ -1,8 +1,7 @@
 package dev.natowb.natosatlas.client.ui.elements;
 
 import dev.natowb.natosatlas.client.NAClient;
-import dev.natowb.natosatlas.core.NACore;
-import dev.natowb.natosatlas.client.access.PainterAccess;
+import dev.natowb.natosatlas.client.access.NAPainter;
 import dev.natowb.natosatlas.client.ui.themes.UIThemeMinecraft;
 
 public abstract class UIElement {
@@ -19,7 +18,7 @@ public abstract class UIElement {
     }
 
     protected void drawCenteredText(String text, int color) {
-        PainterAccess p = NAClient.get().getPlatform().painter;
+        NAPainter p = NAClient.get().getPlatform().painter;
         int tw = p.getStringWidth(text);
         int tx = x + (w - tw) / 2;
         int ty = y + (h - 8) / 2;
@@ -27,7 +26,7 @@ public abstract class UIElement {
     }
 
     protected void drawButtonBackground(int state) {
-        PainterAccess p = NAClient.get().getPlatform().painter;
+        NAPainter p = NAClient.get().getPlatform().painter;
         int texture = p.getMinecraftTextureId("/gui/gui.png");
         int texY = 46 + state * 20;
         int half = w / 2;
@@ -37,7 +36,7 @@ public abstract class UIElement {
     }
 
     protected void drawTooltip(String text, int mouseX, int mouseY, int canvasW, int canvasH) {
-        PainterAccess p = NAClient.get().getPlatform().painter;
+        NAPainter p = NAClient.get().getPlatform().painter;
 
         int padding = 4;
         int tw = p.getStringWidth(text);

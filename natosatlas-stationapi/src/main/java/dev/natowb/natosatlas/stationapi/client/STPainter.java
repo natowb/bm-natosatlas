@@ -1,11 +1,11 @@
 package dev.natowb.natosatlas.stationapi.client;
 
-import dev.natowb.natosatlas.client.access.PainterAccess;
+import dev.natowb.natosatlas.client.access.NAPainter;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 
-public class PlatformPainterST extends PainterAccess {
+public class STPainter extends NAPainter {
 
     @Override
     public void drawString(String text, int x, int y, int color, boolean shadow) {

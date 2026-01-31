@@ -9,11 +9,11 @@ import net.minecraft.client.util.ScreenScaler;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.input.Keyboard;
 
-public class UIScreenWrapperST extends Screen {
+public class STScreenWrapper extends Screen {
     private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
     private final UIScreen screen;
 
-    public UIScreenWrapperST(UIScreen screen) {
+    public STScreenWrapper(UIScreen screen) {
         this.screen = screen;
     }
 

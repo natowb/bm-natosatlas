@@ -3,7 +3,7 @@ package dev.natowb.natosatlas.client.access;
 import dev.natowb.natosatlas.client.texture.TextureProvider;
 import org.lwjgl.opengl.GL11;
 
-public abstract class PainterAccess {
+public abstract class NAPainter {
     public void drawRect(int x1, int y1, int x2, int y2, int argbColor) {
         if (x1 < x2) {
             int t = x1;

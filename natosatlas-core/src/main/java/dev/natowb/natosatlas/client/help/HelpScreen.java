@@ -5,14 +5,14 @@ import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.UITheme;
 import dev.natowb.natosatlas.client.ui.elements.UIElementIconButton;
 import dev.natowb.natosatlas.client.ui.elements.UIScreen;
-import dev.natowb.natosatlas.client.access.PainterAccess;
+import dev.natowb.natosatlas.client.access.NAPainter;
 
 import static dev.natowb.natosatlas.client.texture.TextureProvider.ICON_BACK;
 
 public class HelpScreen extends UIScreen {
 
     private UIElementIconButton closeButton;
-    private final PainterAccess painter = NAClient.get().getPlatform().painter;
+    private final NAPainter painter = NAClient.get().getPlatform().painter;
 
     private int headerY;
 

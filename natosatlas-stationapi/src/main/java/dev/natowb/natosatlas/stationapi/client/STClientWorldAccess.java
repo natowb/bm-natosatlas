@@ -21,13 +21,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldAccessST extends ClientWorldAccess {
+public class STClientWorldAccess extends ClientWorldAccess {
     private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
     @Override
     public NAWorldInfo getWorldInfo() {
         if (mc.world == null) return null;
-        int worldHeight = 128;
+        int worldHeight = mc.world.getHeight();
         String name = mc.world.getProperties().getName();
         long time = mc.world.getTime();
         long seed = mc.world.getSeed();

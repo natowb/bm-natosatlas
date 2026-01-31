@@ -5,6 +5,7 @@ import dev.natowb.natosatlas.client.access.BlockAccess;
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.client.map.MapScreen;
+import dev.natowb.natosatlas.stationapi.STBlockAccess;
 import net.fabricmc.loader.api.FabricLoader;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.client.option.KeyBinding;
@@ -26,9 +27,10 @@ public class ClientEntry {
 
     @EventListener
     public void init(InitFinishedEvent event) {
-        BlockAccess.set(new BlockAccessST());
-        ClientWorldAccess.set(new WorldAccessST());
-        NACore.initClient(FabricLoader.getInstance().getGameDir(),new PlatformST());
+        BlockAccess.set(new STBlockAccess());
+        ClientWorldAccess.set(new STClientWorldAccess());
+        NACore.init(FabricLoader.getInstance().getGameDir());
+        NACore.startClient(new STClientPlatform());
     }
 
 

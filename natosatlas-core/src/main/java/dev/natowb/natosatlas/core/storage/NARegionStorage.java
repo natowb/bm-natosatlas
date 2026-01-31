@@ -48,8 +48,7 @@ public class NARegionStorage {
     }
 
 
-
-    public Optional<NARegionPixelData> loadRegion(int layerId, NACoord coord, File file) {
+    public Optional<NARegionPixelData> loadRegion(NACoord coord, File file) {
 
         if (!file.exists()) {
             return Optional.empty();
@@ -96,7 +95,7 @@ public class NARegionStorage {
                 pngWriter.setOutput(out);
                 pngWriter.write(null, new IIOImage(reusableImage, null, null), pngParams);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LogUtil.error("Failed to save region {} to {}", regionCoord, file);
         }
     }

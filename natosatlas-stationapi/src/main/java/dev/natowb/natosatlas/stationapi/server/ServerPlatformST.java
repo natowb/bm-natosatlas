@@ -5,7 +5,7 @@ import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.data.NARegionFile;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.util.LogUtil;
-import dev.natowb.natosatlas.server.NAServerPlatform;
+import dev.natowb.natosatlas.server.ServerPlatform;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -22,7 +22,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerPlatformST implements NAServerPlatform {
+public class ServerPlatformST implements ServerPlatform {
 
     @Override
     public String getLevelName() {

@@ -48,7 +48,7 @@ public class NARegionPixelCache {
         boolean isMultiplayer = ClientWorldAccess.get().getWorldInfo().isMultiplayer();
         Path dir = NAPaths.getWorldMapStoragePath(layerId, dim, !isMultiplayer);
         File rFile = dir.resolve("region_" + coord.x + "_" + coord.z + ".png").toFile();
-        Optional<NARegionPixelData> loaded = NARegionStorage.get().loadRegion(layerId, coord, rFile);
+        Optional<NARegionPixelData> loaded = NARegionStorage.get().loadRegion(coord, rFile);
         if (loaded.isPresent()) {
             if (arr == null) {
                 arr = new NARegionPixelData[LayerRegistry.getLayers().size()];

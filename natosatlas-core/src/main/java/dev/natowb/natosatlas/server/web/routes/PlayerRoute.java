@@ -3,14 +3,14 @@ package dev.natowb.natosatlas.server.web.routes;
 import com.sun.net.httpserver.HttpServer;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.util.LogUtil;
-import dev.natowb.natosatlas.server.NAServerPlatform;
+import dev.natowb.natosatlas.server.ServerPlatform;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class PlayerRoute {
 
-    public static void register(HttpServer server, NAServerPlatform platform) {
+    public static void register(HttpServer server, ServerPlatform platform) {
         server.createContext("/players", exchange -> {
             try {
                 if (!exchange.getRequestMethod().equalsIgnoreCase("GET")) {

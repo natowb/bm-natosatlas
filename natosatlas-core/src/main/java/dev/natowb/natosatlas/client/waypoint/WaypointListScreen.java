@@ -1,8 +1,7 @@
 package dev.natowb.natosatlas.client.waypoint;
 
 import dev.natowb.natosatlas.client.NAClient;
-import dev.natowb.natosatlas.core.NACore;
-import dev.natowb.natosatlas.client.access.PainterAccess;
+import dev.natowb.natosatlas.client.access.NAPainter;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.UITheme;
@@ -68,7 +67,7 @@ public class WaypointListScreen extends UIScreen {
 
     @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
-        PainterAccess p = NAClient.get().getPlatform().painter;
+        NAPainter p = NAClient.get().getPlatform().painter;
 
         p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
 

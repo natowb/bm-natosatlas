@@ -1,12 +1,12 @@
 package dev.natowb.natosatlas.bta;
 
-import dev.natowb.natosatlas.client.access.PainterAccess;
+import dev.natowb.natosatlas.client.access.NAPainter;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.texture.Texture;
 import org.lwjgl.opengl.GL11;
 
-public class PlatformPainterBTA extends PainterAccess {
+public class PlatformPainterBTA extends NAPainter {
 
     @Override
     public void drawString(String text, int x, int y, int color, boolean shadow) {

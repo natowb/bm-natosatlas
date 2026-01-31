@@ -5,6 +5,7 @@ import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.NACore;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
 import turniplabs.halplibe.util.GameStartEntrypoint;
 import turniplabs.halplibe.util.RecipeEntrypoint;
 
@@ -31,6 +32,7 @@ public class NatoAtlasBTA implements ModInitializer, RecipeEntrypoint, GameStart
     public void afterGameStart() {
         BlockAccess.set(new BlockAccessBTA());
         ClientWorldAccess.set(new WorldAccessBTA());
-        NACore.initClient(FabricLoader.getInstance().getGameDir(), new PlatformBTA());
+        NACore.init(FabricLoader.getInstance().getGameDir());
+        NACore.startClient(new PlatformBTA());
     }
 }

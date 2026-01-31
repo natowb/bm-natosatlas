@@ -9,7 +9,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
-public interface NAServerPlatform {
+public interface ServerPlatform {
 
     String getLevelName();
 

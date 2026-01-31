@@ -24,7 +24,8 @@ public class mod_NatosMap extends BaseMod {
         ModLoader.SetInGUIHook(this, true, true);
         BlockAccess.set(new BlockAccessML());
         ClientWorldAccess.set(new WorldAccessML());
-        NACore.initClient(Minecraft.getRunDirectory().toPath(), new PlatformML());
+        NACore.init(Minecraft.getRunDirectory().toPath());
+        NACore.startClient(new PlatformML());
     }
 
     @Override

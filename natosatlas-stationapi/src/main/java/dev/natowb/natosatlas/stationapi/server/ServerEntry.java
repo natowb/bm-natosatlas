@@ -2,7 +2,7 @@ package dev.natowb.natosatlas.stationapi.server;
 
 import dev.natowb.natosatlas.client.access.BlockAccess;
 import dev.natowb.natosatlas.core.NACore;
-import dev.natowb.natosatlas.stationapi.client.BlockAccessST;
+import dev.natowb.natosatlas.stationapi.STBlockAccess;
 import net.fabricmc.loader.api.FabricLoader;
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.modificationstation.stationapi.api.event.init.InitFinishedEvent;
@@ -18,8 +18,9 @@ public class ServerEntry {
 
     @EventListener
     public void init(InitFinishedEvent event) {
-        BlockAccess.set(new BlockAccessST());
-        NACore.initServer(FabricLoader.getInstance().getGameDir(), new ServerPlatformST());
+        BlockAccess.set(new STBlockAccess());
+        NACore.init(FabricLoader.getInstance().getGameDir());
+        NACore.startServer(new ServerPlatformST());
     }
 
     @EventListener

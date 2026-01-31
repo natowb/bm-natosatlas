@@ -25,11 +25,11 @@ public class NAClient implements NAClientSession {
     private boolean inWorld;
     private String worldSaveName;
     private int dim;
-    private final NAClientPlatform platform;
+    private final ClientPlatform platform;
     private final MapLayerController layerController = new MapLayerController();
 
 
-    public NAClient(NAClientPlatform platform) {
+    public NAClient(ClientPlatform platform) {
         if (instance != null) {
             LogUtil.error("tried to create NAClient when one already exists");
             throw new RuntimeException();
@@ -46,7 +46,7 @@ public class NAClient implements NAClientSession {
         return layerController;
     }
 
-    public NAClientPlatform getPlatform() {
+    public ClientPlatform getPlatform() {
         return platform;
     }
 

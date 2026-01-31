@@ -1,12 +1,12 @@
 package dev.natowb.natosatlas.modloader;
 
-import dev.natowb.natosatlas.client.NAClientPlatform;
+import dev.natowb.natosatlas.client.ClientPlatform;
 import dev.natowb.natosatlas.client.access.ScreenAccess;
 import dev.natowb.natosatlas.client.ui.elements.UIScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.ModLoader;
 
-public class PlatformML extends NAClientPlatform {
+public class PlatformML extends ClientPlatform {
     public PlatformML() {
         super(new PlatformPainterML(),  new ScreenAccess() {
             @Override

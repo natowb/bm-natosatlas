@@ -1,9 +1,9 @@
 package dev.natowb.natosatlas.core;
 
 import dev.natowb.natosatlas.client.NAClient;
-import dev.natowb.natosatlas.client.NAClientPlatform;
+import dev.natowb.natosatlas.client.ClientPlatform;
 import dev.natowb.natosatlas.server.NAServer;
-import dev.natowb.natosatlas.server.NAServerPlatform;
+import dev.natowb.natosatlas.server.ServerPlatform;
 
 import java.nio.file.Path;
 
@@ -21,27 +21,28 @@ public final class NACore {
         return initialized;
     }
 
-
-    public static void initClient(Path minecraftPath, NAClientPlatform platform) {
+    public static void init(Path mcPath) {
         if (initialized) return;
         initialized = true;
-        NAPaths.setBasePaths(minecraftPath);
+        NAPaths.setBasePaths(mcPath);
+    }
 
+    public static void startClient(ClientPlatform platform) {
+        if (!initialized) {
+            throw new IllegalStateException("Tried to start Natos Atlas client before NACore was initialized");
+        }
         clientSession = new NAClient(platform);
     }
 
-    public static void initServer(Path minecraftPath, NAServerPlatform platform) {
-        if (initialized) return;
-        initialized = true;
-        NAPaths.setBasePaths(minecraftPath);
-
-        NAServer server = new NAServer(platform);
-        server.startServer();
+    public static void startServer(ServerPlatform platform) {
+        if (!initialized) {
+            throw new IllegalStateException("Tried to start Natos Atlas server before NACore was initialized");
+        }
+        NAServer.getInstance(platform).startServer();
     }
 
 
     public static void tick() {
-        if (!initialized) return;
         if (clientSession == null) return;
         clientSession.tick();
     }
