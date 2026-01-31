@@ -20,7 +20,7 @@ public class ServerEntry {
     public void init(InitFinishedEvent event) {
         BlockAccess.set(new STBlockAccess());
         NACore.init(FabricLoader.getInstance().getGameDir());
-        NACore.startServer(new ServerPlatformST());
+        NACore.startServer(new STServerPlatform());
     }
 
     @EventListener

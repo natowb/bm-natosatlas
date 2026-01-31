@@ -11,7 +11,7 @@ import static dev.natowb.natosatlas.core.NAConstants.PIXELS_PER_CANVAS_CHUNK;
 
 public class MapStageGrid implements MapStage {
     @Override
-    public void draw(MapContext ctx, Set<Long> visibleRegions) {
+    public void draw(MapContext ctx, Set<Long> visibleRegions, int activeLayer) {
         if (!Settings.mapGrid) return;
 
         drawGrid(PIXELS_PER_CANVAS_CHUNK, 0xFF5b5b5b, ctx);

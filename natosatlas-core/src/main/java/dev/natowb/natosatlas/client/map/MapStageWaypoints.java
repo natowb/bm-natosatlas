@@ -13,7 +13,7 @@ import java.util.Set;
 public class MapStageWaypoints implements MapStage {
 
     @Override
-    public void draw(MapContext ctx, Set<Long> visibleRegions) {
+    public void draw(MapContext ctx, Set<Long> visibleRegions, int activeLayer) {
         drawWaypointIcons(ctx);
         drawWaypointLabels(ctx);
     }

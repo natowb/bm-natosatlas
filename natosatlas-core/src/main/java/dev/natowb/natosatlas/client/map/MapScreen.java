@@ -4,6 +4,7 @@ import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.NAConstants;
 import dev.natowb.natosatlas.client.cache.NARegionPixelCache;
+import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.client.access.NAPainter;
@@ -38,6 +39,7 @@ public class MapScreen extends UIScreen {
     private final MapStageEntities entitiesPainter = new MapStageEntities();
     private final MapStageWaypoints waypointsPainter = new MapStageWaypoints();
 
+    private int activeLayer = 0;
     private long lastClickTime = 0;
     private static final long DOUBLE_CLICK_TIME_THRESHOLD = 300;
 
@@ -200,6 +202,54 @@ public class MapScreen extends UIScreen {
 
     }
 
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        if (ClientWorldAccess.get().getWorldInfo().hasCeiling()) {
+            activeLayer = 2;
+            return;
+        }
+
+        switch (Settings.mapRenderMode) {
+            case Day:
+                activeLayer = 0;
+                break;
+            case Night:
+                activeLayer = 1;
+                break;
+            case Cave:
+                activeLayer = 2;
+                break;
+            case Auto: {
+                long time = ClientWorldAccess.get().getWorldInfo().getTime() % 24000L;
+                boolean day = time < 12000L;
+
+                NAEntity player = ClientWorldAccess.get().getPlayer();
+                ChunkWrapper chunk = ClientWorldAccess.get().getChunk(
+                        NACoord.from(player.chunkX, player.chunkZ)
+                );
+
+                int skyLight = chunk.getSkyLight(
+                        player.localX,
+                        (int) Math.floor(player.y),
+                        player.localZ
+                );
+
+                if (skyLight == 0) {
+                    activeLayer = 2;
+                } else {
+                    activeLayer = day ? 0 : 1;
+                }
+            }
+            break;
+            default:
+                break;
+        }
+
+    }
+
     @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
         painter.drawRect(0, 0, width, height, UITheme.PANEL_BG);
@@ -210,11 +260,12 @@ public class MapScreen extends UIScreen {
         MapContext ctx = viewport.getContext();
         Set<Long> visible = viewport.computeVisibleRegions();
 
-        regionPainter.draw(ctx, visible);
-        slimePainter.draw(ctx, visible);
-        gridPainter.draw(ctx, visible);
-        entitiesPainter.draw(ctx, visible);
-        waypointsPainter.draw(ctx, visible);
+
+        regionPainter.draw(ctx, visible, activeLayer);
+        slimePainter.draw(ctx, visible, activeLayer);
+        gridPainter.draw(ctx, visible, activeLayer);
+        entitiesPainter.draw(ctx, visible, activeLayer);
+        waypointsPainter.draw(ctx, visible, activeLayer);
         renderMouseBlockHighlight(ctx);
         viewport.end();
 

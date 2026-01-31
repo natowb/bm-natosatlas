@@ -2,7 +2,6 @@ package dev.natowb.natosatlas.client;
 
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.client.cache.NARegionTextureCache;
-import dev.natowb.natosatlas.client.map.MapLayerController;
 import dev.natowb.natosatlas.client.saving.SaveScheduler;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.core.LayerRegistry;
@@ -21,13 +20,10 @@ public class NAClient implements NAClientSession {
         return instance;
     }
 
-
     private boolean inWorld;
     private String worldSaveName;
     private int dim;
     private final ClientPlatform platform;
-    private final MapLayerController layerController = new MapLayerController();
-
 
     public NAClient(ClientPlatform platform) {
         if (instance != null) {
@@ -42,9 +38,6 @@ public class NAClient implements NAClientSession {
         Settings.load();
     }
 
-    public MapLayerController getLayerController() {
-        return layerController;
-    }
 
     public ClientPlatform getPlatform() {
         return platform;
@@ -104,6 +97,5 @@ public class NAClient implements NAClientSession {
     private void onWorldTick() {
         MapUpdater.get().tick();
         SaveScheduler.tick();
-        layerController.tick();
     }
 }

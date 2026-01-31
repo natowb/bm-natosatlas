@@ -14,7 +14,7 @@ public class MapStageEntities implements MapStage {
     private static final double ENTITY_RENDER_RADIUS = 128.0;
 
     @Override
-    public void draw(MapContext ctx, Set<Long> visibleRegions) {
+    public void draw(MapContext ctx, Set<Long> visibleRegions, int activeLayer) {
         drawEntities(ctx);
     }
 

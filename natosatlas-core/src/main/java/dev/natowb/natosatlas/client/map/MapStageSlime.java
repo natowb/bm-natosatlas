@@ -15,11 +15,11 @@ import static dev.natowb.natosatlas.core.NAConstants.PIXELS_PER_CANVAS_CHUNK;
 
 public class MapStageSlime implements MapStage {
     @Override
-    public void draw(MapContext ctx, Set<Long> visibleRegions) {
+    public void draw(MapContext ctx, Set<Long> visibleRegions, int activeLayer) {
         if (!Settings.showSlimeChunks) return;
         for (long key : visibleRegions) {
             NACoord coord = NACoord.fromKey(key);
-            int texId = TextureProvider.getTexture(coord, NAClient.get().getLayerController().getActiveLayer());
+            int texId = TextureProvider.getTexture(coord, activeLayer);
             if (texId != -1) {
                 for (int x = 0; x < CHUNKS_PER_MINECRAFT_REGION; x++) {
                     for (int z = 0; z < CHUNKS_PER_MINECRAFT_REGION; z++) {

@@ -22,7 +22,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerPlatformST implements ServerPlatform {
+public class STServerPlatform implements ServerPlatform {
 
     @Override
     public String getLevelName() {

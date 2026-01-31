@@ -12,10 +12,10 @@ import static dev.natowb.natosatlas.core.NAConstants.PIXELS_PER_CANVAS_UNIT;
 
 public class MapStageRegions implements MapStage {
     @Override
-    public void draw(MapContext ctx, Set<Long> visibleRegions) {
+    public void draw(MapContext ctx, Set<Long> visibleRegions, int layerId) {
         for (long key : visibleRegions) {
             NACoord coord = NACoord.fromKey(key);
-            int texId = TextureProvider.getTexture(coord, NAClient.get().getLayerController().getActiveLayer());
+            int texId = TextureProvider.getTexture(coord, layerId);
             if (texId != -1) {
                 drawRegionTexture(coord.x, coord.z, texId);
             }
