@@ -42,14 +42,18 @@ public class TileRoute {
                     return;
                 }
 
+
                 Path basePath = NAPaths.getWorldMapStoragePath(layerId, dim, true);
                 Path tilePath = basePath
                         .resolve("region_" + rx + "_" + rz + ".png")
                         .normalize()
                         .toAbsolutePath();
 
-                if (!tilePath.startsWith(basePath.toAbsolutePath())) {
-                    LogUtil.error("Tile path attempted escape: {}", tilePath);
+                Path realBasePath = basePath.toRealPath();
+                Path realTilePath = tilePath.toRealPath();
+
+                if (!realTilePath.startsWith(realBasePath)) {
+                    LogUtil.error("Tile path attempted escape: {}", realTilePath);
                     exchange.sendResponseHeaders(403, -1);
                     return;
                 }

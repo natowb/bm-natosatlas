@@ -78,6 +78,7 @@ public class RegionFileWatcher implements Runnable {
 
         } catch (Exception e) {
             LogUtil.error("RegionFileWatcher crashed for dim {}", dim, e);
+            e.printStackTrace();
         }
     }
 
