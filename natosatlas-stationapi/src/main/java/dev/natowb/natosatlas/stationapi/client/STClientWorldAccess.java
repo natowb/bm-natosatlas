@@ -41,6 +41,10 @@ public class STClientWorldAccess extends ClientWorldAccess {
     @Override
     public String getSaveName() {
         if (mc.isWorldRemote()) {
+            // FIXME: find a way to get the server name if the options is empty.
+            if (mc.options.lastServer == null || mc.options.lastServer.isEmpty()) {
+                return "MPServer-FailedToGetIP";
+            }
             return mc.options.lastServer;
         }
 

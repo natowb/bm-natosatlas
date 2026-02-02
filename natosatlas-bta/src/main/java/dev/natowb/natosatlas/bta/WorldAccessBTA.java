@@ -37,7 +37,11 @@ public class WorldAccessBTA extends ClientWorldAccess {
     @Override
     public String getSaveName() {
         if (mc.isMultiplayerWorld()) {
-            return mc.gameSettings.lastServer.name;
+            // FIXME: find a way to get the server name if the options is empty.
+            if (mc.gameSettings.lastServer == null || mc.gameSettings.lastServer.value.isEmpty()) {
+                return "MPServer-FailedToGetIP";
+            }
+            return mc.gameSettings.lastServer.value;
         }
 
         mc.currentWorld.pauseScreenSave(0);
