@@ -16,14 +16,6 @@ import java.nio.file.Path;
 import static dev.natowb.natosatlas.core.NAConstants.BLOCKS_PER_CANVAS_REGION;
 
 public class MapExporter {
-
-
-    public static void exportAllLayers() {
-        for (int i = 0; i < LayerRegistry.getLayers().size(); i++) {
-            MapExporter.exportMapLayer(i);
-        }
-    }
-
     public static void exportMapLayer(int layerId) {
 
         File outputFile = new File(NAPaths.getWorldDataPath().toFile(), String.format("exported_map_layer_%d.png", layerId));

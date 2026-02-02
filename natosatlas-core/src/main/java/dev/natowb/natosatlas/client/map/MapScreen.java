@@ -401,7 +401,7 @@ public class MapScreen extends UIScreen {
         }
 
         if (keyCode == Keyboard.KEY_P) {
-            MapExporter.exportAllLayers();
+            MapExporter.exportMapLayer(activeLayer);
         }
     }
 

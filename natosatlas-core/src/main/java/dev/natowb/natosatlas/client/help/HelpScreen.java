@@ -11,7 +11,6 @@ import static dev.natowb.natosatlas.client.texture.TextureProvider.ICON_BACK;
 
 public class HelpScreen extends UIScreen {
 
-    private UIElementIconButton closeButton;
     private final NAPainter painter = NAClient.get().getPlatform().painter;
 
     private int headerY;
@@ -22,7 +21,7 @@ public class HelpScreen extends UIScreen {
             {"[L Mouse DBClick]", "Create Waypoint"},
             {"[Mouse Wheel]", "Zoom in/out"},
             {"[Space]", "Reset camera"},
-            {"[P]", "Export map layers"}
+            {"[P]", "Export current map layer"}
     };
 
     public HelpScreen(UIScreen parent) {
@@ -42,7 +41,7 @@ public class HelpScreen extends UIScreen {
 
         headerY = contentTop;
 
-        closeButton = new UIElementIconButton(200, width / 2 - 100, headerY, 20, 20, ICON_BACK);
+        UIElementIconButton closeButton = new UIElementIconButton(200, width / 2 - 100, headerY, 20, 20, ICON_BACK);
         closeButton.setHandler(btn -> NAClient.get().getPlatform().screen.openNacScreen(parent));
         addButton(closeButton);
     }
