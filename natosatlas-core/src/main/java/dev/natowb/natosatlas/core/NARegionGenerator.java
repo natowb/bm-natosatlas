@@ -14,12 +14,12 @@ import java.util.function.Function;
 public class NARegionGenerator {
 
     private final List<NARegionFile> regions;
-    private final Function<NACoord, ChunkWrapper> chunkProvider;
+    private final BiFunction<NACoord, File, ChunkWrapper> chunkProvider;
     private final BiFunction<Integer, NACoord, File> outputFileProvider;
 
     public NARegionGenerator(
             List<NARegionFile> regions,
-            Function<NACoord, ChunkWrapper> chunkProvider,
+            BiFunction<NACoord, File, ChunkWrapper> chunkProvider,
             BiFunction<Integer, NACoord, File> outputFileProvider
     ) {
         this.regions = regions;
@@ -45,9 +45,8 @@ public class NARegionGenerator {
     private NARegionPixelData buildRegionPixels(NARegionFile regionFile, int layerId) {
         NARegionPixelData region = new NARegionPixelData();
         NALayer layer = LayerRegistry.get(layerId);
-
         for (NACoord chunkCoord : regionFile.iterateExistingChunks()) {
-            ChunkWrapper wrapper = chunkProvider.apply(chunkCoord);
+            ChunkWrapper wrapper = chunkProvider.apply(chunkCoord, regionFile.file.getParentFile().getParentFile());
             if (wrapper == null) continue;
 
             NAChunk chunk = layer.builder.build(chunkCoord, wrapper);

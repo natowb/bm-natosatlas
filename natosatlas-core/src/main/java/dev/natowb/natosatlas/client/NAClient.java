@@ -34,7 +34,7 @@ public class NAClient implements NAClientSession {
         NAClient.instance = this;
         this.platform = platform;
 
-        LayerRegistry.getLayers().add(new NALayer(2, "Cave", new NAChunkBuilderCave(), true));
+        LayerRegistry.getLayers().add(new NALayer(2, "Cave", new NAChunkBuilderCave(), true, false ));
         Settings.load();
     }
 

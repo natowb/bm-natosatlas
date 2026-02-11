@@ -70,6 +70,17 @@ public class STClientWorldAccess extends ClientWorldAccess {
     }
 
     @Override
+    public File getDimDirectory(File worldDir) {
+        int dim = getWorldInfo().getDimensionId();
+
+        if (dim == 0) {
+            return worldDir;
+        }
+
+        return new File(worldDir, String.format("DIM%d", dim));
+    }
+
+    @Override
     public NABiome getBiome(NACoord blockCoord) {
         Biome biome = mc.world.method_1781().getBiome(blockCoord.x, blockCoord.z);
         return new NABiome(biome.grassColor, biome.foliageColor);
@@ -145,10 +156,10 @@ public class STClientWorldAccess extends ClientWorldAccess {
     }
 
     @Override
-    public ChunkWrapper getChunkFromDisk(NACoord chunkCoord) {
+    public ChunkWrapper getChunkFromDisk(NACoord chunkCoord, File dimDir) {
         try {
 
-            FlattenedWorldChunkLoader loader = new FlattenedWorldChunkLoader(NAPaths.getWorldSavePath().toFile());
+            FlattenedWorldChunkLoader loader = new FlattenedWorldChunkLoader(dimDir);
 
             int cx = chunkCoord.x;
             int cz = chunkCoord.z;

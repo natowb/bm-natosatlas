@@ -109,7 +109,8 @@ public class RegionFileWatcher implements Runnable {
         }
     }
 
-    private ChunkWrapper getChunk(NACoord chunkCoord) {
+    //FIXME: this dimDir is not used correctly. kinda wanna remake this entire class...
+    private ChunkWrapper getChunk(NACoord chunkCoord, File dimDir) {
         return platform.getChunk(dim, chunkCoord);
     }
 

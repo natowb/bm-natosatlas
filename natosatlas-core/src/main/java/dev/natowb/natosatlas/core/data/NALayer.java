@@ -7,11 +7,13 @@ public final class NALayer {
     public final String name;
     public final NAChunkBuilder builder;
     public final boolean usesBlockLight;
+    public final boolean generateFromExisting;
 
-    public NALayer(int id, String name, NAChunkBuilder builder, boolean usesBlockLight) {
+    public NALayer(int id, String name, NAChunkBuilder builder, boolean usesBlockLight, boolean generateFromExisting) {
         this.id = id;
         this.name = name;
         this.builder = builder;
         this.usesBlockLight = usesBlockLight;
+        this.generateFromExisting = generateFromExisting;
     }
 }

@@ -23,6 +23,8 @@ public abstract class ClientWorldAccess {
 
     public abstract String getSaveName();
 
+    public abstract File getDimDirectory(File worldDir);
+
     public abstract NABiome getBiome(NACoord blockCoord);
 
     public abstract List<NAEntity> getEntities();
@@ -33,7 +35,7 @@ public abstract class ClientWorldAccess {
 
     public abstract ChunkWrapper getChunk(NACoord chunkCoord);
 
-    public abstract ChunkWrapper getChunkFromDisk(NACoord chunkCoord);
+    public abstract ChunkWrapper getChunkFromDisk(NACoord chunkCoord, File dimDir);
 
     public abstract List<NARegionFile> getRegionFiles(File dimDir);
 }

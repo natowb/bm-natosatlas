@@ -19,8 +19,8 @@ public class ClientMapGenerator {
             return;
         }
 
-        File dimDir = NAPaths.getWorldSavePath().toFile();
-        List<NARegionFile> regions = access.getRegionFiles(dimDir);
+        File worldDir = NAPaths.getWorldSavePath().toFile();
+        List<NARegionFile> regions = access.getRegionFiles(ClientWorldAccess.get().getDimDirectory(worldDir));
 
         if (regions.isEmpty()) {
             LogUtil.info("No region files found for client world");

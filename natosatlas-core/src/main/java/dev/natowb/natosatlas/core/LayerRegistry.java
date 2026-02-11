@@ -11,8 +11,8 @@ public class LayerRegistry {
     private static final List<NALayer> LAYERS = new ArrayList<>();
 
     static {
-        LAYERS.add(new NALayer(0, "Day", new NAChunkBuilderSurface(), false));
-        LAYERS.add(new NALayer(1, "Night", new NAChunkBuilderSurface(), true));
+        LAYERS.add(new NALayer(0, "Day", new NAChunkBuilderSurface(), false, true));
+        LAYERS.add(new NALayer(1, "Night", new NAChunkBuilderSurface(), true, true ));
     }
 
     public static List<NALayer> getLayers() {
