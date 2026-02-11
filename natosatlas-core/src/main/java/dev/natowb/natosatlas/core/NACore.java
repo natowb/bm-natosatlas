@@ -2,6 +2,7 @@ package dev.natowb.natosatlas.core;
 
 import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.ClientPlatform;
+import dev.natowb.natosatlas.core.util.LogUtil;
 import dev.natowb.natosatlas.server.NAServer;
 import dev.natowb.natosatlas.server.ServerPlatform;
 
@@ -38,7 +39,10 @@ public final class NACore {
         if (!initialized) {
             throw new IllegalStateException("Tried to start Natos Atlas server before NACore was initialized");
         }
-        NAServer.getInstance(platform).startServer();
+//        NAServer.getInstance(platform).startServer();
+
+        LogUtil.error("NatosAtlas Serverside is currently disabled and or unimplemented");
+
     }
 
 

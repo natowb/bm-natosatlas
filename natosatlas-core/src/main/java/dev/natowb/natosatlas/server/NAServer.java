@@ -17,15 +17,13 @@ public class NAServer {
 
     private boolean started;
     private final ServerPlatform platform;
-    private RegionFileWatcher overworldWatcher;
-    private RegionFileWatcher netherWatcher;
+    private final RegionFileWatcher overworldWatcher;
 
 
     private NAServer(ServerPlatform platform) {
         NAPaths.setWorldPaths(platform.getLevelName(), true);
         this.platform = platform;
         this.overworldWatcher = new RegionFileWatcher(platform);
-        this.netherWatcher = new RegionFileWatcher(platform);
     }
 
     public synchronized void startServer() {
@@ -54,7 +52,5 @@ public class NAServer {
 
     private void startRegionFileWatcher() {
         overworldWatcher.start(0);
-        netherWatcher.start(-1);
     }
-
 }
