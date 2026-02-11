@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.modloader;
+package dev.natowb.natosatlas.modloader.client;
 
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.elements.UIScreen;
@@ -9,11 +9,11 @@ import net.minecraft.src.ModLoader;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-public class UIScreenWrapperML extends Screen {
+public class MLScreenWrapper extends Screen {
     private final Minecraft minecraft = ModLoader.getMinecraftInstance();
     private final UIScreen screen;
 
-    public UIScreenWrapperML(UIScreen screen) {
+    public MLScreenWrapper(UIScreen screen) {
         this.screen = screen;
     }
 

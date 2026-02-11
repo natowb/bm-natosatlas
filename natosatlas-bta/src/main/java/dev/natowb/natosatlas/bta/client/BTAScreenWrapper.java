@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.bta;
+package dev.natowb.natosatlas.bta.client;
 
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.elements.UIScreen;
@@ -10,11 +10,11 @@ import net.minecraft.client.util.debug.DebugRender;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.input.Keyboard;
 
-public class UIScreenWrapperBTA extends Screen {
+public class BTAScreenWrapper extends Screen {
 	private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 	private final UIScreen screen;
 
-	public UIScreenWrapperBTA(UIScreen screen) {
+	public BTAScreenWrapper(UIScreen screen) {
 		this.screen = screen;
 	}
 

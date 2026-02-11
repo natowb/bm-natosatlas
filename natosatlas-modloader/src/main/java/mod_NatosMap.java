@@ -5,6 +5,8 @@ import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.client.map.MapScreen;
 import dev.natowb.natosatlas.modloader.*;
 
+import dev.natowb.natosatlas.modloader.client.MLClientPlatform;
+import dev.natowb.natosatlas.modloader.client.MLClientWorldAccess;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.KeyBinding;
@@ -23,9 +25,9 @@ public class mod_NatosMap extends BaseMod {
         ModLoader.SetInGameHook(this, true, true);
         ModLoader.SetInGUIHook(this, true, true);
         BlockAccess.set(new BlockAccessML());
-        ClientWorldAccess.set(new WorldAccessML());
+        ClientWorldAccess.set(new MLClientWorldAccess());
         NACore.init(Minecraft.getRunDirectory().toPath());
-        NACore.startClient(new PlatformML());
+        NACore.startClient(new MLClientPlatform());
     }
 
     @Override

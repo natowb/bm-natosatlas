@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.modloader;
+package dev.natowb.natosatlas.modloader.client;
 
 import dev.natowb.natosatlas.core.NAPaths;
 import dev.natowb.natosatlas.core.data.*;
@@ -21,7 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldAccessML extends ClientWorldAccess {
+public class MLClientWorldAccess extends ClientWorldAccess {
 
     private static final Minecraft mc = ModLoader.getMinecraftInstance();
 

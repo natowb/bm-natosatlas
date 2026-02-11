@@ -5,10 +5,10 @@ import net.minecraft.core.block.Block;
 import net.minecraft.core.block.Blocks;
 import net.minecraft.core.block.material.MaterialColor;
 
-public class BlockAccessBTA extends BlockAccess {
+public class BTABlockAccess extends BlockAccess {
 
 
-    public BlockAccessBTA() {
+    public BTABlockAccess() {
         registerBlockIdentifier(BlockIdentifier.GLASS, Blocks.GLASS.id());
         registerBlockIdentifier(BlockIdentifier.GRASS, Blocks.GRASS.id());
         registerBlockIdentifier(BlockIdentifier.SNOW, Blocks.LAYER_SNOW.id());

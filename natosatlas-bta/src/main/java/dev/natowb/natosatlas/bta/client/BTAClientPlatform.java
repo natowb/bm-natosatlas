@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.bta;
+package dev.natowb.natosatlas.bta.client;
 
 import dev.natowb.natosatlas.client.ClientPlatform;
 import dev.natowb.natosatlas.client.access.ScreenAccess;
@@ -7,16 +7,16 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.sound.SoundCategory;
 
-public class PlatformBTA extends ClientPlatform {
-    public PlatformBTA() {
-        super(new PlatformPainterBTA(), new ScreenAccess() {
+public class BTAClientPlatform extends ClientPlatform {
+    public BTAClientPlatform() {
+        super(new BTAPainter(), new ScreenAccess() {
             @Override
             public void openNacScreen(UIScreen screen) {
                 Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
                 if (screen == null) {
                     mc.displayScreen(null);
                 } else {
-                    mc.displayScreen(new UIScreenWrapperBTA(screen));
+                    mc.displayScreen(new BTAScreenWrapper(screen));
                 }
             }
 

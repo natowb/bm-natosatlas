@@ -17,16 +17,16 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "dev.natowb.natosatlas.bta.NatoAtlasBTA"
+      "dev.natowb.natosatlas.bta.client.BTAClientEntry"
     ],
     "beforeGameStart": [
-      "dev.natowb.natosatlas.bta.NatoAtlasBTA"
+      "dev.natowb.natosatlas.bta.client.BTAClientEntry"
     ],
     "afterGameStart": [
-      "dev.natowb.natosatlas.bta.NatoAtlasBTA"
+      "dev.natowb.natosatlas.bta.client.BTAClientEntry"
     ],
     "recipesReady": [
-      "dev.natowb.natosatlas.bta.NatoAtlasBTA"
+      "dev.natowb.natosatlas.bta.client.BTAClientEntry"
     ]
   },
   "mixins": [

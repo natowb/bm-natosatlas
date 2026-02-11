@@ -1,4 +1,4 @@
-package dev.natowb.natosatlas.bta;
+package dev.natowb.natosatlas.bta.client;
 
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
@@ -17,7 +17,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldAccessBTA extends ClientWorldAccess {
+public class BTAClientWorldAccess extends ClientWorldAccess {
     private static final Minecraft mc = (Minecraft) FabricLoader.getInstance().getGameInstance();
 
     @Override
