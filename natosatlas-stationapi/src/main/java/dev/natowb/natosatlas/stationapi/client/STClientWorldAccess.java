@@ -5,6 +5,7 @@ import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.util.LogUtil;
+import dev.natowb.natosatlas.stationapi.mixin.STWorldAccessorMixin;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
@@ -45,28 +46,10 @@ public class STClientWorldAccess extends ClientWorldAccess {
             if (mc.options.lastServer == null || mc.options.lastServer.isEmpty()) {
                 return "MPServer-FailedToGetIP";
             }
+
             return mc.options.lastServer;
         }
-
-        mc.world.attemptSaving(0);
-        List<WorldSaveInfo> saves = mc.getWorldStorageSource().getAll();
-        if (saves == null || saves.isEmpty()) return null;
-
-        String currentName = mc.world.getProperties().getName();
-        WorldSaveInfo best = null;
-        long bestTime = Long.MIN_VALUE;
-
-        for (WorldSaveInfo info : saves) {
-            if (info.getName().equals(currentName)) {
-                long t = info.getLastPlayed();
-                if (t > bestTime) {
-                    bestTime = t;
-                    best = info;
-                }
-            }
-        }
-
-        return best != null ? best.getSaveName() : null;
+        return ((STWorldAccessorMixin) mc.world).getStorage().getWorldPropertiesFile("fake").getParentFile().getParentFile().getName();
     }
 
     @Override

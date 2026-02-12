@@ -49,6 +49,7 @@ public class MLClientWorldAccess extends ClientWorldAccess {
             return mc.options.lastServer;
         }
 
+        // FIXME: find if there be a better way for mod loader to get this.
         mc.world.attemptSaving(0);
         List<WorldSaveInfo> saves = mc.getWorldStorageSource().getAll();
         if (saves == null || saves.isEmpty()) return null;
@@ -66,8 +67,18 @@ public class MLClientWorldAccess extends ClientWorldAccess {
                 }
             }
         }
-
         return best != null ? best.getSaveName() : null;
+    }
+
+    @Override
+    public File getDimDirectory(File worldDir) {
+        int dim = getWorldInfo().getDimensionId();
+
+        if (dim == 0) {
+            return worldDir;
+        }
+
+        return new File(worldDir, String.format("DIM%d", dim));
     }
 
     @Override
@@ -148,8 +159,8 @@ public class MLClientWorldAccess extends ClientWorldAccess {
     }
 
     @Override
-    public ChunkWrapper getChunkFromDisk(NACoord chunkCoord) {
-        RegionChunkStorage chunkLoader = new RegionChunkStorage(NAPaths.getWorldSavePath().toFile());
+    public ChunkWrapper getChunkFromDisk(NACoord chunkCoord, File dimDir) {
+        RegionChunkStorage chunkLoader = new RegionChunkStorage(dimDir);
         Chunk chunk = chunkLoader.loadChunk(mc.world, chunkCoord.x, chunkCoord.z);
 
         if (chunk == null) return null;

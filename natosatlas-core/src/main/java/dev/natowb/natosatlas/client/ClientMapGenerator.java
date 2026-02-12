@@ -28,7 +28,6 @@ public class ClientMapGenerator {
         }
 
         LogUtil.info("Client queued {} regions for generation", regions.size());
-
         NARegionGenerator generator = new NARegionGenerator(regions, access::getChunkFromDisk, ClientMapGenerator::buildOutputFile);
 
         generator.generateAll();
@@ -42,7 +41,6 @@ public class ClientMapGenerator {
         if (!baseDir.exists()) {
             baseDir.mkdirs();
         }
-
         return new File(baseDir, "region_" + regionCoord.x + "_" + regionCoord.z + ".png");
     }
 }

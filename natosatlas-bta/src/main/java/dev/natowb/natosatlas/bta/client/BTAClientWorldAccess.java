@@ -36,33 +36,13 @@ public class BTAClientWorldAccess extends ClientWorldAccess {
 
     @Override
     public String getSaveName() {
-        if (mc.isMultiplayerWorld()) {
-            // FIXME: find a way to get the server name if the options is empty.
-            if (mc.gameSettings.lastServer == null || mc.gameSettings.lastServer.value.isEmpty()) {
-                return "MPServer-FailedToGetIP";
-            }
-            return mc.gameSettings.lastServer.value;
-        }
+        return mc.currentWorld.saveHandler.getDataFile("fake").getParentFile().getParentFile().getName();
+    }
 
-        mc.currentWorld.pauseScreenSave(0);
-        List<SaveFile> saves = mc.getSaveFormat().getSaveFileList();
-        if (saves == null || saves.isEmpty()) return null;
-
-        String currentName = mc.currentWorld.getLevelData().getWorldName();
-        SaveFile best = null;
-        long bestTime = Long.MIN_VALUE;
-
-        for (SaveFile info : saves) {
-            if (info.getDisplayName().equals(currentName)) {
-                long t = info.getLastTimePlayed();
-                if (t > bestTime) {
-                    bestTime = t;
-                    best = info;
-                }
-            }
-        }
-
-        return best != null ? best.getFileName() : null;
+    @Override
+    public File getDimDirectory(File worldDir) {
+        int dim = getWorldInfo().getDimensionId();
+        return new File(worldDir, String.format("dimensions/%d", dim));
     }
 
     @Override
@@ -140,7 +120,7 @@ public class BTAClientWorldAccess extends ClientWorldAccess {
     }
 
     @Override
-    public ChunkWrapper getChunkFromDisk(NACoord chunkCoord) {
+    public ChunkWrapper getChunkFromDisk(NACoord chunkCoord, File dimDir) {
         return null;
     }
 
