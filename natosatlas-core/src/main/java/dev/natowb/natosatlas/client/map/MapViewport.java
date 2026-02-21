@@ -153,6 +153,7 @@ public class MapViewport {
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
+
     public Set<Long> computeVisibleRegions() {
         visibleRegions.clear();
 
