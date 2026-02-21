@@ -30,7 +30,6 @@ public class NAChunkBuilderCave implements NAChunkBuilder {
                 int worldX = chunkCoord.x * 16 + x;
                 int worldZ = chunkCoord.z * 16 + z;
                 NABiome biome = ClientWorldAccess.get().getBiome(NACoord.from(worldX, worldZ));
-
                 chunk.set(x, z, floorY, blockId, 0, blockLight, meta, biome);
             }
         }

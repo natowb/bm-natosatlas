@@ -1,6 +1,7 @@
 package dev.natowb.natosatlas.core.chunk;
 
 import dev.natowb.natosatlas.client.access.BlockAccess;
+import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.core.data.NACoord;
@@ -26,10 +27,10 @@ public class NAChunkBuilderSurface implements NAChunkBuilder {
                 int blockLight = wrapper.getBlockLight(x, height + 1, z);
                 int meta = wrapper.getBlockMeta(x, height, z);
                 // FIXME: reintroduce biome detection without client related code
-//                NABiome biome = WorldAccess.get().getBiome(NACoord.from(worldBlockX, worldBlockZ));
-//                int worldBlockX = chunkCoord.x * BLOCKS_PER_MINECRAFT_CHUNK + x;
-//                int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
-                nac.set(x, z, height, blockId, depth, blockLight, meta, new NABiome(0, 0));
+                int worldBlockX = chunkCoord.x * BLOCKS_PER_MINECRAFT_CHUNK + x;
+                int worldBlockZ = chunkCoord.z * BLOCKS_PER_MINECRAFT_CHUNK + z;
+                NABiome biome = ClientWorldAccess.get().getBiome(NACoord.from(worldBlockX, worldBlockZ));
+                nac.set(x, z, height, blockId, depth, blockLight, meta, biome);
             }
         }
         return nac;

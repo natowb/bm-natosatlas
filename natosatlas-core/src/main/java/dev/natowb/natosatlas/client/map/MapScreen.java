@@ -5,6 +5,7 @@ import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.core.NAConstants;
 import dev.natowb.natosatlas.client.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
+import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.client.access.NAPainter;
@@ -271,7 +272,7 @@ public class MapScreen extends UIScreen {
 
 
         renderDebugInfo(ctx);
-        renderMouseTooltip(ctx);
+        renderMouseBlockInfo(ctx);
         super.render(mouseX, mouseY, delta, scaleInfo);
     }
 
@@ -297,9 +298,10 @@ public class MapScreen extends UIScreen {
     }
 
 
-    private void renderMouseTooltip(MapContext ctx) {
+    private void renderMouseBlockInfo(MapContext ctx) {
         NACoord bc = getMouseBlock(ctx);
-        String text = "(" + bc.x + ", " + bc.z + ")";
+        NABiome biome = ClientWorldAccess.get().getBiome(bc);
+        String text = "(" + bc.x + ", " + bc.z + ") | " + biome.name + " |";
 
         NAPainter p = NAClient.get().getPlatform().painter;
 

@@ -4,11 +4,13 @@ import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.impl.lib.sat4j.tools.GateTranslator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.entity.Mob;
 import net.minecraft.core.entity.animal.MobAnimal;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.enums.LightLayer;
+import net.minecraft.core.lang.text.TranslatableText;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.save.SaveFile;
@@ -48,7 +50,7 @@ public class BTAClientWorldAccess extends ClientWorldAccess {
     @Override
     public NABiome getBiome(NACoord blockCoord) {
         Biome biome = mc.currentWorld.getBiomeProvider().getBiome(blockCoord.x, 50, blockCoord.z);
-        return new NABiome(biome.topBlock, biome.color);
+        return new NABiome(biome.topBlock, biome.color, TranslatableText.text().trans(biome.translationKey).toString());
     }
 
     @Override

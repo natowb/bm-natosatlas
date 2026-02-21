@@ -66,7 +66,7 @@ public class STClientWorldAccess extends ClientWorldAccess {
     @Override
     public NABiome getBiome(NACoord blockCoord) {
         Biome biome = mc.world.method_1781().getBiome(blockCoord.x, blockCoord.z);
-        return new NABiome(biome.grassColor, biome.foliageColor);
+        return new NABiome(biome.grassColor, biome.foliageColor, biome.name);
     }
 
     @Override
