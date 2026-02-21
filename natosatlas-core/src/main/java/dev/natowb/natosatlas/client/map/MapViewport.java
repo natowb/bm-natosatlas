@@ -157,21 +157,63 @@ public class MapViewport {
     public Set<Long> computeVisibleRegions() {
         visibleRegions.clear();
 
-        double leftBlock = ctx.scrollX / NAConstants.PIXELS_PER_CANVAS_UNIT;
-        double topBlock = ctx.scrollY / NAConstants.PIXELS_PER_CANVAS_UNIT;
-        double rightBlock = (ctx.scrollX + ctx.canvasW / ctx.zoom) / NAConstants.PIXELS_PER_CANVAS_UNIT;
-        double bottomBlock = (ctx.scrollY + ctx.canvasH / ctx.zoom) / NAConstants.PIXELS_PER_CANVAS_UNIT;
+        float pivotX = ctx.canvasW / 2f;
+        float pivotY = ctx.canvasH / 2f;
 
-        int startChunkX = Math.floorDiv((int) leftBlock, 16);
-        int endChunkX = Math.floorDiv((int) rightBlock, 16);
-        int startChunkZ = Math.floorDiv((int) topBlock, 16);
-        int endChunkZ = Math.floorDiv((int) bottomBlock, 16);
+        float[][] corners = {
+                {0, 0},
+                {ctx.canvasW, 0},
+                {0, ctx.canvasH},
+                {ctx.canvasW, ctx.canvasH}
+        };
 
-        int startRegionX = Math.floorDiv(startChunkX, 32) - 2;
-        int endRegionX = Math.floorDiv(endChunkX, 32) + 2;
-        int startRegionZ = Math.floorDiv(startChunkZ, 32) - 2;
-        int endRegionZ = Math.floorDiv(endChunkZ, 32) + 2;
+        float cos = (float) Math.cos(ctx.rotation);
+        float sin = (float) Math.sin(ctx.rotation);
 
+        float minX = Float.MAX_VALUE;
+        float maxX = -Float.MAX_VALUE;
+        float minY = Float.MAX_VALUE;
+        float maxY = -Float.MAX_VALUE;
+
+        for (float[] p : corners) {
+            float x = p[0];
+            float y = p[1];
+
+            x -= pivotX;
+            y -= pivotY;
+
+            x /= ctx.zoom;
+            y /= ctx.zoom;
+
+            float rx = x * cos - y * sin;
+            float ry = x * sin + y * cos;
+
+            rx += pivotX;
+            ry += pivotY;
+
+            rx += ctx.scrollX;
+            ry += ctx.scrollY;
+
+            minX = Math.min(minX, rx);
+            maxX = Math.max(maxX, rx);
+            minY = Math.min(minY, ry);
+            maxY = Math.max(maxY, ry);
+        }
+
+        double leftBlock = minX / NAConstants.PIXELS_PER_CANVAS_UNIT;
+        double rightBlock = maxX / NAConstants.PIXELS_PER_CANVAS_UNIT;
+        double topBlock = minY / NAConstants.PIXELS_PER_CANVAS_UNIT;
+        double bottomBlock = maxY / NAConstants.PIXELS_PER_CANVAS_UNIT;
+
+        int startChunkX = (int) Math.floor(leftBlock / NAConstants.BLOCKS_PER_MINECRAFT_CHUNK);
+        int endChunkX = (int) Math.floor(rightBlock / NAConstants.BLOCKS_PER_MINECRAFT_CHUNK);
+        int startChunkZ = (int) Math.floor(topBlock / NAConstants.BLOCKS_PER_MINECRAFT_CHUNK);
+        int endChunkZ = (int) Math.floor(bottomBlock / NAConstants.BLOCKS_PER_MINECRAFT_CHUNK);
+
+        int startRegionX = Math.floorDiv(startChunkX, NAConstants.CHUNKS_PER_MINECRAFT_REGION);
+        int endRegionX = Math.floorDiv(endChunkX, NAConstants.CHUNKS_PER_MINECRAFT_REGION);
+        int startRegionZ = Math.floorDiv(startChunkZ, NAConstants.CHUNKS_PER_MINECRAFT_REGION);
+        int endRegionZ = Math.floorDiv(endChunkZ, NAConstants.CHUNKS_PER_MINECRAFT_REGION);
 
         for (int rx = startRegionX; rx <= endRegionX; rx++) {
             for (int rz = startRegionZ; rz <= endRegionZ; rz++) {

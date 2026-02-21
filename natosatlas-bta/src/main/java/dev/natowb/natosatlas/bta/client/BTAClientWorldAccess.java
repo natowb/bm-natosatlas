@@ -3,6 +3,7 @@ package dev.natowb.natosatlas.bta.client;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.core.util.LogUtil;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.impl.lib.sat4j.tools.GateTranslator;
 import net.minecraft.client.Minecraft;
@@ -13,7 +14,9 @@ import net.minecraft.core.enums.LightLayer;
 import net.minecraft.core.lang.text.TranslatableText;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
+import net.minecraft.core.world.chunk.ChunkLoaderRegion;
 import net.minecraft.core.world.save.SaveFile;
+import net.minecraft.core.world.save.mcregion.RegionFile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -123,11 +126,99 @@ public class BTAClientWorldAccess extends ClientWorldAccess {
 
     @Override
     public ChunkWrapper getChunkFromDisk(NACoord chunkCoord, File dimDir) {
-        return null;
+        try {
+
+            ChunkLoaderRegion loader = new ChunkLoaderRegion(dimDir);
+
+            int cx = chunkCoord.x;
+            int cz = chunkCoord.z;
+
+            Chunk mcChunk = loader.loadChunk(mc.currentWorld, cx, cz);
+            if (mcChunk == null) {
+                LogUtil.warn("Chunk {} {} does not exist on disk", cx, cz);
+                return null;
+            }
+
+            return new ChunkWrapper(mcChunk, mc.currentWorld.getHeightBlocks()) {
+
+                @Override
+                public int getBlockId(int x, int y, int z) {
+                    return mcChunk.getBlockID(x, y, z);
+                }
+
+                @Override
+                public int getBlockMeta(int x, int y, int z) {
+                    return mcChunk.getBlockMetadata(x, y, z);
+                }
+
+                @Override
+                public int getBlockLight(int x, int y, int z) {
+                    return mcChunk.getBrightness(LightLayer.Block, x, y, z);
+                }
+
+                @Override
+                public int getSkyLight(int x, int y, int z) {
+                    return mcChunk.getBrightness(LightLayer.Sky, x, y, z);
+                }
+            };
+
+        } catch (Exception e) {
+            LogUtil.error("Failed to load chunk {}: {}", chunkCoord, e);
+            return null;
+        }
     }
 
     @Override
     public List<NARegionFile> getRegionFiles(File dimDir) {
-        return new ArrayList<>();
+        List<NARegionFile> result = new ArrayList<>();
+        File regionDir = new File(dimDir, "region");
+
+        File[] regionFiles = regionDir.listFiles((dir, name) ->
+                name.endsWith(".mcr") || name.endsWith(".mca")
+        );
+
+        if (regionFiles == null) return result;
+
+        int index = 0;
+
+        for (File regionFile : regionFiles) {
+            index++;
+
+            boolean success = false;
+
+            try {
+                String name = regionFile.getName();
+                String[] parts = name.substring(2, name.length() - 4).split("\\.");
+                if (parts.length != 2) continue;
+
+                int rx = Integer.parseInt(parts[0]);
+                int rz = Integer.parseInt(parts[1]);
+                NACoord regionCoord = new NACoord(rx, rz);
+
+                NARegionFile naRegion = new NARegionFile(regionFile, regionCoord);
+
+                RegionFile rf = new RegionFile(regionFile);
+                for (int x = 0; x < NARegionFile.CHUNKS_PER_REGION; x++) {
+                    for (int z = 0; z < NARegionFile.CHUNKS_PER_REGION; z++) {
+                        if (rf.chunkExists(x, z)) {
+                            naRegion.chunkExists[x][z] = true;
+                        }
+                    }
+                }
+                rf.close();
+
+                result.add(naRegion);
+                success = true;
+
+            } catch (Exception ignored) {
+            }
+
+            if (success) {
+                LogUtil.info("[{}/{}] Successfully processed region file: {}", index, regionFiles.length, regionFile.getName());
+            } else {
+                LogUtil.info("[{}/{}] Failed to process region file: {}", index, regionFiles.length, regionFile.getName());
+            }
+        }
+        return result;
     }
 }

@@ -110,6 +110,7 @@ public class STClientWorldAccess extends ClientWorldAccess {
         return new NAEntity(p.x, p.y, p.z, p.yaw, NAEntity.NAEntityType.Player);
     }
 
+
     @Override
     public ChunkWrapper getChunk(NACoord chunkCoord) {
         Chunk chunk = mc.world.getChunk(chunkCoord.x, chunkCoord.z);
