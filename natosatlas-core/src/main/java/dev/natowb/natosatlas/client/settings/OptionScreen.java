@@ -12,6 +12,7 @@ import dev.natowb.natosatlas.client.ui.elements.*;
 import dev.natowb.natosatlas.client.ui.UITheme;
 import dev.natowb.natosatlas.client.ui.layout.UILayout;
 import dev.natowb.natosatlas.client.ui.layout.UIVerticalLayout;
+import dev.natowb.natosatlas.core.util.LogUtil;
 
 import static dev.natowb.natosatlas.client.texture.TextureProvider.ICON_BACK;
 
@@ -58,6 +59,7 @@ public class OptionScreen extends UIScreen {
         existingButton.setHandler(btn -> {
             SaveScheduler.stop();
             ClientMapGenerator.generateClientRegions();
+            LogUtil.info("Finished generating existing regions for current dimension");
             NARegionTextureCache.clear();
             SaveScheduler.start();
         });

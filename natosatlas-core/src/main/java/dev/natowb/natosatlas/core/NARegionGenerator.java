@@ -28,8 +28,11 @@ public class NARegionGenerator {
     }
 
     public void generateAll() {
+        int counter = 0;
+        final int total = regions.size();
         for (NARegionFile regionFile : regions) {
             generateRegion(regionFile);
+            LogUtil.info("[{}/{}] Generated data for region {}", ++counter, total, regionFile.regionCoord);
         }
     }
 
