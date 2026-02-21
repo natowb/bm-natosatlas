@@ -162,15 +162,16 @@ public class MapViewport {
         double rightBlock = (ctx.scrollX + ctx.canvasW / ctx.zoom) / NAConstants.PIXELS_PER_CANVAS_UNIT;
         double bottomBlock = (ctx.scrollY + ctx.canvasH / ctx.zoom) / NAConstants.PIXELS_PER_CANVAS_UNIT;
 
-        int startChunkX = (int) Math.floor(leftBlock / 16);
-        int endChunkX = (int) Math.floor(rightBlock / 16);
-        int startChunkZ = (int) Math.floor(topBlock / 16);
-        int endChunkZ = (int) Math.floor(bottomBlock / 16);
+        int startChunkX = Math.floorDiv((int) leftBlock, 16);
+        int endChunkX = Math.floorDiv((int) rightBlock, 16);
+        int startChunkZ = Math.floorDiv((int) topBlock, 16);
+        int endChunkZ = Math.floorDiv((int) bottomBlock, 16);
 
-        int startRegionX = startChunkX / 32 - 2;
-        int endRegionX = endChunkX / 32 + 2;
-        int startRegionZ = startChunkZ / 32 - 2;
-        int endRegionZ = endChunkZ / 32 + 2;
+        int startRegionX = Math.floorDiv(startChunkX, 32) - 2;
+        int endRegionX = Math.floorDiv(endChunkX, 32) + 2;
+        int startRegionZ = Math.floorDiv(startChunkZ, 32) - 2;
+        int endRegionZ = Math.floorDiv(endChunkZ, 32) + 2;
+
 
         for (int rx = startRegionX; rx <= endRegionX; rx++) {
             for (int rz = startRegionZ; rz <= endRegionZ; rz++) {
