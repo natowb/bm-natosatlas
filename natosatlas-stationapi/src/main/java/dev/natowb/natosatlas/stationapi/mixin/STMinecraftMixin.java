@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.stationapi.mixin;
 
 import dev.natowb.natosatlas.client.NAClient;
-import dev.natowb.natosatlas.client.map.MapScreen;
+import dev.natowb.natosatlas.client.ui.screens.map.MapScreen;
 import dev.natowb.natosatlas.core.NACore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;

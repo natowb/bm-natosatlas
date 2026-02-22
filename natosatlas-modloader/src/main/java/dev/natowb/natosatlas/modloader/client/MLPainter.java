@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.modloader.client;
 
-import dev.natowb.natosatlas.client.access.NAPainter;
+import dev.natowb.natosatlas.client.platform.NAPainter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.ModLoader;
 import org.lwjgl.opengl.GL11;

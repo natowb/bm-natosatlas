@@ -1,9 +1,8 @@
 package dev.natowb.natosatlas.modloader.client;
 
-import dev.natowb.natosatlas.core.NAPaths;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
-import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.client.platform.ClientWorldAccess;
 import dev.natowb.natosatlas.core.util.LogUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;

@@ -1,9 +1,8 @@
 package dev.natowb.natosatlas.core.chunk;
 
-import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
-import dev.natowb.natosatlas.client.access.BlockAccess;
+import dev.natowb.natosatlas.client.platform.BlockAccess;
 
 
 public final class ChunkColorEngine {

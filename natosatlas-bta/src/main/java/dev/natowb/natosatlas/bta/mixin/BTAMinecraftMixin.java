@@ -2,7 +2,7 @@ package dev.natowb.natosatlas.bta.mixin;
 
 import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.core.NACore;
-import dev.natowb.natosatlas.client.map.MapScreen;
+import dev.natowb.natosatlas.client.ui.screens.map.MapScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Screen;
 import org.jetbrains.annotations.Nullable;

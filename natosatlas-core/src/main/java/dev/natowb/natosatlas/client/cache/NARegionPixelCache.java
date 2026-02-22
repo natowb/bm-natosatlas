@@ -1,12 +1,11 @@
 package dev.natowb.natosatlas.client.cache;
 
 import dev.natowb.natosatlas.core.NAPaths;
-import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.client.platform.ClientWorldAccess;
 import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionPixelData;
 import dev.natowb.natosatlas.core.storage.NARegionStorage;
-import dev.natowb.natosatlas.core.util.LogUtil;
 
 import java.io.File;
 import java.nio.file.Path;

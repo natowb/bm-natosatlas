@@ -1,16 +1,16 @@
 package dev.natowb.natosatlas.client;
 
-import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.client.platform.ClientPlatform;
+import dev.natowb.natosatlas.client.platform.ClientWorldAccess;
 import dev.natowb.natosatlas.client.cache.NARegionTextureCache;
-import dev.natowb.natosatlas.client.saving.MapSaver;
-import dev.natowb.natosatlas.client.settings.Settings;
+import dev.natowb.natosatlas.client.io.MapSaver;
+import dev.natowb.natosatlas.client.ui.screens.settings.Settings;
 import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.NAClientSession;
 import dev.natowb.natosatlas.core.NAPaths;
 import dev.natowb.natosatlas.core.data.NALayer;
 import dev.natowb.natosatlas.core.util.LogUtil;
-import dev.natowb.natosatlas.client.map.MapUpdater;
-import dev.natowb.natosatlas.client.waypoint.Waypoints;
+import dev.natowb.natosatlas.client.ui.screens.waypoint.Waypoints;
 
 public class NAClient implements NAClientSession {
 

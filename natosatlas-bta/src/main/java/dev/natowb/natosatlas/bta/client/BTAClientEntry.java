@@ -1,8 +1,8 @@
 package dev.natowb.natosatlas.bta.client;
 
 import dev.natowb.natosatlas.bta.BTABlockAccess;
-import dev.natowb.natosatlas.client.access.BlockAccess;
-import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.client.platform.BlockAccess;
+import dev.natowb.natosatlas.client.platform.ClientWorldAccess;
 import dev.natowb.natosatlas.core.NACore;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;

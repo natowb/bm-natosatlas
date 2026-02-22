@@ -1,9 +1,8 @@
 package dev.natowb.natosatlas.core;
 
 import dev.natowb.natosatlas.client.NAClient;
-import dev.natowb.natosatlas.client.ClientPlatform;
+import dev.natowb.natosatlas.client.platform.ClientPlatform;
 import dev.natowb.natosatlas.core.util.LogUtil;
-import dev.natowb.natosatlas.server.NAServer;
 import dev.natowb.natosatlas.server.ServerPlatform;
 
 import java.nio.file.Path;

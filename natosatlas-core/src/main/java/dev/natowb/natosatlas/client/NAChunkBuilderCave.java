@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.client;
 
-import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.client.platform.ClientWorldAccess;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.core.chunk.NAChunkBuilder;
 import dev.natowb.natosatlas.core.data.NABiome;

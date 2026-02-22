@@ -1,8 +1,8 @@
 package dev.natowb.natosatlas.stationapi.client;
 
-import dev.natowb.natosatlas.client.ClientPlatform;
-import dev.natowb.natosatlas.client.access.ScreenAccess;
-import dev.natowb.natosatlas.client.ui.UIScaleInfo;
+import dev.natowb.natosatlas.client.platform.ClientPlatform;
+import dev.natowb.natosatlas.client.platform.ScreenAccess;
+import dev.natowb.natosatlas.client.ui.elements.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.elements.UIScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;

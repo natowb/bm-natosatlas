@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.client.ui.elements;
 
-import dev.natowb.natosatlas.client.settings.SettingsOption;
+import dev.natowb.natosatlas.client.ui.screens.settings.SettingsOption;
 import dev.natowb.natosatlas.client.ui.layout.UILayout;
 
 public class UIElementOptionButton extends UIElementButton {

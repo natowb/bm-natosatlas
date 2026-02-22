@@ -1,7 +1,6 @@
 package dev.natowb.natosatlas.client.ui.elements;
 
 import dev.natowb.natosatlas.client.NAClient;
-import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;

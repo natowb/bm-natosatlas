@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.client.ui.elements;
 
 import dev.natowb.natosatlas.client.NAClient;
-import dev.natowb.natosatlas.client.access.NAPainter;
+import dev.natowb.natosatlas.client.platform.NAPainter;
 import dev.natowb.natosatlas.client.ui.layout.UILayout;
 import dev.natowb.natosatlas.client.ui.layout.UIPoint;
 import org.lwjgl.input.Mouse;

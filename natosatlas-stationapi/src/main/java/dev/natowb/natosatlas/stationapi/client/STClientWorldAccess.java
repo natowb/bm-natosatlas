@@ -1,9 +1,8 @@
 package dev.natowb.natosatlas.stationapi.client;
 
-import dev.natowb.natosatlas.core.NAPaths;
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
-import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.client.platform.ClientWorldAccess;
 import dev.natowb.natosatlas.core.util.LogUtil;
 import dev.natowb.natosatlas.stationapi.mixin.STWorldAccessorMixin;
 import net.fabricmc.loader.api.FabricLoader;
@@ -15,7 +14,6 @@ import net.minecraft.world.LightType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.RegionFile;
-import net.minecraft.world.storage.WorldSaveInfo;
 import net.modificationstation.stationapi.impl.world.chunk.FlattenedWorldChunkLoader;
 
 import java.io.File;

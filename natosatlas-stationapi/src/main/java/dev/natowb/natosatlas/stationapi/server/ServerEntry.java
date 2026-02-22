@@ -1,6 +1,6 @@
 package dev.natowb.natosatlas.stationapi.server;
 
-import dev.natowb.natosatlas.client.access.BlockAccess;
+import dev.natowb.natosatlas.client.platform.BlockAccess;
 import dev.natowb.natosatlas.core.NACore;
 import dev.natowb.natosatlas.stationapi.STBlockAccess;
 import net.fabricmc.loader.api.FabricLoader;

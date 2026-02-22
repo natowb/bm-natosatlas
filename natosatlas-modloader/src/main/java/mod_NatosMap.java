@@ -1,8 +1,8 @@
 import dev.natowb.natosatlas.client.NAClient;
-import dev.natowb.natosatlas.client.access.BlockAccess;
-import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.client.platform.BlockAccess;
+import dev.natowb.natosatlas.client.platform.ClientWorldAccess;
 import dev.natowb.natosatlas.core.NACore;
-import dev.natowb.natosatlas.client.map.MapScreen;
+import dev.natowb.natosatlas.client.ui.screens.map.MapScreen;
 import dev.natowb.natosatlas.modloader.*;
 
 import dev.natowb.natosatlas.modloader.client.MLClientPlatform;

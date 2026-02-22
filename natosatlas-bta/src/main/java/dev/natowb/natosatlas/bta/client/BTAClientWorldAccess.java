@@ -2,10 +2,9 @@ package dev.natowb.natosatlas.bta.client;
 
 import dev.natowb.natosatlas.core.data.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
-import dev.natowb.natosatlas.client.access.ClientWorldAccess;
+import dev.natowb.natosatlas.client.platform.ClientWorldAccess;
 import dev.natowb.natosatlas.core.util.LogUtil;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.impl.lib.sat4j.tools.GateTranslator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.entity.Mob;
 import net.minecraft.core.entity.animal.MobAnimal;
@@ -15,7 +14,6 @@ import net.minecraft.core.lang.text.TranslatableText;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.chunk.ChunkLoaderRegion;
-import net.minecraft.core.world.save.SaveFile;
 import net.minecraft.core.world.save.mcregion.RegionFile;
 
 import java.io.File;

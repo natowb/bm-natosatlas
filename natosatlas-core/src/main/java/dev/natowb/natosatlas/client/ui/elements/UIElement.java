@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.client.ui.elements;
 
 import dev.natowb.natosatlas.client.NAClient;
-import dev.natowb.natosatlas.client.access.NAPainter;
+import dev.natowb.natosatlas.client.platform.NAPainter;
 import dev.natowb.natosatlas.client.ui.themes.UIThemeMinecraft;
 
 public abstract class UIElement {

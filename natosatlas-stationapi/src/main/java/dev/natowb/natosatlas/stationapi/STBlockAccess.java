@@ -1,7 +1,7 @@
 package dev.natowb.natosatlas.stationapi;
 
 import dev.natowb.natosatlas.core.mapper.ColorMapper;
-import dev.natowb.natosatlas.client.access.BlockAccess;
+import dev.natowb.natosatlas.client.platform.BlockAccess;
 import net.minecraft.block.Block;
 
 public class STBlockAccess extends BlockAccess {
