@@ -2,7 +2,7 @@ package dev.natowb.natosatlas.client;
 
 import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.client.cache.NARegionTextureCache;
-import dev.natowb.natosatlas.client.saving.SaveScheduler;
+import dev.natowb.natosatlas.client.saving.MapSaver;
 import dev.natowb.natosatlas.client.settings.Settings;
 import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.NAClientSession;
@@ -15,6 +15,9 @@ import dev.natowb.natosatlas.client.waypoint.Waypoints;
 public class NAClient implements NAClientSession {
 
     private static NAClient instance;
+
+    private final MapUpdater mapUpdater = MapUpdater.get();
+    private final MapSaver mapSaver = MapSaver.get();
 
     public static NAClient get() {
         return instance;
@@ -34,8 +37,10 @@ public class NAClient implements NAClientSession {
         NAClient.instance = this;
         this.platform = platform;
 
-        LayerRegistry.getLayers().add(new NALayer(2, "Cave", new NAChunkBuilderCave(), true, false ));
+        LayerRegistry.getLayers().add(new NALayer(2, "Cave", new NAChunkBuilderCave(), true, false));
         Settings.load();
+
+        LogUtil.setLoggingLevel(LogUtil.LogLevel.DEBUG);
     }
 
 
@@ -76,26 +81,29 @@ public class NAClient implements NAClientSession {
     }
 
     private void onWorldJoined(String worldSaveName, int dim) {
-        NAPaths.setWorldPaths(worldSaveName, false);
-        Waypoints.load();
-        SaveScheduler.start();
+        LogUtil.info("[Client] Joined world (world={} dim={})", worldSaveName, dim);
 
-        LogUtil.info("Client joined world={} dim={}", worldSaveName, dim);
+        NAPaths.setWorldPaths(worldSaveName, false);
+
+        Waypoints.load();
+        mapSaver.start();
     }
 
     private void onWorldLeft() {
-        SaveScheduler.stop();
+        LogUtil.info("[Client] Left world (world={})", worldSaveName);
+
+        mapSaver.stop();
         NARegionTextureCache.clear();
-        LogUtil.info("Client left world {}", worldSaveName);
     }
 
     private void onDimensionChange(int newDim) {
-        LogUtil.info("Client dimension changed to {}", newDim);
+        LogUtil.info("[Client] Changed dimension (dim={newDim})", newDim);
+
         NARegionTextureCache.clear();
     }
 
     private void onWorldTick() {
-        MapUpdater.get().tick();
-        SaveScheduler.tick();
+        mapUpdater.tick();
+        mapSaver.saveNextBatch();
     }
 }

@@ -6,7 +6,7 @@ import dev.natowb.natosatlas.client.access.ClientWorldAccess;
 import dev.natowb.natosatlas.client.cache.NARegionTextureCache;
 import dev.natowb.natosatlas.client.map.MapConfig;
 import dev.natowb.natosatlas.client.access.NAPainter;
-import dev.natowb.natosatlas.client.saving.SaveScheduler;
+import dev.natowb.natosatlas.client.saving.MapSaver;
 import dev.natowb.natosatlas.client.ui.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.elements.*;
 import dev.natowb.natosatlas.client.ui.UITheme;
@@ -56,12 +56,13 @@ public class OptionScreen extends UIScreen {
 
         boolean isMultiplayer = ClientWorldAccess.get().getWorldInfo().isMultiplayer();
         UIElementButton existingButton = new UIElementButton(102, layout, 150, 20, "Generate Existing", !isMultiplayer);
+        // FIXME: this is a pure hack lets make a proper flow for doing this
         existingButton.setHandler(btn -> {
-            SaveScheduler.stop();
+            MapSaver.get().stop();
             ClientMapGenerator.generateClientRegions();
             LogUtil.info("Finished generating existing regions for current dimension");
             NARegionTextureCache.clear();
-            SaveScheduler.start();
+            MapSaver.get().start();
         });
         addButton(existingButton);
 

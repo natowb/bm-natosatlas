@@ -6,6 +6,7 @@ import dev.natowb.natosatlas.core.LayerRegistry;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NARegionPixelData;
 import dev.natowb.natosatlas.core.storage.NARegionStorage;
+import dev.natowb.natosatlas.core.util.LogUtil;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -37,6 +38,17 @@ public class NARegionPixelCache {
                     return size() > CACHE_SIZE;
                 }
             };
+
+
+    public NARegionPixelData getOrCreateRegion(int layerId, NACoord region) {
+        NARegionPixelData r = getRegion(layerId, region);
+        if (r == null) {
+            r = new NARegionPixelData();
+            put(layerId, region, r);
+        }
+        return r;
+    }
+
 
     public NARegionPixelData getRegion(int layerId, NACoord coord) {
         long key = coord.toKey();
