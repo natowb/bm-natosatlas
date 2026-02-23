@@ -125,7 +125,7 @@ public class WaypointListElement {
     }
 
     public void mouseScroll(int amount) {
-        scrollOffset -= amount / 10;
+        scrollOffset -= amount * 5;
         clampScroll();
     }
 
