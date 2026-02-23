@@ -39,6 +39,15 @@ public class BTAClientWorldAccess extends ClientWorldAccess {
 
     @Override
     public String getSaveName() {
+        if (mc.isMultiplayerWorld()) {
+            // FIXME: find a way to get the server name if the options is empty.
+            if (mc.gameSettings.lastServer == null ||
+                    mc.gameSettings.lastServer.value == null || mc.gameSettings.lastServer.value.isEmpty()) {
+                return "MPServer-FailedToGetIP";
+            }
+
+            return mc.gameSettings.lastServer.value;
+        }
         return mc.currentWorld.saveHandler.getDataFile("fake").getParentFile().getParentFile().getName();
     }
 
