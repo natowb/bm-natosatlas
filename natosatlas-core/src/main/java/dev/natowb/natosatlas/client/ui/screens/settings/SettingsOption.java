@@ -47,7 +47,7 @@ public enum SettingsOption {
 
         @Override
         public String getValueLabel() {
-            return  Settings.mapRenderMode.name();
+            return Settings.mapRenderMode.name();
         }
     },
 
@@ -75,7 +75,7 @@ public enum SettingsOption {
         }
     },
 
-    DEBUG_INFO("Debug") {
+    DEBUG_INFO("Debug Info") {
         @Override
         public void cycle() {
             Settings.debugInfo = !Settings.debugInfo;
@@ -86,15 +86,73 @@ public enum SettingsOption {
             return Settings.debugInfo ? "On" : "Off";
         }
     },
-    USE_REIMINIMAP_WAYPOINTS("Rei's MM Waypoints") {
+    MINIMAP_ENABLED("Enable") {
         @Override
         public void cycle() {
-            Settings.useReiMinimapWaypointStorage = !Settings.useReiMinimapWaypointStorage;
+            Settings.minimapEnabled = !Settings.minimapEnabled;
         }
 
         @Override
         public String getValueLabel() {
-            return Settings.useReiMinimapWaypointStorage ? "On" : "Off";
+            return Settings.minimapEnabled ? "Yes" : "No";
+        }
+    },
+    MINIMAP_ROTATE("Rotate with player") {
+        @Override
+        public void cycle() {
+            Settings.minimapRotateWithPlayer = !Settings.minimapRotateWithPlayer;
+        }
+
+        @Override
+        public String getValueLabel() {
+            return Settings.minimapRotateWithPlayer ? "On" : "Off";
+        }
+    },
+    MINIMAP_ENTITY_DISPLAY("Entities") {
+        @Override
+        public void cycle() {
+            Settings.EntityDisplayMode m = Settings.minimapEntityDisplayMode;
+            switch (m) {
+                case Player:
+                    Settings.minimapEntityDisplayMode = Settings.EntityDisplayMode.All;
+                    break;
+                case All:
+                    Settings.minimapEntityDisplayMode = Settings.EntityDisplayMode.Nothing;
+                    break;
+                case Nothing:
+                    Settings.minimapEntityDisplayMode = Settings.EntityDisplayMode.Player;
+                    break;
+            }
+        }
+
+        @Override
+        public String getValueLabel() {
+            return Settings.minimapEntityDisplayMode.name();
+        }
+    },
+    MINIMAP_MAP_RENDER_MODE("Mode") {
+        @Override
+        public void cycle() {
+            Settings.MapRenderMode m = Settings.minimapRenderMode;
+            switch (m) {
+                case Day:
+                    Settings.minimapRenderMode = Settings.MapRenderMode.Night;
+                    break;
+                case Night:
+                    Settings.minimapRenderMode = Settings.MapRenderMode.Cave;
+                    break;
+                case Cave:
+                    Settings.minimapRenderMode = Settings.MapRenderMode.Auto;
+                    break;
+                case Auto:
+                    Settings.minimapRenderMode = Settings.MapRenderMode.Day;
+                    break;
+            }
+        }
+
+        @Override
+        public String getValueLabel() {
+            return Settings.minimapRenderMode.name();
         }
     };
 

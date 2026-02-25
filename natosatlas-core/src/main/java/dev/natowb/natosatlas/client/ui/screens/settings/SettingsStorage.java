@@ -19,7 +19,12 @@ public final class SettingsStorage extends TextStorage {
         Settings.entityDisplayMode = getEnum("entityDisplayMode", Settings.EntityDisplayMode.class, Settings.EntityDisplayMode.Player);
         Settings.mapRenderMode = getEnum("mapRenderMode", Settings.MapRenderMode.class, Settings.MapRenderMode.Auto);
         Settings.showSlimeChunks = getBoolean("showSlimeChunks", false);
-        Settings.useReiMinimapWaypointStorage = getBoolean("useReiMinimapWaypointStorage", false);
+
+        Settings.minimapRotateWithPlayer = getBoolean("minimapRotateWithPlayer", false);
+        Settings.minimapZoom = getFloat("minimapZoom", 1f);
+        Settings.minimapEntityDisplayMode = getEnum("minimapEntityDisplayMode", Settings.EntityDisplayMode.class, Settings.EntityDisplayMode.Player);
+        Settings.minimapRenderMode = getEnum("minimapRenderMode", Settings.MapRenderMode.class, Settings.MapRenderMode.Auto);
+        Settings.minimapEnabled = getBoolean("minimapEnabled", false);
     }
 
     @Override
@@ -30,6 +35,11 @@ public final class SettingsStorage extends TextStorage {
         put("entityDisplayMode", Settings.entityDisplayMode.name());
         put("mapRenderMode", Settings.mapRenderMode.name());
         put("showSlimeChunks", Settings.showSlimeChunks);
-        put("useReiMinimapWaypointStorage", Settings.useReiMinimapWaypointStorage);
+
+        put("minimapEnabled", Settings.minimapEnabled);
+        put("minimapRotateWithPlayer", Settings.minimapRotateWithPlayer);
+        put("minimapZoom", Settings.minimapZoom);
+        put("minimapEntityDisplayMode", Settings.minimapEntityDisplayMode);
+        put("minimapRenderMode", Settings.minimapRenderMode);
     }
 }

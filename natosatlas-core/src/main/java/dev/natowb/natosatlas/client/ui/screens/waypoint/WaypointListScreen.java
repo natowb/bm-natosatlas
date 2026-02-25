@@ -71,10 +71,6 @@ public class WaypointListScreen extends UIScreen {
 
         p.drawRect(0, 0, width, height, UITheme.PANEL_BG);
 
-        if (Settings.useReiMinimapWaypointStorage) {
-            p.drawCenteredString("Use Rei's Minimap to manage waypoints", width / 2, height / 2, UITheme.TITLE_TEXT);
-            return;
-        }
 
         p.drawCenteredString("Waypoints", width / 2, headerY + 4, UITheme.TITLE_TEXT);
 
@@ -85,20 +81,17 @@ public class WaypointListScreen extends UIScreen {
 
     @Override
     public void mouseScroll(int amount) {
-        if (Settings.useReiMinimapWaypointStorage) return;
         list.mouseScroll(amount);
     }
 
     @Override
     public void mouseDown(int mouseX, int mouseY, int button) {
-        if (Settings.useReiMinimapWaypointStorage) return;
         if (button != 0) return;
         list.mouseDown(mouseX, mouseY);
     }
 
     @Override
     public void mouseUp(int mouseX, int mouseY, int button) {
-        if (Settings.useReiMinimapWaypointStorage) return;
         super.mouseUp(mouseX, mouseY, button);
     }
 }

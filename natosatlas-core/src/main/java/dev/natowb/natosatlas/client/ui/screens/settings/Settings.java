@@ -9,18 +9,28 @@ public final class Settings {
 
     private static final SettingsStorage STORAGE = new SettingsStorage();
 
-
     public enum EntityDisplayMode {All, Player, Nothing}
 
     public enum MapRenderMode {Day, Night, Cave, Auto}
 
+    //FIXME: i should probably seperate these out better.
+
+    // World map settings
     public static boolean mapGrid = true;
     public static boolean debugInfo = false;
     public static boolean showSlimeChunks = false;
     public static float defaultZoom = 0.5f;
-    public static boolean useReiMinimapWaypointStorage = false;
     public static EntityDisplayMode entityDisplayMode = EntityDisplayMode.All;
     public static MapRenderMode mapRenderMode = MapRenderMode.Auto;
+
+
+    // Minimap settings
+    public static boolean minimapRotateWithPlayer = false;
+    public static boolean minimapEnabled = false;
+    public static float minimapZoom = 0.5f;
+    public static EntityDisplayMode minimapEntityDisplayMode = EntityDisplayMode.All;
+    public static MapRenderMode minimapRenderMode = MapRenderMode.Auto;
+
 
     private Settings() {
     }

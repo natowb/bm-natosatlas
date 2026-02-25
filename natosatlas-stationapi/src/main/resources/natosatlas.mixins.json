@@ -8,6 +8,7 @@
   "mixins": [],
   "client": [
     "STMinecraftMixin",
-    "STWorldAccessorMixin"
+    "STWorldAccessorMixin",
+    "STHudMixin"
   ]
 }

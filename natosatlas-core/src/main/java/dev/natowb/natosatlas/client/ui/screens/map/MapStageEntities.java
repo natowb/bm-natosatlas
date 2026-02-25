@@ -2,8 +2,8 @@ package dev.natowb.natosatlas.client.ui.screens.map;
 
 import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.platform.ClientWorldAccess;
-import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.client.ui.screens.settings.Settings;
+import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.NAConstants;
 import org.lwjgl.opengl.GL11;
 
@@ -13,13 +13,19 @@ public class MapStageEntities implements MapStage {
 
     private static final double ENTITY_RENDER_RADIUS = 128.0;
 
+    private Settings.EntityDisplayMode displayMode = Settings.EntityDisplayMode.Player;
+
+    public void setDisplayMode(Settings.EntityDisplayMode mode) {
+        displayMode = mode;
+    }
+
     @Override
     public void draw(MapContext ctx, Set<Long> visibleRegions, int activeLayer) {
         drawEntities(ctx);
     }
 
     private void drawEntities(MapContext ctx) {
-        if (Settings.entityDisplayMode == Settings.EntityDisplayMode.Nothing) return;
+        if (displayMode == Settings.EntityDisplayMode.Nothing) return;
 
         NAEntity player = ClientWorldAccess.get().getPlayer();
         double px = player.x;
@@ -28,7 +34,7 @@ public class MapStageEntities implements MapStage {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,
                 NAClient.get().getPlatform().painter.getMinecraftTextureId("/misc/mapicons.png"));
 
-        if (Settings.entityDisplayMode == Settings.EntityDisplayMode.All) {
+        if (displayMode == Settings.EntityDisplayMode.All) {
             for (NAEntity e : ClientWorldAccess.get().getEntities()) {
 
                 double dx = e.x - px;

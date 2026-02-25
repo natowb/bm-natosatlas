@@ -263,6 +263,7 @@ public class MapScreen extends UIScreen {
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
         painter.drawRect(0, 0, width, height, UITheme.PANEL_BG);
 
+
         viewport.updateMouse(mouseX, mouseY);
         viewport.begin(scaleInfo);
 
@@ -273,6 +274,7 @@ public class MapScreen extends UIScreen {
         regionPainter.draw(ctx, visible, activeLayer);
         slimePainter.draw(ctx, visible, activeLayer);
         gridPainter.draw(ctx, visible, activeLayer);
+        entitiesPainter.setDisplayMode(Settings.entityDisplayMode);
         entitiesPainter.draw(ctx, visible, activeLayer);
         waypointsPainter.draw(ctx, visible, activeLayer);
         renderMouseBlockHighlight(ctx);

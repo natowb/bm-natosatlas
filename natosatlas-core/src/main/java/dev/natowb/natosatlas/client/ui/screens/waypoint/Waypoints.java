@@ -21,18 +21,7 @@ public final class Waypoints {
 
     private static File getFile() {
         String fileName = String.format("%s.DIM%d.points", NAPaths.getWorldSaveName(), ClientWorldAccess.get().getWorldInfo().getDimensionId());
-        if (!Settings.useReiMinimapWaypointStorage) {
-            return new File(NAPaths.getWorldDataPath().toFile(), fileName);
-        }
-
-        Path minimapPath = NAPaths.getMinecraftPath().resolve("mods/rei_minimap");
-
-        try {
-            Files.createDirectories(minimapPath);
-        } catch (IOException ignored) {
-        }
-
-        return new File(minimapPath.toFile(), fileName);
+        return new File(NAPaths.getWorldDataPath().toFile(), fileName);
     }
 
     public static void load() {

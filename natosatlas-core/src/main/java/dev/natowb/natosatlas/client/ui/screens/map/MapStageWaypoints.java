@@ -11,10 +11,14 @@ import java.util.Set;
 
 public class MapStageWaypoints implements MapStage {
 
+    public boolean showLabels = true;
+
     @Override
     public void draw(MapContext ctx, Set<Long> visibleRegions, int activeLayer) {
         drawWaypointIcons(ctx);
-        drawWaypointLabels(ctx);
+        if (showLabels) {
+            drawWaypointLabels(ctx);
+        }
     }
 
     private void drawWaypointIcons(MapContext ctx) {
@@ -48,7 +52,6 @@ public class MapStageWaypoints implements MapStage {
         );
     }
 
-
     private void drawWaypointLabels(MapContext ctx) {
         for (Waypoint wp : Waypoints.getAll()) {
             if (!wp.visible) continue;
@@ -67,7 +70,7 @@ public class MapStageWaypoints implements MapStage {
 
     private void drawUpright(MapContext ctx, double worldX, double worldZ, double scale, double yaw, Runnable draw) {
         GL11.glPushMatrix();
-        GL11.glTranslated(worldX, worldZ, 0);
+        GL11.glTranslated(worldX - scale * 0.5, worldZ - scale * 0.5, 0);
         GL11.glRotated(-Math.toDegrees(ctx.rotation), 0, 0, 1);
         if (yaw != 0) GL11.glRotated(yaw, 0, 0, 1);
         GL11.glScaled(scale, scale, 1);
