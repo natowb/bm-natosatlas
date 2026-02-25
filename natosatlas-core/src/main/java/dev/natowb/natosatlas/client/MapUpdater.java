@@ -51,7 +51,7 @@ public class MapUpdater {
         updateChunk(chunkCoord, chunk);
     }
 
-    private void updateChunk(NACoord chunkCoord, ChunkWrapper wrapper) {
+    public void updateChunk(NACoord chunkCoord, ChunkWrapper wrapper) {
         NACoord regionCoord = NACoord.from(chunkCoord.x >> 5, chunkCoord.z >> 5);
 
         for (NALayer layer : LayerRegistry.getLayers()) {

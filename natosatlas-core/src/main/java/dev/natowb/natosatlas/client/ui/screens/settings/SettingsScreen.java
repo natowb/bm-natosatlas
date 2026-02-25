@@ -1,18 +1,15 @@
 package dev.natowb.natosatlas.client.ui.screens.settings;
 
-import dev.natowb.natosatlas.client.io.MapExistingGenerator;
 import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.platform.ClientWorldAccess;
-import dev.natowb.natosatlas.client.cache.NARegionTextureCache;
+import dev.natowb.natosatlas.client.ui.screens.generate.GenerateScreen;
 import dev.natowb.natosatlas.client.ui.screens.map.MapConfig;
 import dev.natowb.natosatlas.client.platform.NAPainter;
-import dev.natowb.natosatlas.client.io.MapSaver;
 import dev.natowb.natosatlas.client.ui.elements.UIScaleInfo;
 import dev.natowb.natosatlas.client.ui.elements.*;
 import dev.natowb.natosatlas.client.ui.themes.UITheme;
 import dev.natowb.natosatlas.client.ui.layout.UILayout;
 import dev.natowb.natosatlas.client.ui.layout.UIVerticalLayout;
-import dev.natowb.natosatlas.core.util.LogUtil;
 
 import static dev.natowb.natosatlas.client.texture.TextureProvider.ICON_BACK;
 
@@ -58,11 +55,7 @@ public class SettingsScreen extends UIScreen {
         UIElementButton existingButton = new UIElementButton(102, layout, 150, 20, "Generate Existing", !isMultiplayer);
         // FIXME: this is a pure hack lets make a proper flow for doing this
         existingButton.setHandler(btn -> {
-            MapSaver.get().stop();
-            MapExistingGenerator.generateClientRegions();
-            LogUtil.info("Finished generating existing regions for current dimension");
-            NARegionTextureCache.clear();
-            MapSaver.get().start();
+            NAClient.get().getPlatform().screen.openNacScreen(new GenerateScreen(this));
         });
         addButton(existingButton);
 
@@ -71,7 +64,6 @@ public class SettingsScreen extends UIScreen {
         zoomSlider.setStep(0.01f);
         addSlider(zoomSlider);
     }
-
 
     @Override
     public void onSliderChanged(UIElementSlider slider) {
