@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.client.ui.screens.map;
 
+import dev.natowb.natosatlas.client.MapUpdater;
 import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.platform.ClientWorldAccess;
 import dev.natowb.natosatlas.client.io.MapExporter;
@@ -45,23 +46,29 @@ public class MapScreen extends UIScreen {
     private long lastClickTime = 0;
     private static final long DOUBLE_CLICK_TIME_THRESHOLD = 300;
 
+    private boolean firstInit = false;
+
     public MapScreen(UIScreen parent) {
         super(parent);
-        viewport.setZoom(Settings.defaultZoom);
         Waypoints.load();
+        viewport.setZoom(Settings.defaultZoom);
+
     }
 
     @Override
     public void init(int width, int height) {
         super.init(width, height);
         viewport.initViewport(0, 0, width, height);
-        NAEntity player = ClientWorldAccess.get().getPlayer();
-        if (player != null) {
-            viewport.centerOn((float) player.x * 8f, (float) player.z * 8f);
+
+        if (!firstInit) {
+            firstInit = true;
+            NAEntity player = ClientWorldAccess.get().getPlayer();
+            if (player != null) {
+                viewport.centerOn((float) player.x * NAConstants.PIXELS_PER_CANVAS_UNIT, (float) player.z * NAConstants.PIXELS_PER_CANVAS_UNIT);
+            }
         }
 
         UILayout leftLayout = new UIHorizontalLayout(5, 15, 5, false);
-
 
         UIElementIconButton closeButton = new UIElementIconButton(101, leftLayout, 20, 20, ICON_CROSS);
         closeButton.setHandler(btn -> NAClient.get().getPlatform().screen.openNacScreen(parent));
@@ -425,8 +432,6 @@ public class MapScreen extends UIScreen {
 
         y += 15;
         painter.drawString("Cache", 5, y, 0xFFFFFF);
-        y += 10;
-        painter.drawString(String.format("Pending Saves: %d", MapSaver.get().getPendingCount()), 5, y, 0xFFFFFF);
         y += 10;
         painter.drawString(String.format("Cache size: r=%d, t=%d", NARegionPixelCache.get().getRegionCount(), NARegionPixelCache.get().getTotalCount()), 5, y, 0xFFFFFF);
         y += 10;
