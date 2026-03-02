@@ -49,7 +49,6 @@ public class SettingsScreen extends UIScreen {
         UIElementIconButton closeButton =
                 new UIElementIconButton(101, width / 2 - 100, headerY, 20, 20, ICON_BACK);
         closeButton.setHandler(btn -> {
-            Settings.save();
             NAClient.get().getPlatform().screen.openNacScreen(parent);
         });
         addButton(closeButton);
@@ -82,6 +81,11 @@ public class SettingsScreen extends UIScreen {
         rebuildContent();
     }
 
+    @Override
+    public void onClose() {
+        Settings.save();
+    }
+
     private void switchTab(Tab tab) {
         this.activeTab = tab;
         updateTabActiveStates();
@@ -93,7 +97,6 @@ public class SettingsScreen extends UIScreen {
         worldMapTab.active = !(activeTab == Tab.ATLAS);
         minimapTab.active = !(activeTab == Tab.MINIMAP);
     }
-
 
     private void rebuildContent() {
         buttons.removeIf(b -> b.id >= 300);

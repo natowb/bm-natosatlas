@@ -54,7 +54,7 @@ public class NAClient implements NAClientSession {
         LayerRegistry.getLayers().add(new NALayer(2, "Cave", new NAChunkBuilderCave(), true, false));
         Settings.load();
 
-        LogUtil.setLoggingLevel(LogUtil.LogLevel.DEBUG);
+        LogUtil.setLoggingLevel(LogUtil.LogLevel.INFO);
     }
 
     public ClientPlatform getPlatform() {

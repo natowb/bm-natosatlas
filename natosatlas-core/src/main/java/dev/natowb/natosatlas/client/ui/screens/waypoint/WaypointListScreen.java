@@ -66,6 +66,11 @@ public class WaypointListScreen extends UIScreen {
     }
 
     @Override
+    public void onClose() {
+        Waypoints.save();
+    }
+
+    @Override
     public void render(int mouseX, int mouseY, float delta, UIScaleInfo scaleInfo) {
         NAPainter p = NAClient.get().getPlatform().painter;
 

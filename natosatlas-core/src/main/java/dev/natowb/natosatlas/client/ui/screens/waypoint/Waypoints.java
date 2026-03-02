@@ -26,12 +26,12 @@ public final class Waypoints {
 
     public static void load() {
         STORAGE.load(getFile());
-        LogUtil.trace("Loaded {} waypoints", STORAGE.getAll().size());
+        LogUtil.debug("Loaded {} waypoints", STORAGE.getAll().size());
     }
 
     public static void save() {
         STORAGE.save(getFile());
-        LogUtil.trace("Saved {} waypoints", STORAGE.getAll().size());
+        LogUtil.debug("Saved {} waypoints", STORAGE.getAll().size());
     }
 
     public static List<Waypoint> getAll() {
@@ -40,13 +40,13 @@ public final class Waypoints {
 
     public static void add(Waypoint wp) {
         STORAGE.getAll().add(wp);
-        LogUtil.trace("Added waypoint {}", wp.name);
+        LogUtil.debug("Added waypoint {}", wp.name);
         save();
     }
 
     public static void remove(Waypoint wp) {
         STORAGE.getAll().remove(wp);
-        LogUtil.trace("Removed waypoint {}", wp.name);
+        LogUtil.debug("Removed waypoint {}", wp.name);
         save();
     }
 
@@ -56,7 +56,7 @@ public final class Waypoints {
 
         if (index >= 0) {
             list.set(index, newWp);
-            LogUtil.trace("Updated waypoint {} -> {}", oldWp.name, newWp.name);
+            LogUtil.debug("Updated waypoint {} -> {}", oldWp.name, newWp.name);
             save();
         }
     }

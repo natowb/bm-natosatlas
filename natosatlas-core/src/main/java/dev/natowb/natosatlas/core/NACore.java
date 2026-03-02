@@ -42,10 +42,7 @@ public final class NACore {
         if (!initialized) {
             throw new IllegalStateException("Tried to start Natos Atlas server before NACore was initialized");
         }
-//        NAServer.getInstance(platform).startServer();
-
         LogUtil.error("NatosAtlas Serverside is currently disabled and or unimplemented");
-
     }
 
 
