@@ -20,6 +20,6 @@ public class BTAScreenConnectingMixin {
         NAClientSession session = NACore.getClientSession();
         if(session == null) return;
 
-        session.setServerName(String.format("%s:%d", hostName, port));
+        session.setServerName(String.format("%s-%d", hostName, port));
     }
 }
