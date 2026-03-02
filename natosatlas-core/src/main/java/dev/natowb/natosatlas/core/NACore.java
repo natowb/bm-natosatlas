@@ -21,6 +21,10 @@ public final class NACore {
         return initialized;
     }
 
+    public static NAClientSession getClientSession() {
+        return clientSession;
+    }
+
     public static void init(Path mcPath) {
         if (initialized) return;
         initialized = true;

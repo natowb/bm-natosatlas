@@ -17,6 +17,7 @@ import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
 import dev.natowb.natosatlas.core.data.NALayer;
+import dev.natowb.natosatlas.core.data.NAWorldInfo;
 import dev.natowb.natosatlas.core.util.LogUtil;
 import dev.natowb.natosatlas.client.ui.screens.waypoint.Waypoint;
 import dev.natowb.natosatlas.client.ui.screens.waypoint.Waypoints;
@@ -36,7 +37,8 @@ public class NAClient implements NAClientSession {
     }
 
     private boolean inWorld;
-    private String worldSaveName;
+    private String offlineSaveName;
+    private String serverName;
     private int dim;
     private final ClientPlatform platform;
 
@@ -61,7 +63,8 @@ public class NAClient implements NAClientSession {
 
     @Override
     public void tick() {
-        boolean worldExists = ClientWorldAccess.get().getWorldInfo() != null;
+        NAWorldInfo worldInfo = ClientWorldAccess.get().getWorldInfo();
+        boolean worldExists = worldInfo != null;
 
         if (!worldExists && inWorld) {
             inWorld = false;
@@ -69,15 +72,23 @@ public class NAClient implements NAClientSession {
             return;
         }
 
-        if (worldExists && !inWorld) {
-            worldSaveName = ClientWorldAccess.get().getSaveName();
-            if (worldSaveName == null) {
-                return;
-            }
 
-            inWorld = true;
-            dim = ClientWorldAccess.get().getWorldInfo().getDimensionId();
-            onWorldJoined(worldSaveName, dim);
+        if (worldExists && !inWorld) {
+            if (worldInfo.isMultiplayer()) {
+                if (serverName != null) {
+                    inWorld = true;
+                    dim = ClientWorldAccess.get().getWorldInfo().getDimensionId();
+                    onWorldJoined(serverName, dim, true);
+                }
+            } else {
+                offlineSaveName = ClientWorldAccess.get().getOfflineSaveName();
+                if (offlineSaveName != null) {
+                    inWorld = true;
+                    dim = ClientWorldAccess.get().getWorldInfo().getDimensionId();
+                    onWorldJoined(offlineSaveName, dim, false);
+                }
+            }
+            return;
         }
 
         if (!inWorld) return;
@@ -91,17 +102,22 @@ public class NAClient implements NAClientSession {
         onWorldTick();
     }
 
-    private void onWorldJoined(String worldSaveName, int dim) {
+    @Override
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    private void onWorldJoined(String worldSaveName, int dim, boolean isMultiplayerWorld) {
         LogUtil.info("[Client] Joined world (world={} dim={})", worldSaveName, dim);
 
-        NAPaths.setWorldPaths(worldSaveName, false);
+        NAPaths.setWorldPaths(worldSaveName, isMultiplayerWorld);
 
         Waypoints.load();
         mapSaver.start();
     }
 
     private void onWorldLeft() {
-        LogUtil.info("[Client] Left world (world={})", worldSaveName);
+        LogUtil.info("[Client] Left world (world={})", offlineSaveName);
 
         mapSaver.stop();
         NARegionTextureCache.clear();

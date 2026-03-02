@@ -39,7 +39,7 @@ public class MLClientWorldAccess extends ClientWorldAccess {
     }
 
     @Override
-    public String getSaveName() {
+    public String getOfflineSaveName() {
         if (mc.isWorldRemote()) {
             // FIXME: find a way to get the server name if the options is empty.
             if (mc.options.lastServer == null || mc.options.lastServer.isEmpty()) {

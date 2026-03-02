@@ -29,11 +29,11 @@ public final class NAPaths {
         LogUtil.info("Set dataPath to {}", dataPath);
     }
 
-    public static void setWorldPaths(String saveName, boolean isServer) {
+    public static void setWorldPaths(String saveName, boolean isMultiplayerWorld) {
         worldSaveName = saveName;
-        if (isServer) {
-            worldSavePath = ensurePathExists(mcPath.resolve(saveName));
+        if (isMultiplayerWorld) {
             worldDataPath = ensurePathExists(dataPath.resolve(String.format("servers/%s/", saveName)));
+            worldSavePath = worldDataPath;
         } else {
             worldDataPath = ensurePathExists(dataPath.resolve(String.format("worlds/%s/", saveName)));
             worldSavePath = ensurePathExists(mcPath.resolve("saves/" + saveName));

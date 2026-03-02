@@ -21,7 +21,7 @@ public abstract class ClientWorldAccess {
 
     public abstract NAWorldInfo getWorldInfo();
 
-    public abstract String getSaveName();
+    public abstract String getOfflineSaveName();
 
     public abstract File getDimDirectory(File worldDir);
 

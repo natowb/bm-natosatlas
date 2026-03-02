@@ -38,14 +38,9 @@ public class STClientWorldAccess extends ClientWorldAccess {
     }
 
     @Override
-    public String getSaveName() {
+    public String getOfflineSaveName() {
         if (mc.isWorldRemote()) {
-            // FIXME: find a way to get the server name if the options is empty.
-            if (mc.options.lastServer == null || mc.options.lastServer.isEmpty()) {
-                return "MPServer-FailedToGetIP";
-            }
-
-            return mc.options.lastServer;
+            return null;
         }
         return ((STWorldAccessorMixin) mc.world).getStorage().getWorldPropertiesFile("fake").getParentFile().getParentFile().getName();
     }
