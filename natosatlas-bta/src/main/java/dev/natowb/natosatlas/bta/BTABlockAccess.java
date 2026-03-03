@@ -20,11 +20,16 @@ public class BTABlockAccess extends BlockAccess {
         if (block == null) {
             return MaterialColor.getColorFromIndex(MaterialColor.none.id);
         }
-        if (block.getMaterialColor() == null) return 0xFF00FF00;
 
-        assert Blocks.getBlock(blockId) != null;
-        return MaterialColor.getColorFromIndex(Blocks.getBlock(blockId).getMaterialColor().id);
+        MaterialColor mc = block.getMaterialColor();
+        if (mc == null) {
+            return 0xFF00FF00;
+        }
+
+        int colorIndex = MaterialColor.getColorIndexFromBlock(block, blockMeta);
+        return MaterialColor.getColorFromIndex(colorIndex);
     }
+
 
     @Override
     public boolean isFluid(int blockId) {
