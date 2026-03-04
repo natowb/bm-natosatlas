@@ -1,7 +1,9 @@
 package dev.natowb.natosatlas.client.texture;
 
+import dev.natowb.natosatlas.client.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.client.cache.NARegionTextureCache;
 import dev.natowb.natosatlas.core.data.NACoord;
+import dev.natowb.natosatlas.core.data.NARegionPixelData;
 import dev.natowb.natosatlas.core.util.LogUtil;
 
 import javax.imageio.ImageIO;
@@ -61,11 +63,8 @@ public final class TextureProvider {
     }
 
     public static int getTexture(NACoord coord, int layerId) {
-        NARegionTexture tex = NARegionTextureCache.get(coord, layerId);
-        if (tex == null) return -1;
-
-        tex.update();
-        return tex.getTextureId();
+        NARegionPixelData pixelData = NARegionPixelCache.get().getRegion(layerId, coord);
+        if (pixelData == null) return -1;
+        return pixelData.getTextureId();
     }
-
 }

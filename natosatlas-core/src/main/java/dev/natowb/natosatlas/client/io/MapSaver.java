@@ -86,6 +86,9 @@ public class MapSaver {
             NARegionPixelData region = cache.getRegion(layer.id, coord);
             if (region == null) continue;
 
+            //FIXME: maybe a better place to put this
+            region.updateTexture();
+
             Path baseDir = NAPaths.getWorldMapStoragePath(layer.id, dim, !isMultiplayer);
             File file = baseDir.resolve("region_" + coord.x + "_" + coord.z + ".png").toFile();
 
