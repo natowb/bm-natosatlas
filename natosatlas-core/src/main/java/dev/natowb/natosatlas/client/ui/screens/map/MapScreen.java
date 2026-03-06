@@ -275,8 +275,8 @@ public class MapScreen extends UIScreen {
         slimePainter.draw(ctx, visible, activeLayer);
         gridPainter.draw(ctx, visible, activeLayer);
         entitiesPainter.setDisplayMode(Settings.entityDisplayMode);
-        entitiesPainter.draw(ctx, visible, activeLayer);
         waypointsPainter.draw(ctx, visible, activeLayer);
+        entitiesPainter.draw(ctx, visible, activeLayer);
         renderMouseBlockHighlight(ctx);
         viewport.end();
 

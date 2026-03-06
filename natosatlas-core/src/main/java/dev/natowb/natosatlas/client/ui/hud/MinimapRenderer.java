@@ -206,8 +206,8 @@ public class MinimapRenderer {
         viewport.begin(scaleInfo);
         Set<Long> visible = viewport.computeVisibleRegions();
         stageRegions.draw(ctx, visible, activeLayer);
-        stageEntities.draw(ctx, visible, activeLayer);
         stageWaypoints.draw(ctx, visible, activeLayer);
+        stageEntities.draw(ctx, visible, activeLayer);
         viewport.end();
     }
 

@@ -31,9 +31,6 @@ public class MapStageEntities implements MapStage {
         double px = player.x;
         double pz = player.z;
 
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D,
-                NAClient.get().getPlatform().painter.getMinecraftTextureId("/misc/mapicons.png"));
-
         if (displayMode == Settings.EntityDisplayMode.All) {
             for (NAEntity e : ClientWorldAccess.get().getEntities()) {
 
