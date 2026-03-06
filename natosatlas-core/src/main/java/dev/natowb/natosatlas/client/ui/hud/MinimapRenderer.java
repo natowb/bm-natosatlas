@@ -69,22 +69,6 @@ public class MinimapRenderer {
         stageWaypoints.showLabels = false;
         stageEntities.setDisplayMode(Settings.minimapEntityDisplayMode);
         chooseMinimapActiveLayer();
-
-        NAEntity player = ClientWorldAccess.get().getPlayer();
-        if (player != null) {
-            viewport.centerOn(
-                    (float) player.x * NAConstants.PIXELS_PER_CANVAS_UNIT,
-                    (float) player.z * NAConstants.PIXELS_PER_CANVAS_UNIT
-            );
-
-            if (Settings.minimapRotateWithPlayer) {
-                double yaw = player.yaw;
-                float rotation = (float) Math.toRadians(-(yaw - 180f));
-                viewport.setRotation(rotation);
-            } else {
-                viewport.setRotation(0);
-            }
-        }
     }
     public void render(UIScaleInfo scaleInfo) {
         if (!Settings.minimapEnabled) return;
@@ -103,6 +87,22 @@ public class MinimapRenderer {
         int startY = minimapPadding;
         viewport.initViewport(startX, startY, viewportSize, viewportSize);
         viewport.setZoom(Settings.minimapZoom);
+
+        NAEntity player = ClientWorldAccess.get().getPlayer();
+        if (player != null) {
+            viewport.centerOn(
+                    (float) player.x * NAConstants.PIXELS_PER_CANVAS_UNIT,
+                    (float) player.z * NAConstants.PIXELS_PER_CANVAS_UNIT
+            );
+
+            if (Settings.minimapRotateWithPlayer) {
+                double yaw = player.yaw;
+                float rotation = (float) Math.toRadians(-(yaw - 180f));
+                viewport.setRotation(rotation);
+            } else {
+                viewport.setRotation(0);
+            }
+        }
     }
     private float[] worldToMinimap(MapContext ctx, float worldPx, float worldPz) {
         float halfW = ctx.canvasW * 0.5f;
