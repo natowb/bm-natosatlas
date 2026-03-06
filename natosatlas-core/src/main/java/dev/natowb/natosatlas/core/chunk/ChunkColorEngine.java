@@ -1,5 +1,6 @@
 package dev.natowb.natosatlas.core.chunk;
 
+import dev.natowb.natosatlas.core.data.NABiome;
 import dev.natowb.natosatlas.core.data.NAChunk;
 import dev.natowb.natosatlas.client.platform.BlockAccess;
 
@@ -16,67 +17,98 @@ public final class ChunkColorEngine {
         }
 
         int blockId = chunk.blockIds[index];
-        int meta    = chunk.meta[index];
-
+        int meta = chunk.meta[index];
+        NABiome biome = chunk.biome[index];
 
         int baseColor = BlockAccess.get().getColor(blockId, meta);
 
-        int shadeIndex;
+        baseColor = applyBiomeTint(blockId, baseColor, biome);
 
         if (BlockAccess.get().isFluid(blockId)) {
-            shadeIndex = computeWaterBrightness(localX, localZ, chunk);
-        } else {
-            shadeIndex = computeHeightBrightness(localX, localZ, chunk);
+            baseColor = applyWaterTint(localX, localZ, chunk, baseColor);
         }
 
-        return applyShade(baseColor, shadeIndex);
+        baseColor = applyHeightShading(localX, localZ, chunk, baseColor);
+
+        if (useBlockLight) {
+            int blockLight = chunk.blockLight[index];
+            baseColor = applyBlockLight(baseColor, blockLight);
+        }
+
+        return baseColor;
     }
 
+    private int applyBiomeTint(int blockId, int baseColor, NABiome biome) {
+        if (BlockAccess.get().isBlock(blockId, BlockAccess.BlockIdentifier.GRASS)) {
+            return mixColors(baseColor, biome.grassColor, 0.1f);
+        }
+        return baseColor;
+    }
 
-    private int computeWaterBrightness(int localX, int localZ, NAChunk chunk) {
+    private int applyWaterTint(int localX, int localZ, NAChunk chunk, int baseColor) {
         int index = NAChunk.index(localX, localZ);
         int waterDepth = chunk.waterDepths[index];
 
         double noise = ((localX + localZ) & 1) * 0.2;
-        double d3 = waterDepth * 0.1 + noise;
+        double depthFactor = waterDepth * 0.1 + noise;
 
-        int brightness = 1;
-        if (d3 < 0.5) {
-            brightness = 2;
-        } else if (d3 > 0.9) {
-            brightness = 0;
-        }
+        int shadeIndex =
+                (depthFactor < 0.5) ? 2 :
+                        (depthFactor > 0.9) ? 0 : 1;
 
-        return brightness;
+        return applyShade(baseColor, shadeIndex);
     }
 
-    private int computeHeightBrightness(int localX, int localZ, NAChunk chunk) {
+    private int applyHeightShading(int localX, int localZ, NAChunk chunk, int baseColor) {
         int index = NAChunk.index(localX, localZ);
         int height = chunk.heights[index];
 
         int prevZ = Math.max(0, localZ - 1);
-        int prevIndex = NAChunk.index(localX, prevZ);
+        int prevIndex = prevZ * 16 + localX;
         int prevHeight = chunk.heights[prevIndex];
 
-        double heightDiff = (height - prevHeight) * (4.0 / 5.0)
-                + (((localX + localZ) & 1) - 0.5) * 0.4;
+        int heightDiff = height - prevHeight;
+        int shadeIndex = heightDiff > 0 ? 2 : heightDiff < 0 ? 0 : 1;
 
-        int brightness = 1;
-        if (heightDiff > 0.6) {
-            brightness = 2;
-        } else if (heightDiff < -0.6) {
-            brightness = 0;
-        }
-
-        return brightness;
+        return applyShade(baseColor, shadeIndex);
     }
 
     private int applyShade(int baseColor, int shadeIndex) {
-        int shade = BRIGHTNESS[shadeIndex & 3];
+        int brightnessFactor = BRIGHTNESS[shadeIndex & 3];
 
-        int r = ((baseColor >> 16) & 255) * shade / 255;
-        int g = ((baseColor >> 8) & 255) * shade / 255;
-        int b = (baseColor & 255) * shade / 255;
+        int r = ((baseColor >> 16) & 255) * brightnessFactor / 255;
+        int g = ((baseColor >> 8) & 255) * brightnessFactor / 255;
+        int b = (baseColor & 255) * brightnessFactor / 255;
+
+        return 0xFF000000 | (r << 16) | (g << 8) | b;
+    }
+
+    // ⭐ Restored from your old engine
+    private int applyBlockLight(int baseColor, int blockLightLevel) {
+        float minBrightness = 0.20f;
+        float lightFactor = Math.max(minBrightness, blockLightLevel / 15f);
+
+        int r = (int) (((baseColor >> 16) & 255) * lightFactor);
+        int g = (int) (((baseColor >> 8) & 255) * lightFactor);
+        int b = (int) ((baseColor & 255) * lightFactor);
+
+        return 0xFF000000 | (r << 16) | (g << 8) | b;
+    }
+
+    private int mixColors(int baseColor, int tintColor, float tintAmount) {
+        float baseAmount = 1f - tintAmount;
+
+        int br = (baseColor >> 16) & 255;
+        int bg = (baseColor >> 8) & 255;
+        int bb = baseColor & 255;
+
+        int tr = (tintColor >> 16) & 255;
+        int tg = (tintColor >> 8) & 255;
+        int tb = tintColor & 255;
+
+        int r = (int) (br * baseAmount + tr * tintAmount);
+        int g = (int) (bg * baseAmount + tg * tintAmount);
+        int b = (int) (bb * baseAmount + tb * tintAmount);
 
         return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
