@@ -1,2 +1,7 @@
-# @ is a shorthand for the current mod id, which is natoworldmap. E.g: tile.@.redclay.name
-key.natosatlas.map_keybind=Open Map
+natosatlas.options.title=NatosAtlas
+natosatlas.options.category.keybinds=Keybinds
+
+natosatlas.key.map=Fullscreen Map
+natosatlas.key.config=Map Config
+natosatlas.key.waypoints=Waypoints
+natosatlas.key.add_waypoint=Add Waypoint
