@@ -2,6 +2,7 @@ package dev.natowb.natosatlas.bta.mixin;
 
 import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.ui.elements.UIScaleInfo;
+import dev.natowb.natosatlas.core.NACore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenPhotoMode;
 import net.minecraft.client.gui.hud.HudIngame;
@@ -14,21 +15,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(HudIngame.class)
 public class BTAHudMixin {
 
-    @Inject(method = "renderGameOverlay", at = @At("HEAD"))
-    private void natosatlas$drawMiniMap(float partialTicks, boolean flag, int mouseX, int mouseY, CallbackInfo ci) {
+    @Inject(method = "renderGameOverlay", at = @At("TAIL"))
+    private void drawNatosAtlasMinimap(float partialTicks, boolean flag, int mouseX, int mouseY, CallbackInfo ci) {
 
         Minecraft mc = Minecraft.getMinecraft();
         if (mc == null || mc.resolution == null) return;
-        if (mc.currentScreen instanceof ScreenPhotoMode) return;
-        if (!mc.gameSettings.immersiveMode.drawOverlays()) return;
+        if(!NACore.isInitialized()) return;
 
-        // ----------------------------------------------
-        // copied straight from Hudingame.class
-        // ----------------------------------------------
-        mc.worldRenderer.setupScaledResolution();
-        GL11.glEnable(3042);
-        GL11.glBlendFunc(770, 771);
-        // ----------------------------------------------
+        if(mc.gameSettings.showDebugScreen.value) return;
+        if (!mc.gameSettings.immersiveMode.drawOverlays()) return;
 
         int scale = mc.resolution.getScale();
         int screenW = mc.resolution.getScaledWidthScreenCoords();

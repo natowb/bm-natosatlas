@@ -10,7 +10,6 @@ import turniplabs.halplibe.util.GameStartEntrypoint;
 import turniplabs.halplibe.util.RecipeEntrypoint;
 
 public class BTAClientEntry implements ModInitializer, RecipeEntrypoint, GameStartEntrypoint {
-    private NACore nac;
 
     @Override
     public void onInitialize() {
