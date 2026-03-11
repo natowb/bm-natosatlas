@@ -9,12 +9,12 @@ loom {
 }
 
 repositories {
-    maven("https://maven.fabricmc.net/")
-    maven("https://maven.thesignalumproject.net/releases/")
-    maven("https://maven.thesignalumproject.net/infrastructure/")
-
-    ivy("https://github.com/Better-than-Adventure/") {
-        patternLayout { artifact("[organisation]/releases/download/v[revision]/[module].jar") }
+    mavenCentral()
+    maven("https://maven.fabricmc.net/") { name = "Fabric" }
+    maven("https://maven.thesignalumproject.net/infrastructure") { name = "SignalumMavenInfrastructure" }
+    maven("https://maven.thesignalumproject.net/releases") { name = "SignalumMavenReleases" }
+    ivy("https://github.com/Better-than-Adventure") {
+        patternLayout { artifact("[organisation]/releases/download/[revision]/[module]-bta-[revision].jar") }
         metadataSources { artifact() }
     }
     ivy("https://downloads.betterthanadventure.net/bta-client/${libs.versions.btaChannel.get()}/") {
@@ -25,7 +25,7 @@ repositories {
         patternLayout { artifact("/v[revision]/server.jar") }
         metadataSources { artifact() }
     }
-    ivy("https://piston-data.mojang.com/") {
+    ivy("https://piston-data.mojang.com") {
         patternLayout { artifact("v1/[organisation]/[revision]/[module].jar") }
         metadataSources { artifact() }
     }
