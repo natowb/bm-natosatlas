@@ -25,6 +25,10 @@ public final class SettingsStorage extends TextStorage {
         Settings.minimapEntityDisplayMode = getEnum("minimapEntityDisplayMode", Settings.EntityDisplayMode.class, Settings.EntityDisplayMode.Player);
         Settings.minimapRenderMode = getEnum("minimapRenderMode", Settings.MapRenderMode.class, Settings.MapRenderMode.Auto);
         Settings.minimapEnabled = getBoolean("minimapEnabled", false);
+        Settings.minimapPosition = getEnum("minimapPosition", Settings.MinimapPosition.class, Settings.MinimapPosition.TopRight);
+        Settings.minimapScale = getFloat("minimapScale", 1f);
+
+
     }
 
     @Override
@@ -41,5 +45,7 @@ public final class SettingsStorage extends TextStorage {
         put("minimapZoom", Settings.minimapZoom);
         put("minimapEntityDisplayMode", Settings.minimapEntityDisplayMode);
         put("minimapRenderMode", Settings.minimapRenderMode);
+        put("minimapScale", Settings.minimapScale);
+        put("minimapPosition", Settings.minimapPosition);
     }
 }

@@ -13,7 +13,8 @@ public final class Settings {
 
     public enum MapRenderMode {Day, Night, Cave, Auto}
 
-    //FIXME: i should probably seperate these out better.
+    public enum MinimapPosition {TopLeft, TopRight, BottomLeft, BottomRight}
+
 
     // World map settings
     public static boolean mapGrid = true;
@@ -28,6 +29,8 @@ public final class Settings {
     public static boolean minimapRotateWithPlayer = false;
     public static boolean minimapEnabled = false;
     public static float minimapZoom = 0.5f;
+    public static float minimapScale = 1.0f;
+    public static MinimapPosition minimapPosition = MinimapPosition.TopRight;
     public static EntityDisplayMode minimapEntityDisplayMode = EntityDisplayMode.All;
     public static MapRenderMode minimapRenderMode = MapRenderMode.Auto;
 

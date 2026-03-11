@@ -154,7 +154,32 @@ public enum SettingsOption {
         public String getValueLabel() {
             return Settings.minimapRenderMode.name();
         }
-    };
+    },
+    MINIMAP_POSITION("Position") {
+        @Override
+        public void cycle() {
+            Settings.MinimapPosition m = Settings.minimapPosition;
+            switch (m) {
+                case TopLeft:
+                    Settings.minimapPosition = Settings.MinimapPosition.TopRight;
+                    break;
+                case TopRight:
+                    Settings.minimapPosition = Settings.MinimapPosition.BottomLeft;
+                    break;
+                case BottomLeft:
+                    Settings.minimapPosition = Settings.MinimapPosition.BottomRight;
+                    break;
+                case BottomRight:
+                    Settings.minimapPosition = Settings.MinimapPosition.TopLeft;
+                    break;
+            }
+        }
+
+        @Override
+        public String getValueLabel() {
+            return Settings.minimapPosition.name();
+        }
+    };;
 
     private final String title;
 

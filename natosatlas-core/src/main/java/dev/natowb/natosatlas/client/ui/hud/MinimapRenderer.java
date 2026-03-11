@@ -70,6 +70,7 @@ public class MinimapRenderer {
         stageEntities.setDisplayMode(Settings.minimapEntityDisplayMode);
         chooseMinimapActiveLayer();
     }
+
     public void render(UIScaleInfo scaleInfo) {
         if (!Settings.minimapEnabled) return;
         setupViewport(scaleInfo);
@@ -80,11 +81,39 @@ public class MinimapRenderer {
         drawWaypointEdgeIndicators();
     }
 
+
     private void setupViewport(UIScaleInfo scaleInfo) {
-        int viewportSize = 100;
+
+        Settings.MinimapPosition position = Settings.minimapPosition;
+
+        int viewportSize = (int) (100 * Settings.minimapScale);
         int minimapPadding = 10;
-        int startX = scaleInfo.scaledWidth - viewportSize - minimapPadding;
-        int startY = minimapPadding;
+
+        int startX = 0;
+        int startY = 0;
+
+        switch (position) {
+            case TopLeft:
+                startX = minimapPadding;
+                startY = minimapPadding;
+                break;
+
+            case TopRight:
+                startX = scaleInfo.scaledWidth - viewportSize - minimapPadding;
+                startY = minimapPadding;
+                break;
+
+            case BottomLeft:
+                startX = minimapPadding;
+                startY = scaleInfo.scaledHeight - viewportSize - minimapPadding;
+                break;
+
+            case BottomRight:
+                startX = scaleInfo.scaledWidth - viewportSize - minimapPadding;
+                startY = scaleInfo.scaledHeight - viewportSize - minimapPadding;
+                break;
+        }
+
         viewport.initViewport(startX, startY, viewportSize, viewportSize);
         viewport.setZoom(Settings.minimapZoom);
 
@@ -104,6 +133,8 @@ public class MinimapRenderer {
             }
         }
     }
+
+
     private float[] worldToMinimap(MapContext ctx, float worldPx, float worldPz) {
         float halfW = ctx.canvasW * 0.5f;
         float halfH = ctx.canvasH * 0.5f;
