@@ -169,15 +169,15 @@ public abstract class UIScreen {
     }
 
     public void keyPressed(char character, int keyCode) {
+        if (keyCode == Keyboard.KEY_ESCAPE) {
+            NAClient.get().getPlatform().screen.openNacScreen(parent);
+        }
+
         for (UIElementTextField tf : textFields) {
             if (tf.focused) {
                 tf.keyPressed(character, keyCode);
                 return;
             }
-        }
-
-        if (keyCode == Keyboard.KEY_ESCAPE) {
-            NAClient.get().getPlatform().screen.openNacScreen(parent);
         }
     }
 

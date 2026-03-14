@@ -32,4 +32,5 @@ bin/
 
 run/*
 natosatlas-stationapi/run/*
+natosatlas-bta/run/*
 

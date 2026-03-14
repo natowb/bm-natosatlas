@@ -4,7 +4,6 @@ import dev.natowb.natosatlas.bta.BTABlockAccess;
 import dev.natowb.natosatlas.client.platform.BlockAccess;
 import dev.natowb.natosatlas.client.platform.ClientWorldAccess;
 import dev.natowb.natosatlas.core.NACore;
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.options.components.KeyBindingComponent;
 import net.minecraft.client.gui.options.components.OptionsCategory;
@@ -15,10 +14,8 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.item.Items;
 import org.lwjgl.input.Keyboard;
-import turniplabs.halplibe.util.GameStartEntrypoint;
-import turniplabs.halplibe.util.RecipeEntrypoint;
 
-public class BTAClientEntry implements ModInitializer, RecipeEntrypoint, GameStartEntrypoint {
+public class BTAClient {
 
     public static final KeyBinding KEY_MAP = new KeyBinding("natosatlas.key.map")
             .setDefault(InputDevice.keyboard, Keyboard.KEY_M);
@@ -30,24 +27,7 @@ public class BTAClientEntry implements ModInitializer, RecipeEntrypoint, GameSta
             .setDefault(InputDevice.keyboard, Keyboard.KEY_K);
 
 
-    @Override
-    public void onInitialize() {
-    }
-
-    @Override
-    public void onRecipesReady() {
-    }
-
-    @Override
-    public void initNamespaces() {
-    }
-
-    @Override
-    public void beforeGameStart() {
-    }
-
-    @Override
-    public void afterGameStart() {
+    public static void setup() {
         BlockAccess.set(new BTABlockAccess());
         ClientWorldAccess.set(new BTAClientWorldAccess());
         NACore.init(FabricLoader.getInstance().getGameDir());
@@ -62,4 +42,5 @@ public class BTAClientEntry implements ModInitializer, RecipeEntrypoint, GameSta
                         .withComponent(new KeyBindingComponent(KEY_ADD_WAYPOINT))
         );
     }
+
 }
