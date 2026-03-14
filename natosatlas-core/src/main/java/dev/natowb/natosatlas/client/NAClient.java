@@ -25,7 +25,10 @@ import dev.natowb.natosatlas.client.ui.screens.waypoint.Waypoint;
 import dev.natowb.natosatlas.client.ui.screens.waypoint.Waypoints;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class NAClient implements NAClientSession {
 
@@ -133,8 +136,36 @@ public class NAClient implements NAClientSession {
     private void onWorldTick() {
         mapUpdater.tick();
         mapSaver.saveNextBatch();
+
         if (Settings.minimapEnabled)
             minimapRenderer.tick();
+
+
+        //  FIXME: this has shown me i hate the waypoint object bs.
+        //         Nato you need to rework this BS when you are not lazy
+        List<Waypoint> all = Waypoints.getAll();
+        NAEntity player = ClientWorldAccess.get().getPlayer();
+
+        double threshold = 4;
+        double thresholdSq = threshold * threshold;
+
+        List<Waypoint> toRemove = new ArrayList<>();
+
+        for (Waypoint w : all) {
+            if (!w.temp) continue;
+
+            double dx = w.x - player.x;
+            double dz = w.z - player.z;
+            double distSq = dx * dx + dz * dz;
+
+            if (distSq <= thresholdSq) {
+                toRemove.add(w);
+            }
+        }
+
+        for (Waypoint w : toRemove) {
+            Waypoints.remove(w);
+        }
     }
 
     private final MinimapRenderer minimapRenderer = new MinimapRenderer();

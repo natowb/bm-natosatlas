@@ -9,6 +9,7 @@ public class Waypoint {
     public int color;
 
     public boolean visible;
+    public boolean temp;
 
     public Waypoint(String name, int x, int y, int z) {
         this.name = name;
@@ -17,6 +18,7 @@ public class Waypoint {
         this.z = z;
         this.visible = true;
         this.color = 0xFFFFFF;
+        this.temp = false;
     }
 
     public Waypoint(String name, int x, int y, int z, int argb) {
@@ -26,5 +28,16 @@ public class Waypoint {
         this.z = z;
         this.visible = true;
         this.color = argb;
+        this.temp = false;
+    }
+
+    public Waypoint(String name, int x, int y, int z, int argb, boolean temp) {
+        this.name = name;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.visible = true;
+        this.color = argb;
+        this.temp = temp;
     }
 }

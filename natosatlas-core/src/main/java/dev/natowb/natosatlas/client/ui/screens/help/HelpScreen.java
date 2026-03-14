@@ -19,6 +19,7 @@ public class HelpScreen extends UIScreen {
             {"[L Mouse Drag]", "Pan the map"},
             {"[R Mouse Drag]", "Rotate the map"},
             {"[L Mouse DBClick]", "Create Waypoint"},
+            {"[R Mouse DBClick]", "Temp Waypoint"},
             {"[Mouse Wheel]", "Zoom in/out"},
             {"[Space]", "Reset camera"},
             {"[P]", "Export current map layer"}

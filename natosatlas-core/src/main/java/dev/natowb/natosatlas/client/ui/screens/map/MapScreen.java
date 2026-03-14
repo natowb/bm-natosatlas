@@ -5,6 +5,7 @@ import dev.natowb.natosatlas.client.NAClient;
 import dev.natowb.natosatlas.client.platform.ClientWorldAccess;
 import dev.natowb.natosatlas.client.io.MapExporter;
 import dev.natowb.natosatlas.client.io.MapSaver;
+import dev.natowb.natosatlas.client.ui.screens.waypoint.Waypoint;
 import dev.natowb.natosatlas.core.NAConstants;
 import dev.natowb.natosatlas.client.cache.NARegionPixelCache;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
@@ -28,6 +29,7 @@ import dev.natowb.natosatlas.client.ui.screens.waypoint.Waypoints;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import java.util.List;
 import java.util.Set;
 
 import static dev.natowb.natosatlas.client.texture.TextureProvider.*;
@@ -43,8 +45,10 @@ public class MapScreen extends UIScreen {
     private final MapStageWaypoints waypointsPainter = new MapStageWaypoints();
 
     private int activeLayer = 0;
-    private long lastClickTime = 0;
-    private static final long DOUBLE_CLICK_TIME_THRESHOLD = 300;
+    private long lastLeftClickTime = 0;
+    private long lastRightClickTime = 0;
+
+    private static final long DOUBLE_CLICK_TIME_THRESHOLD = 250;
 
     private boolean firstInit = false;
 
@@ -362,22 +366,47 @@ public class MapScreen extends UIScreen {
         return new NACoord(blockX, blockZ);
     }
 
+
     @Override
     public void mouseDown(int x, int y, int button) {
         super.mouseDown(x, y, button);
 
+        long now = System.currentTimeMillis();
+
         if (button == 0) {
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - lastClickTime <= DOUBLE_CLICK_TIME_THRESHOLD) {
+            if (now - lastLeftClickTime <= DOUBLE_CLICK_TIME_THRESHOLD) {
                 MapContext ctx = viewport.getContext();
                 NACoord blockCoord = getMouseBlock(ctx);
-                NAClient.get().getPlatform().screen.openNacScreen(new WaypointCreateScreen(this, blockCoord.x, blockCoord.z));
+                NAClient.get().getPlatform().screen.openNacScreen(
+                        new WaypointCreateScreen(this, blockCoord.x, blockCoord.z)
+                );
                 return;
             }
-            lastClickTime = currentTime;
+
+            lastLeftClickTime = now;
             viewport.dragStart(x, y);
+            return;
         }
-        if (button == 1) viewport.rotateStart(x, y);
+
+        if (button == 1) {
+            if (now - lastRightClickTime <= DOUBLE_CLICK_TIME_THRESHOLD) {
+                long tempCount = Waypoints.getAll().stream()
+                        .filter(w -> w.temp).count();
+
+                String name = "Temp #" + (tempCount + 1);
+
+                MapContext ctx = viewport.getContext();
+                NACoord blockCoord = getMouseBlock(ctx);
+
+                Waypoint wp = new Waypoint(name, blockCoord.x, 0, blockCoord.z, 0xFFFFFFFF, true);
+                Waypoints.add(wp);
+                return;
+            }
+
+
+            lastRightClickTime = now;
+            viewport.rotateStart(x, y);
+        }
     }
 
 

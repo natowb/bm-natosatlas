@@ -35,15 +35,19 @@ public final class WaypointStorage {
             int y = parse(p[2]);
             int z = parse(p[3]);
             boolean visible = Boolean.parseBoolean(p[4]);
-
             int color = parseColor(p[5]);
 
-            Waypoint wp = new Waypoint(name, x, y, z);
+            boolean temp = false;
+            if (p.length >= 7) {
+                temp = Boolean.parseBoolean(p[6]);
+            }
+
+            Waypoint wp = new Waypoint(name, x, y, z, color, temp);
             wp.visible = visible;
-            wp.color = color;
 
             waypoints.add(wp);
         }
+
     }
 
     public void save(File file) {
@@ -52,9 +56,17 @@ public final class WaypointStorage {
         for (Waypoint wp : waypoints) {
             int c = wp.color == 0 ? 0xFFFFFF : wp.color;
             String hex = String.format("%06X", c & 0xFFFFFF);
-            lines.add(wp.name + ":" + wp.x + ":" + wp.y + ":" + wp.z + ":" + wp.visible + ":" + hex);
-        }
 
+            lines.add(
+                    wp.name + ":" +
+                            wp.x + ":" +
+                            wp.y + ":" +
+                            wp.z + ":" +
+                            wp.visible + ":" +
+                            hex + ":" +
+                            wp.temp
+            );
+        }
         FileUtil.writeLines(file, lines);
     }
 
