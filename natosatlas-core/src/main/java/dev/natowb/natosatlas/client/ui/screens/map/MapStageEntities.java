@@ -12,6 +12,7 @@ import java.util.Set;
 public class MapStageEntities implements MapStage {
 
     private static final double ENTITY_RENDER_RADIUS = 128.0;
+    private static final int ENTITY_MAX_DEPTH = 32;
 
     private Settings.EntityDisplayMode displayMode = Settings.EntityDisplayMode.Player;
 
@@ -29,19 +30,24 @@ public class MapStageEntities implements MapStage {
 
         NAEntity player = ClientWorldAccess.get().getPlayer();
         double px = player.x;
+        double py = player.y;
         double pz = player.z;
 
         if (displayMode == Settings.EntityDisplayMode.All) {
             for (NAEntity e : ClientWorldAccess.get().getEntities()) {
 
                 double dx = e.x - px;
+                double dy = e.y - py;
                 double dz = e.z - pz;
 
-                if ((dx * dx + dz * dz) > (ENTITY_RENDER_RADIUS * ENTITY_RENDER_RADIUS)) {
+                double distSq = dx * dx + dy * dy + dz * dz;
+
+                if (distSq > ENTITY_RENDER_RADIUS * ENTITY_RENDER_RADIUS) {
                     continue;
                 }
 
-                renderEntity(ctx, e);
+                int argb = getEntityHeightARGB(e, py);
+                renderEntity(ctx, e, argb);
             }
         }
 
@@ -58,7 +64,25 @@ public class MapStageEntities implements MapStage {
         }
     }
 
-    private void renderEntity(MapContext ctx, NAEntity e) {
+    private static int getEntityHeightARGB(NAEntity e, double py) {
+        double entityHeightDiff = e.y - py;
+
+        double brightness;
+        if (entityHeightDiff >= 0) {
+            brightness = 1.0;
+        } else {
+            double depth = -entityHeightDiff;
+
+
+            brightness = 1.0 - (depth / ENTITY_MAX_DEPTH);
+            if (brightness < 0) brightness = 0;
+        }
+
+        int shade = (int) (brightness * 255);
+        return (0xFF << 24) | (shade << 16) | (shade << 8) | shade;
+    }
+
+    private void renderEntity(MapContext ctx, NAEntity e, int argb) {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,
                 NAClient.get().getPlatform().painter.getMinecraftTextureId(e.texturePath));
 
@@ -69,7 +93,7 @@ public class MapStageEntities implements MapStage {
         NAEntity.UV uv = NAEntity.getUV(e.texturePath);
 
         drawUpright(ctx, x, z, s, 180, () ->
-                NAClient.get().getPlatform().painter.drawTexturedQuad(uv.u1, uv.v1, uv.u2, uv.v2)
+                NAClient.get().getPlatform().painter.drawTexturedQuad(argb, uv.u1, uv.v1, uv.u2, uv.v2)
         );
     }
 
