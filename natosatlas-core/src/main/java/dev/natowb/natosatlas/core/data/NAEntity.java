@@ -15,6 +15,8 @@ public class NAEntity {
     public final double yaw;
     public String name = "";
     public String texturePath = "/mob/char.png";
+    public boolean isCrouching;
+    public boolean isSpectating;
 
     public NAEntity(double x, double y, double z, double yaw, NAEntityType type) {
         this.x = x;

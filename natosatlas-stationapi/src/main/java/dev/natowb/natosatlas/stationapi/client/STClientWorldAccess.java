@@ -91,7 +91,12 @@ public class STClientWorldAccess extends ClientWorldAccess {
         for (Object o : mc.world.players) {
             if (!(o instanceof PlayerEntity)) continue;
             PlayerEntity p = (PlayerEntity) o;
-            players.add(new NAEntity(p.x, p.y, p.z, p.yaw, NAEntity.NAEntityType.Player));
+            NAEntity player = new NAEntity(p.x, p.y, p.z, p.yaw, NAEntity.NAEntityType.Player);
+            player.setName(p.name);
+            if (p.isSneaking()) {
+                player.isCrouching = true;
+            }
+            players.add(player);
         }
 
         return players;

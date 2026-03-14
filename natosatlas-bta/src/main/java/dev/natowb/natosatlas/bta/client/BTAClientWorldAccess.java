@@ -11,6 +11,7 @@ import net.minecraft.core.entity.animal.MobAnimal;
 import net.minecraft.core.entity.player.Player;
 import net.minecraft.core.enums.LightLayer;
 import net.minecraft.core.lang.text.TranslatableText;
+import net.minecraft.core.player.gamemode.Gamemode;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.chunk.ChunkLoaderRegion;
@@ -84,7 +85,16 @@ public class BTAClientWorldAccess extends ClientWorldAccess {
         List<NAEntity> players = new ArrayList<>();
 
         for (Player p : mc.currentWorld.players) {
-            players.add(new NAEntity(p.x, p.y, p.z, p.yRot, NAEntity.NAEntityType.Player));
+            NAEntity player = new NAEntity(p.x, p.y, p.z, p.yRot, NAEntity.NAEntityType.Player);
+            player.setName(p.getDisplayName());
+            if (p.isSneaking()) {
+                player.isCrouching = true;
+            }
+
+            if (p.gamemode == Gamemode.spectator) {
+                player.isSpectating = true;
+            }
+            players.add(player);
         }
 
         return players;

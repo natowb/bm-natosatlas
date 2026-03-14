@@ -57,15 +57,23 @@ public class MapStageEntities implements MapStage {
                 continue;
             }
 
+            if (p.isCrouching || p.isSpectating) continue;
+
             double dx = p.x - px;
+            double dy = p.y - py;
             double dz = p.z - pz;
 
-            if ((dx * dx + dz * dz) > (ENTITY_RENDER_RADIUS * ENTITY_RENDER_RADIUS)) {
+            double distSq = dx * dx + dy * dy + dz * dz;
+
+            if (distSq > ENTITY_RENDER_RADIUS * ENTITY_RENDER_RADIUS) {
                 continue;
             }
 
+
             renderMapMarker(ctx, p);
         }
+
+        renderMapMarker(ctx, localPlayer);
     }
 
     private static int getEntityHeightARGB(NAEntity e, double py) {
