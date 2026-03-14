@@ -28,10 +28,10 @@ public class MapStageEntities implements MapStage {
     private void drawEntities(MapContext ctx) {
         if (displayMode == Settings.EntityDisplayMode.Nothing) return;
 
-        NAEntity player = ClientWorldAccess.get().getPlayer();
-        double px = player.x;
-        double py = player.y;
-        double pz = player.z;
+        NAEntity localPlayer = ClientWorldAccess.get().getPlayer();
+        double px = localPlayer.x;
+        double py = localPlayer.y;
+        double pz = localPlayer.z;
 
         if (displayMode == Settings.EntityDisplayMode.All) {
             for (NAEntity e : ClientWorldAccess.get().getEntities()) {
@@ -52,6 +52,10 @@ public class MapStageEntities implements MapStage {
         }
 
         for (NAEntity p : ClientWorldAccess.get().getPlayers()) {
+
+            if (p.name.equals(localPlayer.name)) {
+                continue;
+            }
 
             double dx = p.x - px;
             double dz = p.z - pz;
