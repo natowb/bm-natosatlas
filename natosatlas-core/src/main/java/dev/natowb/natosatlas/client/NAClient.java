@@ -11,10 +11,7 @@ import dev.natowb.natosatlas.client.ui.hud.MinimapRenderer;
 import dev.natowb.natosatlas.client.ui.screens.map.*;
 import dev.natowb.natosatlas.client.ui.screens.settings.Settings;
 import dev.natowb.natosatlas.client.ui.themes.UITheme;
-import dev.natowb.natosatlas.core.LayerRegistry;
-import dev.natowb.natosatlas.core.NAClientSession;
-import dev.natowb.natosatlas.core.NAConstants;
-import dev.natowb.natosatlas.core.NAPaths;
+import dev.natowb.natosatlas.core.*;
 import dev.natowb.natosatlas.core.chunk.ChunkWrapper;
 import dev.natowb.natosatlas.core.data.NACoord;
 import dev.natowb.natosatlas.core.data.NAEntity;
@@ -171,6 +168,7 @@ public class NAClient implements NAClientSession {
     private final MinimapRenderer minimapRenderer = new MinimapRenderer();
 
     public void renderGui(UIScaleInfo scaleInfo) {
+        if (!inWorld) return;
         if (Settings.minimapEnabled)
             minimapRenderer.render(scaleInfo);
     }
