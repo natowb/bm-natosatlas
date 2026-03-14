@@ -43,7 +43,7 @@ public class BTAMinecraftMixin {
         if (this.thePlayer.getHealth() <= 0 && !deathTriggered) {
             deathTriggered = true;
             Waypoints.add(new Waypoint(
-                    "Lastest Death",
+                    "Last Death",
                     (int) this.thePlayer.x,
                     (int) this.thePlayer.y,
                     (int) this.thePlayer.z,

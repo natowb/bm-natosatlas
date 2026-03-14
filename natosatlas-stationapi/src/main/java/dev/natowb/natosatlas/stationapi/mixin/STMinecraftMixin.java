@@ -43,7 +43,7 @@ public class STMinecraftMixin {
         if (this.player.health <= 0 && !deathTriggered) {
             deathTriggered = true;
             Waypoints.add(new Waypoint(
-                    "Lastest Death",
+                    "Last Death",
                     (int) this.player.x,
                     (int) this.player.y,
                     (int) this.player.z,
