@@ -39,10 +39,30 @@ public final class Waypoints {
     }
 
     public static void add(Waypoint wp) {
-        STORAGE.getAll().add(wp);
+
+        List<Waypoint> existing = STORAGE.getAll();
+
+        boolean alreadyExists = existing.stream().anyMatch(w ->
+                w.name.equals(wp.name) &&
+                        w.x == wp.x &&
+                        w.y == wp.y &&
+                        w.z == wp.z &&
+                        w.color == wp.color
+        );
+
+        if (alreadyExists) {
+            LogUtil.warn(
+                    "Skipped adding waypoint '{}' because a waypoint with identical details already exists",
+                    wp.name
+            );
+            return;
+        }
+
+        existing.add(wp);
         LogUtil.debug("Added waypoint {}", wp.name);
         save();
     }
+
 
     public static void remove(Waypoint wp) {
         STORAGE.getAll().remove(wp);
