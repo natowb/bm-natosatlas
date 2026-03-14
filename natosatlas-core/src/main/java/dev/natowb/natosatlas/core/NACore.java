@@ -47,6 +47,7 @@ public final class NACore {
 
 
     public static void tick() {
+        if (!initialized) return;
         if (clientSession == null) return;
         clientSession.tick();
     }

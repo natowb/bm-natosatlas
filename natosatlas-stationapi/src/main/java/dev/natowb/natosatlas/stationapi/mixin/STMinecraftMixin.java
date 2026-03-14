@@ -24,8 +24,6 @@ public class STMinecraftMixin {
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void onTick(CallbackInfo ci) {
-        if (!NACore.isInitialized()) return;
-
         NACore.tick();
 
         if (currentScreen != null) return;

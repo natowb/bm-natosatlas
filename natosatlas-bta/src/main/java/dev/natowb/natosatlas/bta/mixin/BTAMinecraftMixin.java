@@ -27,9 +27,8 @@ public class BTAMinecraftMixin {
 
     @Inject(method = "runTick", at = @At("TAIL"))
     private void onTick(CallbackInfo ci) {
-        if (!NACore.isInitialized() || currentScreen != null) return;
-
         NACore.tick();
+        if (currentScreen != null) return;
 
         if (Keyboard.isKeyDown(KEY_MAP.getKeyCode())) {
             NAClient.get().getPlatform().screen.openNacScreen(new MapScreen(null));
