@@ -16,7 +16,8 @@ public final class UITheme {
     public static final int LIST_SUBTEXT = 0xFF808080;
 
     public static final int SCROLLBAR_BG = 0x202A2A2A;
-    public static final int SCROLLBAR_THUMB = 0x80A0A0A0;
+    public static final int SCROLLBAR_THUMB =  0xFF303030;
+    public static final int SCROLLBAR_THUMB_HOVER = 0x80A0A0A0;
 
     public static final int PANEL_BG = 0xFF181818;
 

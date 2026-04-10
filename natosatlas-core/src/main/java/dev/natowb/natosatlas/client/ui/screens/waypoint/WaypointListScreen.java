@@ -96,7 +96,14 @@ public class WaypointListScreen extends UIScreen {
     }
 
     @Override
+    public void mouseDrag(int mouseX, int mouseY, int button) {
+        super.mouseDrag(mouseX, mouseY, button);
+        if (button == 0) list.mouseMove(mouseX, mouseY);
+    }
+
+    @Override
     public void mouseUp(int mouseX, int mouseY, int button) {
         super.mouseUp(mouseX, mouseY, button);
+        if (button == 0) list.mouseUp(mouseX, mouseY);
     }
 }

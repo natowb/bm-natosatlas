@@ -20,6 +20,11 @@ public class WaypointListElement {
     private final int entryHeight;
 
     private int scrollOffset = 0;
+    private boolean draggingScrollbar = false;
+    private boolean hoveringScrollbar = false;
+    private int dragStartY = 0;
+    private int dragStartScroll = 0;
+
 
     public interface ClickHandler {
         void onEdit(Waypoint wp);
@@ -66,12 +71,16 @@ public class WaypointListElement {
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
-        renderScrollbar(p, items.size());
+        renderScrollbar(p, items.size(), mouseX, mouseY);
     }
 
 
     private void renderEntry(NAPainter p, Waypoint wp, int yPos, int mouseX, int mouseY) {
-        boolean hovered = isMouseOver(x, yPos, width, entryHeight, mouseX, mouseY);
+        boolean hovered = !draggingScrollbar &&
+                !hoveringScrollbar &&
+                isInsideScissor(mouseX, mouseY) &&
+                isMouseOver(x, yPos, width, entryHeight, mouseX, mouseY);
+
 
         int bgColor = hovered ? UITheme.LIST_BG_HOVER : UITheme.LIST_BG;
         p.drawRect(x, yPos, x + width, yPos + entryHeight, bgColor);
@@ -107,9 +116,12 @@ public class WaypointListElement {
         return x - BTN_SIZE - BTN_GAP;
     }
 
-    private void renderScrollbar(NAPainter p, int itemCount) {
+    private void renderScrollbar(NAPainter p, int itemCount, int mouseX, int mouseY) {
         int contentHeight = itemCount * entryHeight;
-        if (contentHeight <= height) return;
+        if (contentHeight <= height) {
+            hoveringScrollbar = false;
+            return;
+        }
 
         int barX1 = x + width + 2;
         int barX2 = barX1 + 6;
@@ -120,19 +132,60 @@ public class WaypointListElement {
         float scrollRatio = (float) scrollOffset / (contentHeight - height);
         int thumbY = y + (int) (scrollRatio * (height - thumbHeight));
 
+        hoveringScrollbar = isMouseOver(barX1, thumbY, barX2 - barX1, thumbHeight,
+                mouseX,
+                mouseY
+        );
+
+        int thumbColor = draggingScrollbar || hoveringScrollbar
+                ? UITheme.SCROLLBAR_THUMB_HOVER
+                : UITheme.SCROLLBAR_THUMB;
+
         p.drawRect(barX1, y, barX2, y + height, UITheme.SCROLLBAR_BG);
-        p.drawRect(barX1, thumbY, barX2, thumbY + thumbHeight, UITheme.SCROLLBAR_THUMB);
+        p.drawRect(barX1, thumbY, barX2, thumbY + thumbHeight, thumbColor);
     }
 
+
     public void mouseScroll(int amount) {
-        scrollOffset -= amount * 5;
+        scrollOffset -= amount * 10;
         clampScroll();
     }
 
+    public void mouseMove(int mouseX, int mouseY) {
+        if (!draggingScrollbar) return;
+
+        int contentHeight = Waypoints.getAll().size() * entryHeight;
+        int maxScroll = Math.max(0, contentHeight - height);
+
+        float scrollableHeight = height - Math.max(20, (int) ((float) height / contentHeight * height));
+        if (scrollableHeight <= 0) return;
+
+        int dy = mouseY - dragStartY;
+        float ratio = (float) dy / scrollableHeight;
+
+        scrollOffset = dragStartScroll + (int) (ratio * maxScroll);
+        clampScroll();
+    }
+
+    public void mouseUp(int mouseX, int mouseY) {
+        draggingScrollbar = false;
+    }
+
     public void mouseDown(int mouseX, int mouseY) {
-        if (!isMouseOver(x, y, width, height, mouseX, mouseY)) {
-            return;
+        int contentHeight = Waypoints.getAll().size() * entryHeight;
+        if (contentHeight > height) {
+            int barX1 = x + width + 2;
+            int barX2 = barX1 + 6;
+
+            if (mouseX >= barX1 && mouseX <= barX2 && mouseY >= y && mouseY <= y + height) {
+                draggingScrollbar = true;
+                dragStartY = mouseY;
+                dragStartScroll = scrollOffset;
+                return;
+            }
         }
+
+        if (!isMouseOver(x, y, width, height, mouseX, mouseY)) return;
 
         List<Waypoint> items = Waypoints.getAll();
         int index = (mouseY - y + scrollOffset) / entryHeight;
@@ -147,6 +200,7 @@ public class WaypointListElement {
 
         if (isMouseOver(buttonX, buttonY, BTN_SIZE, BTN_SIZE, mouseX, mouseY)) {
             if (handler != null) handler.onDelete(wp);
+            clampScroll();
             return;
         }
 
@@ -171,4 +225,10 @@ public class WaypointListElement {
     private boolean isMouseOver(int x, int y, int w, int h, int mouseX, int mouseY) {
         return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
     }
+
+    private boolean isInsideScissor(int mouseX, int mouseY) {
+        return mouseX >= x && mouseX <= x + width &&
+                mouseY >= y && mouseY <= y + height;
+    }
+
 }
